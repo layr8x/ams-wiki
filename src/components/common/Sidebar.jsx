@@ -9,7 +9,7 @@ import {
 import { useSearchStore } from '@/store/searchStore.jsx';
 import { MODULE_TREE, RECENT_GUIDES } from '@/data/mockData';
 import { Separator } from '@/components/ui/separator';
-import { Button } from '@/components/ui';
+import { Button } from '@/components/ui/button';
 
 const ICON_MAP = {
   ClipboardList, BookOpen, Calendar, CreditCard, Users,

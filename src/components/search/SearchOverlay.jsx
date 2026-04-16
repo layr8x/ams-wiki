@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Search, FileText, CornerDownLeft } from 'lucide-react';
 import { useSearchStore } from '@/store/searchStore.jsx';
-import { Button } from '@/components/ui';
+import { Button } from '@/components/ui/button';
 import { useNavigate, Link } from 'react-router-dom';
 import { GUIDES, RECENT_GUIDES } from '@/data/mockData';
 

@@ -13,10 +13,10 @@ import {
   User, Calendar, ArrowUpRight, BookOpen
 } from 'lucide-react';
 import { GUIDES } from '../data/mockData';
-import { Button } from '@/components/ui';
-import { Alert, AlertTitle, AlertDescription } from '@/components/ui';
-import { Input } from '@/components/ui';
-import { Textarea } from '@/components/ui';
+import { Button } from '@/components/ui/button';
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 
 // ─── 인라인 데이터 제거됨 — src/data/mockData.js 참조 ─────────────────────
 // 하위 호환 폴백 (mockData에 없는 id 대비)

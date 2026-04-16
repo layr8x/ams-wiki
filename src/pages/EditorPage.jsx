@@ -7,13 +7,13 @@ import {
   GripVertical, AlertTriangle, RotateCcw, Eye, EyeOff, Upload,
   User, Calendar, Hash, Layers, Tag, ShieldCheck, MessageCircle
 } from 'lucide-react';
-import { Button } from '@/components/ui';
-import { Alert, AlertTitle, AlertDescription } from '@/components/ui';
-import { Input } from '@/components/ui';
-import { Textarea } from '@/components/ui';
+import { Button } from '@/components/ui/button';
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter
-} from '@/components/ui';
+} from '@/components/ui/dialog';
 
 // ─── Mock Data ─────────────────────────────────────────────────────────────
 const GUIDES_LIST = [

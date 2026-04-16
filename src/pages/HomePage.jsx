@@ -10,7 +10,7 @@ import { useSearchStore } from '@/store/searchStore.jsx'
 import { MODULES } from '@/api/mockData'
 import { RECENT_GUIDES } from '@/data/mockData'
 import { Card } from '@/components/ui/card'
-import { Button } from '@/components/ui'
+import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 
 const ICON_MAP = { ClipboardList, BookOpen, Calendar, CreditCard, Gift, MessageSquare, Users, Building, GraduationCap, Shield, BarChart3 }

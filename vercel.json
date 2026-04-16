@@ -9,7 +9,7 @@
   "git": {
     "deploymentEnabled": {
       "main": true,
-      "claude/*": false
+      "claude/*": true
     }
   }
 }

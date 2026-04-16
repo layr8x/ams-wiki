@@ -5,7 +5,7 @@ import Sidebar from './Sidebar'
 import { useSearchStore } from '@/store/searchStore.jsx'
 
 const S = {
-  // header
+  // 헤더
   header: {
     position: 'sticky', top: 0, zIndex: 100,
     display: 'flex', alignItems: 'center', justifyContent: 'space-between',
@@ -69,14 +69,14 @@ export default function Layout() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100dvh', backgroundColor: '#ffffff', fontFamily: "'Pretendard', -apple-system, sans-serif" }}>
 
-      {/* ── Global Header ── */}
+      {/* ── 전역 헤더 ── */}
       <header style={S.header}>
-        {/* Logo */}
+        {/* 로고 */}
         <div style={S.logo} onClick={() => navigate('/')}>
           <img src="/logo.svg" alt="AMS 운영 위키" style={{ height: '22px', width: 'auto', display: 'block' }} />
         </div>
 
-        {/* Search — single source of truth */}
+        {/* 검색 — 단일 정보 소스 */}
         <button
           onClick={open}
           style={S.searchBtn}
@@ -88,7 +88,7 @@ export default function Layout() {
           <kbd style={S.kbd}>/</kbd>
         </button>
 
-        {/* Right actions */}
+        {/* 오른쪽 작업 */}
         <div style={S.rightActions}>
           <div style={S.bell}>
             <Bell size={18} color="#666666" />
@@ -100,7 +100,7 @@ export default function Layout() {
         </div>
       </header>
 
-      {/* ── Body ── */}
+      {/* ── 본문 ── */}
       <div style={S.body}>
         <Sidebar />
         <main style={S.main}>

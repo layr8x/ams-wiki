@@ -312,22 +312,6 @@ export const GUIDES = {
   },
 
   // ── 추가 가이드 ─────────────────────────────────────────────────────────────
-  'class-transfer': {
-    type: 'SOP', module: '수업운영관리', title: '전반 처리 가이드',
-    updated: '2026-04-12', confluenceId: '1920123456', targets: ['운영자', '실장'],
-    tldr: "수강 종료 후 다음 반으로 옮기는 전반 처리 절차입니다.",
-    path: 'AMS 어드민 > 수업운영관리 > 수업상세',
-    amsUrl: `${AMS}/operation/class/manage`,
-    confluenceUrl: `${CONFLUENCE}/1920123456`,
-    steps: [
-      { title: "전반 대상자 선택", desc: "현재 수강 중인 회원 중 전반할 대상을 선택합니다." },
-      { title: "새로운 강좌 지정", desc: "[새 강좌] 드롭다운에서 전반할 새 강좌를 선택합니다." },
-      { title: "전반 처리 버튼 클릭", desc: "[전반 처리] 버튼을 누르고 확인합니다." },
-    ],
-    mainItemsTable: null, cases: null, cautions: ["전반 후 이전 강좌는 퇴반 상태로 변경됨"],
-    troubleTable: null, responses: null, decisionTable: null, referenceData: null, policyDiff: null,
-  },
-
   'payment-method': {
     type: 'SOP', module: '청구/수납/결제/환불', title: '결제 수단 등록 가이드',
     updated: '2026-04-05', confluenceId: '1920234567', targets: ['운영자'],
@@ -359,6 +343,37 @@ export const GUIDES = {
     ],
     steps: null, mainItemsTable: null, cases: null, cautions: ["개강일 변경 시 기존 청구 이력이 영향받을 수 있음"],
     troubleTable: null, responses: null, decisionTable: null, policyDiff: null,
+  },
+
+  'student-suspension': {
+    type: 'SOP', module: '고객(원생) 관리', title: '휴강 처리 절차',
+    updated: '2026-03-15', confluenceId: '1920456789',
+    targets: ['운영자', '실장'],
+    tldr: "학생이 일시적으로 수강을 중단하고자 할 때 휴강 처리하는 방법입니다.\n휴강 기간 동안 수강료는 청구되지 않으며, 복강 시 원래 강좌로 복귀합니다.",
+    path: 'AMS 어드민 > 고객(원생) 관리 > 회원조회 > 회원상세',
+    amsUrl: `${AMS}/customer/member/detail`,
+    confluenceUrl: `${CONFLUENCE}/1920456789`,
+    steps: [
+      { title: '회원 상세 페이지 진입', desc: '고객(원생) 관리 > 회원조회에서 휴강할 회원을 검색하여 선택합니다.', image: null },
+      { title: '입반 정보 탭 선택', desc: '회원상세 화면의 [입반정보] 탭을 클릭합니다.', image: null },
+      { title: '휴강 버튼 클릭', desc: '[휴강처리] 버튼을 클릭하고 휴강 시작일과 예상 복강일을 입력합니다.', image: null },
+      { title: '휴강 승인 및 저장', desc: '입력한 정보를 검토 후 [저장] 버튼을 클릭하여 휴강을 완료합니다.', image: null },
+    ],
+    cases: [
+      { label: '질병으로 인한 단기 휴강', action: '진단서 또는 확인서 첨부 후 [의료사유 휴강] 선택', note: '보험 처리 시 필수 문서' },
+      { label: '군입대 또는 타 지역 이동', action: '[정상 휴강]으로 처리 후 복강일 미정 설정', note: '복강 시 실장 승인 필요 가능' },
+      { label: '월 중간 휴강', action: '휴강 시작일을 일자 단위로 입력 (예: 2026-03-15)', note: '해당 월 청구에서 청구제외 처리됨' },
+    ],
+    cautions: [
+      '휴강 중 해당 강좌에 청구 불가 — 자동으로 청구 대상에서 제외',
+      '휴강 후 복강 시 새로운 입반일로 재입반 처리됨',
+      '장기 휴강(3개월 이상)은 실장에게 사전 보고 권장',
+    ],
+    troubleTable: [
+      { issue: '"해당 회원은 이미 휴강 상태입니다"', cause: '동일 강좌에 이미 활성 휴강 존재', solution: '기존 휴강을 복강하거나 일시중단 상태 확인', severity: 'medium' },
+      { issue: '"복강일이 휴강일보다 앞설 수 없습니다"', cause: '예상 복강일을 휴강 시작일 이전으로 설정', solution: '복강일을 휴강 시작일 이후로 수정', severity: 'low' },
+    ],
+    mainItemsTable: null, responses: null, decisionTable: null, referenceData: null, policyDiff: null,
   },
 };
 
@@ -399,6 +414,7 @@ export const MODULE_TREE = [
     guides: [
       { id: 'member-merge',      label: 'AMS 회원 병합 가이드' },
       { id: 'duplicate-account', label: '중복 계정 통합 프로세스' },
+      { id: 'student-suspension', label: '휴강 처리 절차' },
     ],
   },
   {

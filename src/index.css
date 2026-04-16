@@ -1,8 +1,5 @@
 @import "tailwindcss";
-@import "shadcn/tailwind.css";
 @import "@fontsource-variable/geist";
-
-@custom-variant dark (&:is(.dark *));
 
 /* ═══════════════════════════════════════════════════════
    FONT: Pretendard Variable (Korean-optimized)

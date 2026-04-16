@@ -2,15 +2,7 @@
   "buildCommand": "npm ci && npm run build",
   "outputDirectory": "dist",
   "framework": "vite",
-  "nodeVersion": "18.x",
   "installCommand": "npm ci",
-  "env": {
-    "VITE_CONFLUENCE_EMAIL": "@VITE_CONFLUENCE_EMAIL",
-    "VITE_CONFLUENCE_TOKEN": "@VITE_CONFLUENCE_TOKEN",
-    "VITE_ENABLE_ANALYTICS": "true",
-    "VITE_ENV": "production",
-    "VITE_API_BASE_URL": "https://sdij-ams-wiki.app"
-  },
   "regions": ["icn1"],
   "rewrites": [
     {

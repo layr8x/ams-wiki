@@ -2,34 +2,52 @@ name: Setup Custom Domain
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
 
 jobs:
   setup-domain:
     runs-on: ubuntu-latest
+    name: Configure Vercel Domain
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Add Custom Domain to Vercel
+        id: add-domain
         run: |
-          curl -s -X POST "https://api.vercel.com/v10/projects/${{ secrets.VERCEL_PROJECT_ID }}/domains" \
+          DOMAIN="sdij-ams-wiki.app"
+          RESPONSE=$(curl -s -X POST "https://api.vercel.com/v10/projects/${{ secrets.VERCEL_PROJECT_ID }}/domains" \
             -H "Authorization: Bearer ${{ secrets.VERCEL_TOKEN }}" \
             -H "Content-Type: application/json" \
-            -d '{"name":"sdij-ams-wiki.app"}' | jq '.'
+            -d "{\"name\":\"${DOMAIN}\"}")
 
-      - name: Update README with custom domain
-        run: |
-          sed -i 's|ams-wiki-xqqu.vercel.app|sdij-ams-wiki.app|g' README.md
-          sed -i 's|https://ams-wiki.vercel.app|https://sdij-ams-wiki.app|g' README.md
+          echo "Response: $RESPONSE"
+          echo "response=$RESPONSE" >> $GITHUB_OUTPUT
 
-      - name: Commit and push
+      - name: Verify Domain Setup
         run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add README.md
-          git commit -m "docs: Update URL to custom domain (sdij-ams-wiki.app)" || true
-          git push origin main || true
+          DOMAIN="sdij-ams-wiki.app"
+          curl -s -X GET "https://api.vercel.com/v10/projects/${{ secrets.VERCEL_PROJECT_ID }}/domains?domain=${DOMAIN}" \
+            -H "Authorization: Bearer ${{ secrets.VERCEL_TOKEN }}" | jq '.'
+
+      - name: Update documentation
+        run: |
+          DOMAIN="sdij-ams-wiki.app"
+          sed -i "s|https://.*\.vercel\.app|https://${DOMAIN}|g" README.md
+          sed -i "s|http://.*\.vercel\.app|https://${DOMAIN}|g" README.md
+
+      - name: Commit and push updates
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+
+          if git diff --quiet README.md; then
+            echo "No changes to commit"
+          else
+            git add README.md
+            git commit -m "chore: Update deployment domain to sdij-ams-wiki.app"
+            git push origin main || true
+          fi
 

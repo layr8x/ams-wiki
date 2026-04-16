@@ -1,18 +1,17 @@
-name: Pre-deployment Checks
+name: Build & Deploy
 
 on:
   push:
     branches:
       - main
-      - claude/*
   pull_request:
     branches:
       - main
-      - claude/*
 
 jobs:
-  build-and-test:
+  build-and-verify:
     runs-on: ubuntu-latest
+    name: Build & Verify
 
     steps:
       - name: Checkout code
@@ -20,14 +19,14 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup Node.js
+      - name: Setup Node.js 22.x
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '22.x'
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --no-audit --prefer-offline
 
       - name: Run linting
         run: npm run lint
@@ -35,5 +34,32 @@ jobs:
       - name: Build project
         run: npm run build
         env:
-          VITE_CONFLUENCE_EMAIL: ${{ secrets.VITE_CONFLUENCE_EMAIL || '' }}
-          VITE_CONFLUENCE_TOKEN: ${{ secrets.VITE_CONFLUENCE_TOKEN || '' }}
+          VITE_CONFLUENCE_EMAIL: ${{ secrets.VITE_CONFLUENCE_EMAIL }}
+          VITE_CONFLUENCE_TOKEN: ${{ secrets.VITE_CONFLUENCE_TOKEN }}
+          VITE_ENV: production
+          VITE_API_BASE_URL: https://sdij-ams-wiki.app
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+          retention-days: 7
+
+  deploy-to-vercel:
+    runs-on: ubuntu-latest
+    name: Deploy to Vercel
+    needs: build-and-verify
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy to Vercel
+        uses: vercel/action@main
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          production: true

@@ -17,12 +17,12 @@ export default function LanguageSelector() {
         alignItems: 'center',
         gap: '8px',
         padding: '8px',
-        background: '#f2f2f2',
-        borderRadius: '6px',
-        border: '1px solid rgba(0,0,0,0.12)',
+        background: 'var(--color-secondary)',
+        borderRadius: 'var(--radius)',
+        border: '1px solid var(--color-border)',
       }}
     >
-      <Globe size={18} style={{ color: '#666666' }} />
+      <Globe size={18} style={{ color: 'var(--color-muted-foreground)' }} />
       <select
         value={language}
         onChange={(e) => setLanguage(e.target.value)}
@@ -31,7 +31,7 @@ export default function LanguageSelector() {
           border: 'none',
           cursor: 'pointer',
           fontSize: '14px',
-          color: '#1a1a1a',
+          color: 'var(--color-foreground)',
           padding: '0 4px',
           fontFamily: 'inherit',
         }}

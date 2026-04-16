@@ -9,6 +9,9 @@
       "claude/*": false
     }
   },
+  "domains": [
+    "sdij-ams-wiki.app"
+  ],
   "rewrites": [
     {
       "source": "/(.*)",

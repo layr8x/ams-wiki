@@ -95,16 +95,16 @@ export default function HomePage() {
           className="group mt-4 flex items-center gap-3 w-full max-w-[560px] h-[52px] px-5 rounded-2xl border border-border bg-background shadow-sm cursor-pointer transition-all hover:border-zinc-300 hover:shadow-md box-border"
         >
           <Search size={18} className="text-muted-foreground transition-colors group-hover:text-primary" />
-          <span className="flex-1 text-left text-[15px] text-zinc-400 font-medium">가이드 검색 (단축키 '/')</span>
+          <span className="flex-1 text-left text-[15px] text-muted-foreground font-medium">가이드 검색 (단축키 '/')</span>
           <div className="flex items-center gap-1">
-            <kbd className="font-mono text-[11px] font-semibold text-zinc-400 bg-zinc-50 border border-zinc-200 rounded px-2 py-0.5">⌘</kbd>
-            <kbd className="font-mono text-[11px] font-semibold text-zinc-400 bg-zinc-50 border border-zinc-200 rounded px-2 py-0.5">K</kbd>
+            <kbd className="font-mono text-[11px] font-semibold text-muted-foreground bg-muted border border-border rounded px-2 py-0.5">⌘</kbd>
+            <kbd className="font-mono text-[11px] font-semibold text-muted-foreground bg-muted border border-border rounded px-2 py-0.5">K</kbd>
           </div>
         </button>
 
         {/* 인기 검색어 칩 */}
         <div className="flex items-center gap-2 mt-2">
-          <span className="text-[13px] font-medium text-zinc-400 mr-1">인기 검색어:</span>
+          <span className="text-[13px] font-medium text-muted-foreground mr-1">인기 검색어:</span>
           {POPULAR.map(q => (
             <Button
               key={q}
@@ -122,7 +122,7 @@ export default function HomePage() {
       {/* ── 모듈 그리드 ── */}
       <section className="mb-16">
         <div className="flex items-center justify-between mb-5">
-          <h2 className="text-base font-bold text-zinc-900 m-0 tracking-tight">카테고리 탐색</h2>
+          <h2 className="text-base font-bold text-foreground m-0 tracking-tight">카테고리 탐색</h2>
         </div>
         <div className="grid grid-cols-3 gap-4">
           {mods.map(m => <ModuleCard key={m.id} m={m} />)}
@@ -132,28 +132,34 @@ export default function HomePage() {
       {/* ── 하단 영역 (최근 업데이트 & 빠른 링크) ── */}
       <div className="grid grid-cols-[2fr_1fr] gap-8">
         <section>
-          <h2 className="text-base font-bold text-zinc-900 mb-5 m-0 tracking-tight">최근 업데이트</h2>
-          <Card className="overflow-hidden shadow-sm">
-            {recents.map((g, i) => <RecentItem key={g.id} g={g} isLast={i === recents.length - 1} />)}
+          <h2 className="text-base font-bold text-foreground mb-5 m-0 tracking-tight">최근 업데이트</h2>
+          <Card className="overflow-hidden">
+            <CardContent className="p-0">
+              {recents.map((g, i) => <RecentItem key={g.id} g={g} isLast={i === recents.length - 1} />)}
+            </CardContent>
           </Card>
         </section>
 
         <section className="flex flex-col gap-3">
-          <h2 className="text-base font-bold text-zinc-900 mb-2 m-0 tracking-tight">빠른 링크</h2>
+          <h2 className="text-base font-bold text-foreground mb-2 m-0 tracking-tight">빠른 링크</h2>
           {[
             { to:'/faq', Icon:HelpCircle, label:'운영 FAQ', desc:'반복 문의 해결' },
             { to:'/updates', Icon:Bell, label:'업데이트 이력', desc:'정책 및 기능 변경' },
             { to:'/feedback', Icon:ExternalLink, label:'오류 제보', desc:'시스템 개선 요청' },
           ].map((link, i) => (
             <Link key={i} to={link.to} className="group no-underline">
-              <Card className="flex items-center gap-3 p-4">
-                <div className="w-9 h-9 rounded-lg bg-zinc-50 flex items-center justify-center">
-                  <link.Icon size={18} strokeWidth={2.5} className="text-zinc-500 transition-colors group-hover:text-blue-600" />
-                </div>
-                <div>
-                  <p className="text-sm font-bold text-zinc-900 m-0">{link.label}</p>
-                  <p className="text-xs font-medium text-zinc-400 mt-0.5 mb-0">{link.desc}</p>
-                </div>
+              <Card>
+                <CardHeader>
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-lg bg-muted flex items-center justify-center">
+                      <link.Icon size={18} strokeWidth={2.5} className="text-muted-foreground transition-colors group-hover:text-primary" />
+                    </div>
+                    <div>
+                      <CardTitle>{link.label}</CardTitle>
+                      <CardDescription>{link.desc}</CardDescription>
+                    </div>
+                  </div>
+                </CardHeader>
               </Card>
             </Link>
           ))}

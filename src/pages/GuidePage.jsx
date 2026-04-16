@@ -228,14 +228,14 @@ function OnThisPage({ sections }) {
 
   return (
     <nav aria-label="페이지 내 목차">
-      <p className="text-[11px] font-extrabold text-zinc-400 uppercase tracking-widest mb-5">On this page</p>
-      <ul className="list-none p-0 mb-14 border-l-2 border-zinc-100">
+      <p className="text-[11px] font-extrabold text-muted-foreground uppercase tracking-widest mb-5">On this page</p>
+      <ul className="list-none p-0 mb-14 border-l-2 border-border">
         {sections.map(s => {
           const isActive = active === s.id;
           return (
             <li key={s.id}
               onClick={() => scrollTo(s.id)}
-              className={`pl-4.5 -ml-0.5 text-[13px] mb-4 cursor-pointer transition-all duration-150 leading-snug border-l-2 ${isActive ? 'border-blue-500 font-bold text-blue-500' : 'border-transparent font-medium text-zinc-400 hover:text-zinc-900'}`}
+              className={`pl-4.5 -ml-0.5 text-[13px] mb-4 cursor-pointer transition-all duration-150 leading-snug border-l-2 ${isActive ? 'border-blue-500 font-bold text-blue-500' : 'border-transparent font-medium text-muted-foreground hover:text-foreground'}`}
             >{s.label}</li>
           );
         })}
@@ -247,7 +247,7 @@ function OnThisPage({ sections }) {
 // ─── 섹션 ID 기반 헤딩 래퍼 ─────────────────────────────────────────────────
 function SecHeading({ id, children }) {
   return (
-    <h2 id={id} className="text-[22px] font-extrabold text-zinc-900 mb-7 -tracking-wide leading-tight scroll-mt-20">
+    <h2 id={id} className="text-[22px] font-extrabold text-foreground mb-7 -tracking-wide leading-tight scroll-mt-20">
       {children}
     </h2>
   );
@@ -286,37 +286,37 @@ export default function GuidePage() {
         <div id="sec-overview" className="mb-13 scroll-mt-20">
           <div className="flex items-center justify-between mb-5.5 flex-wrap gap-2.5">
             <div className="flex items-center gap-1.5 flex-wrap">
-              <span className="text-[11px] font-extrabold py-1 px-3 bg-zinc-50 text-blue-700 rounded-full border border-blue-200 tracking-wide">{guide.module}</span>
+              <span className="text-[11px] font-extrabold py-1 px-3 bg-muted text-blue-700 rounded-full border border-blue-200 tracking-wide">{guide.module}</span>
               <span className={`text-[11px] font-bold py-1 px-3 rounded-full border ${tm.cls}`}>{tm.label}</span>
               {guide.targets?.map(t=>(
-                <span key={t} className="text-[11px] font-semibold py-0.5 px-2.5 bg-zinc-100 text-zinc-500 rounded-full">{t}</span>
+                <span key={t} className="text-[11px] font-semibold py-0.5 px-2.5 bg-muted text-muted-foreground rounded-full">{t}</span>
               ))}
             </div>
-            <Link to="/editor" className="flex items-center gap-1.5 text-xs font-semibold text-zinc-400 no-underline py-1.5 px-3 border border-zinc-200 rounded-lg transition-all duration-150 hover:text-zinc-600 hover:border-zinc-300"
+            <Link to="/editor" className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground no-underline py-1.5 px-3 border border-border rounded-lg transition-all duration-150 hover:text-foreground hover:border-zinc-300"
             ><Clock size={12}/> 버전 이력</Link>
           </div>
 
-          <h1 className="text-[clamp(32px,4vw,46px)] font-[850] text-zinc-900 mb-5 -tracking-[0.04em] leading-[1.12]">{guide.title}</h1>
+          <h1 className="text-[clamp(32px,4vw,46px)] font-[850] text-foreground mb-5 -tracking-[0.04em] leading-[1.12]">{guide.title}</h1>
 
           <div className="flex items-center gap-4 flex-wrap">
-            <span className="text-[13px] text-zinc-400 flex items-center gap-1.5"><Calendar size={12}/> {guide.updated}</span>
+            <span className="text-[13px] text-muted-foreground flex items-center gap-1.5"><Calendar size={12}/> {guide.updated}</span>
             <span className="w-[3px] h-[3px] rounded-full bg-zinc-300" />
-            <span className="text-[13px] text-zinc-400 flex items-center gap-1.5"><User size={12}/> 플랫폼서비스실</span>
+            <span className="text-[13px] text-muted-foreground flex items-center gap-1.5"><User size={12}/> 플랫폼서비스실</span>
           </div>
         </div>
 
         {/* 02 TL;DR */}
-        <div className="py-5 px-6 bg-zinc-50 rounded-xl border border-blue-200 mb-10">
+        <div className="py-5 px-6 bg-muted rounded-xl border border-blue-200 mb-10">
           <p className="m-0 mb-1.5 text-[11px] font-bold text-blue-500 uppercase tracking-widest">TL;DR</p>
           <p className="m-0 text-sm leading-7 text-zinc-700 whitespace-pre-wrap">{guide.tldr}</p>
         </div>
 
         {/* 03 메뉴 경로 */}
-        <div className="flex items-center justify-between py-3 px-5 mb-16 rounded-xl border border-zinc-100 bg-zinc-50">
-          <div className="flex items-center gap-1.5 text-[13px] text-zinc-400 font-mono flex-wrap">
+        <div className="flex items-center justify-between py-3 px-5 mb-16 rounded-xl border border-border bg-muted">
+          <div className="flex items-center gap-1.5 text-[13px] text-muted-foreground font-mono flex-wrap">
             {guide.path.split('>').map((p,i,arr)=>(
               <span key={i} className="flex items-center gap-1.5">
-                <span className={i===arr.length-1 ? 'text-zinc-900 font-bold' : 'text-zinc-400'}>{p.trim()}</span>
+                <span className={i===arr.length-1 ? 'text-foreground font-bold' : 'text-muted-foreground'}>{p.trim()}</span>
                 {i!==arr.length-1 && <ChevronRight size={11} className="text-zinc-300" />}
               </span>
             ))}
@@ -332,13 +332,13 @@ export default function GuidePage() {
             <SecHeading id="sec-steps">단계별 가이드</SecHeading>
             <div className="relative pl-6">
               {/* 세로 연결선 */}
-              <div className="absolute top-3.5 bottom-3.5 left-[35px] w-0.5 bg-gradient-to-b from-blue-200 to-zinc-100" />
+              <div className="absolute top-3.5 bottom-3.5 left-[35px] w-0.5 bg-gradient-to-b from-blue-200 to-border" />
               {guide.steps.map((s,i)=>(
                 <div key={i} className="relative flex gap-9 mb-15">
                   <div className="relative z-10 w-6.5 h-6.5 rounded-full bg-white border-2 border-blue-500 text-blue-500 text-xs font-black flex items-center justify-center mt-1 shrink-0 shadow-[0_0_0_5px_#fff] ring-1 ring-black/8">{i+1}</div>
                   <div className="flex-1">
-                    <h3 className="text-[19px] font-extrabold text-zinc-900 mb-4.5 -tracking-tight">{s.title}</h3>
-                    <div className="bg-zinc-50 rounded-xl border border-zinc-100 overflow-hidden w-full">
+                    <h3 className="text-[19px] font-extrabold text-foreground mb-4.5 -tracking-tight">{s.title}</h3>
+                    <div className="bg-muted rounded-xl border border-border overflow-hidden w-full">
                       {s.image ? (
                         <div>
                           <img
@@ -350,17 +350,17 @@ export default function GuidePage() {
                               e.target.nextSibling.style.display = 'flex';
                             }}
                           />
-                          <div className="hidden p-10 justify-center items-center text-zinc-400 text-[13px]">
+                          <div className="hidden p-10 justify-center items-center text-muted-foreground text-[13px]">
                             [ {s.image.name || 'AMS 화면 캡처'} ]
                           </div>
                         </div>
                       ) : (
                         <div className="p-12 flex flex-col items-center justify-center gap-2 min-h-[120px]">
-                          <div className="py-2.5 px-5 bg-white border border-zinc-200 rounded-lg text-zinc-400 text-[13px]">[ AMS 화면 캡처 ]</div>
+                          <div className="py-2.5 px-5 bg-white border border-border rounded-lg text-muted-foreground text-[13px]">[ AMS 화면 캡처 ]</div>
                         </div>
                       )}
-                      <div className="py-4 px-5 border-t border-zinc-100 bg-white">
-                        <p className="text-zinc-600 text-sm leading-7 m-0">{s.desc}</p>
+                      <div className="py-4 px-5 border-t border-border bg-white">
+                        <p className="text-muted-foreground text-sm leading-7 m-0">{s.desc}</p>
                       </div>
                     </div>
                   </div>
@@ -374,12 +374,12 @@ export default function GuidePage() {
         {guide.type==='DECISION' && guide.decisionTable && (
           <section className="mb-18">
             <SecHeading id="sec-decision">판단 기준</SecHeading>
-            <div className="rounded-xl border border-zinc-200 overflow-hidden ring-1 ring-black/8">
+            <div className="rounded-xl border border-border overflow-hidden ring-1 ring-black/8">
               <table className="w-full border-collapse text-left">
-                <thead className="bg-zinc-50">
+                <thead className="bg-muted">
                   <tr>
                     {['상황 (Condition)','처리 방법 (Action)','비고'].map(h=>(
-                      <th key={h} className="py-4.5 px-5.5 text-[11px] font-extrabold text-zinc-400 uppercase tracking-wide border-b border-zinc-100">{h}</th>
+                      <th key={h} className="py-4.5 px-5.5 text-[11px] font-extrabold text-muted-foreground uppercase tracking-wide border-b border-border">{h}</th>
                     ))}
                   </tr>
                 </thead>
@@ -387,8 +387,8 @@ export default function GuidePage() {
                   {guide.decisionTable.map((row,i)=>{
                     const sc = STATUS_TW[row.status] || STATUS_TW.safe;
                     return (
-                      <tr key={i} className={`transition-colors duration-150 hover:bg-zinc-50 ${i<guide.decisionTable.length-1 ? 'border-b border-zinc-100' : ''}`}>
-                        <td className="py-5 px-5.5 font-bold text-zinc-900 text-[15px]">{row.cond}</td>
+                      <tr key={i} className={`transition-colors duration-150 hover:bg-muted ${i<guide.decisionTable.length-1 ? 'border-b border-border' : ''}`}>
+                        <td className="py-5 px-5.5 font-bold text-foreground text-[15px]">{row.cond}</td>
                         <td className="py-5 px-5.5">
                           <span className={`py-1.5 px-3.5 rounded-lg text-[13px] font-bold ${sc}`}>{row.action}</span>
                         </td>

@@ -127,19 +127,29 @@ export default function GuideListPage() {
       {/* 모듈 필터 */}
       <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', flexWrap: 'wrap', alignItems: 'center' }}>
         <span style={{ fontSize: '12px', fontWeight: 600, color: '#9ca3af', marginRight: '4px' }}>카테고리</span>
-        <Chip label="전체" active={selectedModule === null} onClick={() => setSelectedModule(null)} />
-        {modules.map(m => (
-          <Chip key={m} label={m} active={selectedModule === m} onClick={() => setSelectedModule(selectedModule === m ? null : m)} />
-        ))}
+        <Chip
+          label={`전체 ${Object.keys(GUIDES).length}`}
+          active={selectedModule === null}
+          onClick={() => setSelectedModule(null)}
+        />
+        {modules.map(m => {
+          const cnt = Object.values(GUIDES).filter(g => g.module === m).length;
+          return (
+            <Chip key={m} label={`${m} ${cnt}`} active={selectedModule === m} onClick={() => setSelectedModule(selectedModule === m ? null : m)} />
+          );
+        })}
       </div>
 
       {/* 타입 필터 */}
       <div style={{ display: 'flex', gap: '8px', marginBottom: '32px', flexWrap: 'wrap', alignItems: 'center' }}>
         <span style={{ fontSize: '12px', fontWeight: 600, color: '#9ca3af', marginRight: '4px' }}>유형</span>
         <Chip label="전체" active={selectedType === null} onClick={() => setSelectedType(null)} />
-        {types.map(t => (
-          <Chip key={t} label={TYPE_LABELS[t] || t} active={selectedType === t} onClick={() => setSelectedType(selectedType === t ? null : t)} colorActive={TYPE_COLORS[t]?.color || '#0070f3'} />
-        ))}
+        {types.map(t => {
+          const cnt = Object.values(GUIDES).filter(g => g.type === t && (!selectedModule || g.module === selectedModule)).length;
+          return (
+            <Chip key={t} label={`${TYPE_LABELS[t] || t} ${cnt}`} active={selectedType === t} onClick={() => setSelectedType(selectedType === t ? null : t)} colorActive={TYPE_COLORS[t]?.color || '#0070f3'} />
+          );
+        })}
       </div>
 
       {/* 가이드 목록 */}
@@ -216,8 +226,16 @@ export default function GuideListPage() {
             </Link>
           ))
         ) : (
-          <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '60px 20px', color: '#8f8f8f' }}>
-            <p style={{ fontSize: '16px', margin: 0 }}>검색 결과가 없습니다.</p>
+          <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '80px 20px', color: '#8f8f8f' }}>
+            <p style={{ fontSize: '32px', margin: '0 0 16px' }}>🔍</p>
+            <p style={{ fontSize: '16px', fontWeight: 700, color: '#374151', margin: '0 0 8px' }}>검색 결과가 없습니다.</p>
+            <p style={{ fontSize: '14px', color: '#9ca3af', margin: '0 0 20px' }}>다른 검색어나 필터를 사용해보세요.</p>
+            <button
+              onClick={() => { setSelectedModule(null); setSelectedType(null); setSearchQuery(''); }}
+              style={{ padding: '10px 24px', borderRadius: '99px', backgroundColor: '#111827', color: '#fff', border: 'none', fontSize: '14px', fontWeight: 600, cursor: 'pointer', fontFamily: "'Pretendard', sans-serif" }}
+            >
+              필터 초기화
+            </button>
           </div>
         )}
       </div>

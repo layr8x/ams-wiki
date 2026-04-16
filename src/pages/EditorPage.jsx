@@ -88,6 +88,15 @@ const TYPE_BADGE = {
   POLICY:    { bg:'#fff1f2', color:'#be123c', border:'#fecdd3' },
 };
 
+const TYPE_BADGE_TW = {
+  SOP:       { chip:'bg-blue-50 text-blue-700 border-blue-200', dot:'bg-blue-50 text-blue-700 border-blue-200' },
+  DECISION:  { chip:'bg-yellow-50 text-yellow-700 border-yellow-200', dot:'bg-yellow-50 text-yellow-700 border-yellow-200' },
+  REFERENCE: { chip:'bg-green-50 text-green-700 border-green-200', dot:'bg-green-50 text-green-700 border-green-200' },
+  TROUBLE:   { chip:'bg-orange-50 text-orange-700 border-orange-200', dot:'bg-orange-50 text-orange-700 border-orange-200' },
+  RESPONSE:  { chip:'bg-purple-50 text-purple-700 border-purple-200', dot:'bg-purple-50 text-purple-700 border-purple-200' },
+  POLICY:    { chip:'bg-rose-50 text-rose-700 border-rose-200', dot:'bg-rose-50 text-rose-700 border-rose-200' },
+};
+
 // ─── Input base style (Catalyst-exact) ─────────────────────────────────────
 const inputBase = {
   width: '100%', padding: '9px 12px',
@@ -137,21 +146,16 @@ function PortalDropdown({ anchorRef, isOpen, children }) {
   const top = openUpward ? rect.top - 8 : rect.bottom + 4;
 
   return createPortal(
-    <div style={{
-      position:   'fixed',
-      top:        openUpward ? undefined : top,
-      bottom:     openUpward ? window.innerHeight - top : undefined,
-      left:       rect.left,
-      width:      rect.width,
-      zIndex:     9999,
-      backgroundColor: '#ffffff',
-      border:     `1px solid ${C.gray200}`,
-      borderRadius: R.lg,
-      boxShadow:  SHADOW.dropdown,
-      overflow:   'hidden',
-      maxHeight:  `${maxH}px`,
-      animation:  'ddFadeIn 0.12s ease',
-    }}>
+    <div
+      className="fixed z-[9999] bg-white border border-zinc-200 rounded-xl shadow-lg overflow-hidden animate-[ddFadeIn_0.12s_ease]"
+      style={{
+        top:    openUpward ? undefined : top,
+        bottom: openUpward ? window.innerHeight - top : undefined,
+        left:   rect.left,
+        width:  rect.width,
+        maxHeight: `${maxH}px`,
+      }}
+    >
       <style>{`
         @keyframes ddFadeIn {
           from { opacity:0; transform:translateY(-4px); }
@@ -223,21 +227,16 @@ function RelatedGuideCombobox({ selected, onSelect, onRemove }) {
     <div>
       {/* Selected chips */}
       {selected.length > 0 && (
-        <div style={{ display:'flex', flexWrap:'wrap', gap:'6px', marginBottom:'10px' }}>
+        <div className="flex flex-wrap gap-1.5 mb-2.5">
           {selected.map(g => {
-            const tc = TYPE_BADGE[g.type] || TYPE_BADGE.SOP;
+            const tw = TYPE_BADGE_TW[g.type] || TYPE_BADGE_TW.SOP;
             return (
-              <span key={g.id} style={{
-                display:'inline-flex', alignItems:'center', gap:'6px',
-                padding:'4px 10px', borderRadius: R.full,
-                backgroundColor: tc.bg, border:`1px solid ${tc.border}`,
-                fontSize:'13px', fontWeight:600, color: tc.color,
-              }}>
+              <span key={g.id} className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-[13px] font-semibold ${tw.chip}`}>
                 <FileText size={11} />
                 {g.title}
                 <button
                   onMouseDown={e => { e.preventDefault(); onRemove(g.id); }}
-                  style={{ border:'none', background:'none', cursor:'pointer', padding:'0 0 0 2px', display:'flex', alignItems:'center', color: tc.color, opacity:0.7 }}
+                  className="border-none bg-transparent cursor-pointer pl-0.5 flex items-center opacity-70"
                 ><X size={11} /></button>
               </span>
             );
@@ -246,8 +245,8 @@ function RelatedGuideCombobox({ selected, onSelect, onRemove }) {
       )}
 
       {/* Input anchor */}
-      <div ref={anchorRef} style={{ position:'relative' }}>
-        <Search size={14} color={C.gray400} style={{ position:'absolute', left:'10px', top:'50%', transform:'translateY(-50%)', pointerEvents:'none' }} />
+      <div ref={anchorRef} className="relative">
+        <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-zinc-400" />
         <input
           ref={inputRef}
           type="text"
@@ -255,53 +254,48 @@ function RelatedGuideCombobox({ selected, onSelect, onRemove }) {
           onChange={e => { setQuery(e.target.value); setIsOpen(true); }}
           onKeyDown={handleKeyDown}
           placeholder="가이드 제목, 모듈, 유형으로 검색…"
-          style={{ ...inputBase, paddingLeft:'34px' }}
-          onFocus={e => { setIsOpen(true); onFocus(e); }}
-          onBlur={onBlur}
+          className="w-full px-3 py-2 pl-[34px] border border-zinc-200 rounded-lg text-sm text-zinc-900 bg-white outline-none transition-colors focus:border-blue-500 focus:ring-[3px] focus:ring-blue-500/15"
+          onFocus={() => setIsOpen(true)}
           autoComplete="off"
         />
-        <ChevronDown size={14} color={C.gray400} style={{ position:'absolute', right:'10px', top:'50%', transform: isOpen ? 'translateY(-50%) rotate(180deg)' : 'translateY(-50%)', transition:'transform 0.15s', pointerEvents:'none' }} />
+        <ChevronDown size={14} className={`absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-zinc-400 transition-transform duration-150 ${isOpen ? 'rotate-180' : ''}`} />
       </div>
 
       {/* Portal Dropdown — never clipped by parents */}
       <PortalDropdown anchorRef={anchorRef} isOpen={isOpen}>
-        <div data-combobox-portal style={{ overflowY:'auto', maxHeight:'320px' }} ref={listRef}>
+        <div data-combobox-portal className="overflow-y-auto max-h-[320px]" ref={listRef}>
           {filtered.length > 0 ? (
             <>
-              <div style={{ padding:'8px 12px 6px', borderBottom:`1px solid ${C.gray100}` }}>
-                <span style={{ fontSize:'11px', fontWeight:700, color:C.gray400, textTransform:'uppercase', letterSpacing:'0.07em' }}>
+              <div className="px-3 pt-2 pb-1.5 border-b border-zinc-100">
+                <span className="text-[11px] font-bold text-zinc-400 uppercase tracking-wide">
                   {filtered.length}개 가이드
                 </span>
               </div>
               {filtered.map((g, idx) => {
                 const isFocused = focusedIdx === idx;
-                const tc = TYPE_BADGE[g.type] || TYPE_BADGE.SOP;
+                const tw = TYPE_BADGE_TW[g.type] || TYPE_BADGE_TW.SOP;
                 return (
                   <div
                     key={g.id}
                     data-idx={idx}
                     onMouseDown={e => { e.preventDefault(); commit(g); }}
                     onMouseEnter={() => setFocusedIdx(idx)}
-                    style={{
-                      padding:'10px 14px', cursor:'pointer',
-                      backgroundColor: isFocused ? C.gray50 : 'transparent',
-                      borderLeft: `3px solid ${isFocused ? C.blue500 : 'transparent'}`,
-                    }}
+                    className={`px-3.5 py-2.5 cursor-pointer border-l-[3px] ${isFocused ? 'bg-zinc-50 border-l-blue-500' : 'bg-transparent border-l-transparent hover:bg-zinc-50'}`}
                   >
-                    <div style={{ display:'flex', alignItems:'center', gap:'8px' }}>
-                      <FileText size={13} color={isFocused ? C.blue500 : C.gray400} />
-                      <span style={{ flex:1, fontSize:'14px', fontWeight:600, color: isFocused ? C.gray900 : C.gray800 }}>{g.title}</span>
-                      <span style={{ fontSize:'11px', fontWeight:700, padding:'2px 7px', borderRadius: R.full, backgroundColor: tc.bg, color: tc.color, border:`1px solid ${tc.border}` }}>{g.type}</span>
+                    <div className="flex items-center gap-2">
+                      <FileText size={13} className={isFocused ? 'text-blue-500' : 'text-zinc-400'} />
+                      <span className={`flex-1 text-sm font-semibold ${isFocused ? 'text-zinc-900' : 'text-zinc-800'}`}>{g.title}</span>
+                      <span className={`text-[11px] font-bold px-[7px] py-0.5 rounded-full border ${tw.chip}`}>{g.type}</span>
                     </div>
-                    <p style={{ margin:'3px 0 0 21px', fontSize:'12px', color:C.gray400 }}>{g.module}</p>
+                    <p className="mt-0.5 ml-[21px] text-xs text-zinc-400">{g.module}</p>
                   </div>
                 );
               })}
             </>
           ) : (
-            <div style={{ padding:'32px 16px', textAlign:'center' }}>
-              <Search size={18} color={C.gray300} style={{ marginBottom:'8px' }} />
-              <p style={{ margin:0, fontSize:'13px', color:C.gray400 }}>'{query}'에 해당하는 가이드 없음</p>
+            <div className="py-8 px-4 text-center">
+              <Search size={18} className="text-zinc-300 mb-2 mx-auto" />
+              <p className="m-0 text-[13px] text-zinc-400">'{query}'에 해당하는 가이드 없음</p>
             </div>
           )}
         </div>

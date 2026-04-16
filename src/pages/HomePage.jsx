@@ -1,5 +1,5 @@
 // src/pages/HomePage.jsx
-import { useQuery } from '@tanstack/react-query'
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
   Search, ClipboardList, BookOpen, Calendar, CreditCard, Gift,
@@ -76,7 +76,7 @@ function ModuleCard({ m }) {
 }
 
 function RecentItem({ g, isLast }) {
-  const isNew = g.updated_at && Date.now() - new Date(g.updated_at).getTime() < 7*24*60*60*1000
+  const [isNew] = useState(() => g.updated_at && Date.now() - new Date(g.updated_at).getTime() < 7*24*60*60*1000)
   return (
     <Link 
       to={`/guides/${g.id}`} 

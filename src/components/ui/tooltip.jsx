@@ -1,11 +1,9 @@
 import { cn } from '@/lib/utils'
 import * as TooltipPrimitive from '@radix-ui/react-tooltip'
 
-export const TooltipProvider = TooltipPrimitive.Provider
-
-export const Tooltip = TooltipPrimitive.Root
-
-export const TooltipTrigger = TooltipPrimitive.Trigger
+const TooltipProvider = TooltipPrimitive.Provider
+const Tooltip = TooltipPrimitive.Root
+const TooltipTrigger = TooltipPrimitive.Trigger
 
 export const TooltipContent = ({ className, sideOffset = 4, ...props }) => (
   <TooltipPrimitive.Content
@@ -19,3 +17,5 @@ export const TooltipContent = ({ className, sideOffset = 4, ...props }) => (
 )
 
 TooltipContent.displayName = TooltipPrimitive.Content.displayName
+
+export { TooltipProvider, Tooltip, TooltipTrigger }

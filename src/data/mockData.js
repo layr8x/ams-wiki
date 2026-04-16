@@ -140,7 +140,7 @@ export const GUIDES = {
       { issue: '"500원 미만 결제건은 전환결제가 불가합니다"', cause: '500원 미만 소액 결제 선택', solution: '해당 건은 전환결제 불가, 직접 취소 후 재결제 안내', severity: 'medium' },
       { issue: '"환불 가능한 금액이 없는 결제건은 전환결제가 불가합니다"', cause: '이미 취소/환불된 결제건 선택', solution: '결제건 상태 확인 후 정상 결제건으로 재시도', severity: 'medium' },
     ],
-    steps: null, mainItemsTable: null, responses: null, decisionTable: null, referenceData: null, policyDiff: null,
+    mainItemsTable: null, responses: null, decisionTable: null, referenceData: null, policyDiff: null,
   },
 
   'refund-policy': {

@@ -1,4 +1,9 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "@fontsource-variable/geist";
+
+@custom-variant dark (&:is(.dark *));
 
 /* ═══════════════════════════════════════════════════════
    FONT: Pretendard Variable (Korean-optimized)
@@ -19,129 +24,52 @@
 }
 
 /* ═══════════════════════════════════════════════════════
-   GEIST DESIGN TOKENS — Light Mode
-   Source: vercel.com/geist (실측 + 공식 문서 기준)
+   SHADCN/UI DESIGN TOKENS (100% Pure)
+   Source: shadcn/ui official guidelines
    ═══════════════════════════════════════════════════════ */
 :root {
   /* Font */
-  --font:      'Pretendard', -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', sans-serif;
+  --font: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', sans-serif;
   --font-mono: ui-monospace, 'Geist Mono', 'JetBrains Mono', 'Fira Code', monospace;
 
-  /* ── Backgrounds ── */
-  --ds-bg-100: #ffffff;
-  --ds-bg-200: #fafafa;
-
-  /* ── Gray Scale ── */
-  --ds-gray-100: #f2f2f2;
-  --ds-gray-200: #ebebeb;
-  --ds-gray-300: #e2e2e2;
-  --ds-gray-400: #8f8f8f;   /* border default */
-  --ds-gray-500: #7d7d7d;
-  --ds-gray-600: #666666;   /* secondary text */
-  --ds-gray-700: #4d4d4d;
-  --ds-gray-800: #333333;
-  --ds-gray-900: #1a1a1a;   /* primary text */
-  --ds-gray-1000: #000000;
-
-  /* ── Gray Alpha ── */
-  --ds-gray-a100: rgba(0,0,0,0.04);
-  --ds-gray-a200: rgba(0,0,0,0.08);
-  --ds-gray-a400: rgba(0,0,0,0.12);   /* border standard */
-  --ds-gray-a700: rgba(0,0,0,0.56);
-  --ds-gray-a900: rgba(0,0,0,0.88);
-
-  /* ── Blue ── */
-  --ds-blue-100: #d3e5ff;
-  --ds-blue-200: #c0d8ff;
-  --ds-blue-300: #52a8ff;
-  --ds-blue-400: #0070f3;   /* primary interactive */
-  --ds-blue-500: #0060d1;
-  --ds-blue-600: #0052b2;
-  --ds-blue-700: #0070f3;
-  --ds-blue-900: #002e6e;
-
-  /* ── Red ── */
-  --ds-red-100: #ffdce0;
-  --ds-red-200: #ffced3;
-  --ds-red-400: #e5484d;
-  --ds-red-700: #e5484d;
-  --ds-red-900: #b91c1c;
-
-  /* ── Amber ── */
-  --ds-amber-100: #fff8bb;
-  --ds-amber-200: #fff3a0;
-  --ds-amber-400: #f5a623;
-  --ds-amber-700: #f5a623;
-  --ds-amber-900: #78350f;
-
-  /* ── Green ── */
-  --ds-green-100: #cef5d8;
-  --ds-green-200: #b5f1c4;
-  --ds-green-400: #1a9e5c;
-  --ds-green-700: #107a3a;
-  --ds-green-900: #14532d;
-
-  /* ── Semantic Aliases ── */
-  --color-bg:             var(--ds-bg-100);
-  --color-bg-secondary:   var(--ds-bg-200);
-  --color-bg-tertiary:    var(--ds-gray-100);
-  --color-border:         var(--ds-gray-a400);   /* rgba(0,0,0,0.12) */
-  --color-border-hover:   var(--ds-gray-300);
-  --color-text-primary:   var(--ds-gray-900);
-  --color-text-secondary: var(--ds-gray-600);
-  --color-text-tertiary:  var(--ds-gray-400);
-  --color-accent:         var(--ds-blue-400);
-  --color-accent-bg:      var(--ds-blue-100);
-  --color-success:        var(--ds-green-400);
-  --color-success-bg:     var(--ds-green-100);
-  --color-warning:        var(--ds-amber-400);
-  --color-warning-bg:     var(--ds-amber-100);
-  --color-danger:         var(--ds-red-400);
-  --color-danger-bg:      var(--ds-red-100);
-
-  /* ── Border Radius (Geist) ── */
-  --r-xs:   4px;
-  --r-sm:   6px;
-  --r-md:   8px;    /* buttons, inputs */
-  --r-lg:   12px;   /* cards, modals */
-  --r-xl:   16px;
-  --r-2xl:  20px;
-  --r-full: 9999px;
-
-  /* ── Shadows (Geist exact) ── */
-  --shadow-xs: 0 1px 2px rgba(0,0,0,0.05);
-  --shadow-sm: 0 1px 2px rgba(0,0,0,0.07), 0 0 0 1px rgba(0,0,0,0.06);
-  --shadow-md: 0 4px 8px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.08);
-  --shadow-lg: 0 8px 30px rgba(0,0,0,0.12), 0 0 0 1px rgba(0,0,0,0.08);
-  --shadow-dropdown: 0 4px 20px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.08);
-  --shadow-modal: 0 24px 60px rgba(0,0,0,0.18), 0 0 0 1px rgba(0,0,0,0.08);
-
-  /* ── Typography Scale (Geist) ── */
-  --text-12: 12px;
-  --text-13: 13px;
-  --text-14: 14px;   /* body */
-  --text-16: 16px;
-  --text-20: 20px;
-  --text-24: 24px;
-  --text-32: 32px;
-  --text-40: 40px;
-  --text-48: 48px;
-
-  /* ── Spacing ── */
-  --sp-1: 4px;
-  --sp-2: 8px;
-  --sp-3: 12px;
-  --sp-4: 16px;
-  --sp-5: 20px;
-  --sp-6: 24px;
-  --sp-8: 32px;
-  --sp-10: 40px;
-  --sp-12: 48px;
-
-  /* ── Transitions ── */
+  /* Transitions */
   --ease: cubic-bezier(0.4, 0, 0.2, 1);
   --duration-fast: 120ms;
   --duration-base: 200ms;
+
+  /* ── shadcn/ui Semantic Color Tokens (OKLCH) ── */
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --radius: 0.625rem;
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -161,11 +89,9 @@ html {
 
 body {
   font-family: var(--font);
-  font-size: var(--text-14);
+  font-size: 14px;
   font-weight: 400;
   line-height: 1.6;
-  color: var(--color-text-primary);
-  background-color: var(--color-bg);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
@@ -174,209 +100,39 @@ body {
 body.search-open { overflow: hidden; }
 #root { min-height: 100dvh; display: flex; flex-direction: column; }
 
-/* ── Headings (Geist: tight letter-spacing, high weight) ── */
+/* ── Headings (tight letter-spacing, high weight) ── */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font);
   font-weight: 700;
   letter-spacing: -0.03em;
-  color: var(--color-text-primary);
   line-height: 1.2;
 }
 
-/* ── Focus (Geist: 2px solid blue-400, 2px offset) ── */
+/* ── Focus ── */
 :focus-visible {
-  outline: 2px solid var(--color-accent);
+  outline: 2px solid hsl(var(--ring));
   outline-offset: 2px;
-  border-radius: var(--r-sm);
+  border-radius: 4px;
 }
 
 /* ── Selection ── */
 ::selection {
-  background: var(--ds-blue-100);
-  color: var(--ds-blue-900);
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
 }
 
-/* ── Scrollbar (thin, gray) ── */
+/* ── Scrollbar (thin) ── */
 ::-webkit-scrollbar { width: 4px; height: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--ds-gray-300); border-radius: var(--r-full); }
-::-webkit-scrollbar-thumb:hover { background: var(--ds-gray-400); }
-
-/* ═══════════════════════════════════════════════════════
-   GEIST BUTTON SYSTEM
-   Sizes: sm (h=28), md (h=32 default), lg (h=36)
-   ═══════════════════════════════════════════════════════ */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  font-family: var(--font);
-  font-size: var(--text-14);
-  font-weight: 500;
-  line-height: 1;
-  white-space: nowrap;
-  cursor: pointer;
-  border-radius: var(--r-md);
-  transition: background-color var(--duration-fast) var(--ease),
-              border-color var(--duration-fast) var(--ease),
-              color var(--duration-fast) var(--ease),
-              box-shadow var(--duration-fast) var(--ease);
-  text-decoration: none;
-  -webkit-user-select: none;
-  user-select: none;
-}
-.btn:disabled { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
-
-/* Default (Secondary) — border + bg-100 */
-.btn-default {
-  height: 32px;
-  padding: 0 12px;
-  background: var(--ds-bg-100);
-  border: 1px solid var(--color-border);
-  color: var(--color-text-primary);
-}
-.btn-default:hover {
-  background: var(--ds-gray-100);
-  border-color: var(--ds-gray-300);
-}
-
-/* Primary — black bg */
-.btn-primary {
-  height: 32px;
-  padding: 0 12px;
-  background: var(--ds-gray-1000);
-  border: 1px solid var(--ds-gray-1000);
-  color: #ffffff;
-}
-.btn-primary:hover { background: var(--ds-gray-800); border-color: var(--ds-gray-800); }
-
-/* Ghost */
-.btn-ghost {
-  height: 32px;
-  padding: 0 10px;
-  background: transparent;
-  border: none;
-  color: var(--color-text-secondary);
-}
-.btn-ghost:hover { background: var(--ds-gray-100); color: var(--color-text-primary); }
-
-/* Error */
-.btn-error {
-  height: 32px;
-  padding: 0 12px;
-  background: var(--ds-red-400);
-  border: 1px solid var(--ds-red-400);
-  color: #ffffff;
-}
-.btn-error:hover { background: var(--ds-red-700); }
-
-/* Sizes */
-.btn-sm { height: 28px; padding: 0 10px; font-size: var(--text-12); }
-.btn-lg { height: 40px; padding: 0 16px; font-size: var(--text-16); }
-
-/* ═══════════════════════════════════════════════════════
-   GEIST INPUT SYSTEM
-   Height: 32px (sm), 36px (md default), 40px (lg)
-   ═══════════════════════════════════════════════════════ */
-.input {
-  display: block;
-  width: 100%;
-  height: 36px;
-  padding: 0 12px;
-  font-family: var(--font);
-  font-size: var(--text-14);
-  color: var(--color-text-primary);
-  background: var(--ds-bg-100);
-  border: 1px solid var(--color-border);
-  border-radius: var(--r-md);
-  outline: none;
-  transition: border-color var(--duration-fast) var(--ease),
-              box-shadow var(--duration-fast) var(--ease);
-  -webkit-appearance: none;
-}
-.input::placeholder { color: var(--color-text-tertiary); }
-.input:hover { border-color: var(--ds-gray-300); }
-.input:focus {
-  border-color: var(--color-accent);
-  box-shadow: 0 0 0 3px var(--ds-blue-100);
-}
-.input:disabled {
-  background: var(--ds-gray-100);
-  color: var(--color-text-tertiary);
-  cursor: not-allowed;
-}
-.input-error {
-  border-color: var(--ds-red-400);
-}
-.input-error:focus {
-  box-shadow: 0 0 0 3px var(--ds-red-100);
-}
-.input-sm { height: 32px; font-size: var(--text-12); }
-.input-lg { height: 40px; font-size: var(--text-16); }
-
-/* ═══════════════════════════════════════════════════════
-   GEIST BADGE/PILL
-   ═══════════════════════════════════════════════════════ */
-.badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-size: var(--text-12);
-  font-weight: 500;
-  line-height: 1;
-  padding: 3px 8px;
-  border-radius: var(--r-full);
-  border: 1px solid var(--color-border);
-  background: var(--ds-gray-100);
-  color: var(--color-text-secondary);
-  white-space: nowrap;
-}
-.badge-blue   { background: var(--ds-blue-100);  border-color: var(--ds-blue-200);  color: var(--ds-blue-900); }
-.badge-green  { background: var(--ds-green-100); border-color: var(--ds-green-200); color: var(--ds-green-900); }
-.badge-red    { background: var(--ds-red-100);   border-color: var(--ds-red-200);   color: var(--ds-red-900); }
-.badge-amber  { background: var(--ds-amber-100); border-color: var(--ds-amber-200); color: var(--ds-amber-900); }
-
-/* ═══════════════════════════════════════════════════════
-   GEIST CARD
-   ═══════════════════════════════════════════════════════ */
-.card {
-  background: var(--ds-bg-100);
-  border: 1px solid var(--color-border);
-  border-radius: var(--r-lg);
-  box-shadow: var(--shadow-sm);
-}
-
-/* ═══════════════════════════════════════════════════════
-   GEIST TABLE
-   ═══════════════════════════════════════════════════════ */
-.table { width: 100%; border-collapse: collapse; font-size: var(--text-14); }
-.table th {
-  padding: 10px 16px;
-  text-align: left;
-  font-size: var(--text-12);
-  font-weight: 600;
-  color: var(--color-text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  border-bottom: 1px solid var(--color-border);
-  background: var(--ds-bg-200);
-}
-.table td {
-  padding: 12px 16px;
-  border-bottom: 1px solid var(--ds-gray-100);
-  color: var(--color-text-primary);
-  vertical-align: middle;
-}
-.table tr:last-child td { border-bottom: none; }
-.table tr:hover td { background: var(--ds-bg-200); }
+::-webkit-scrollbar-thumb { background: hsl(var(--border)); border-radius: 9999px; }
+::-webkit-scrollbar-thumb:hover { background: hsl(var(--muted-foreground)); }
 
 /* ═══════════════════════════════════════════════════════
    LAYOUT HELPERS
    ═══════════════════════════════════════════════════════ */
 .divider {
   height: 1px;
-  background: var(--color-border);
+  background: hsl(var(--border));
   border: none;
 }
 
@@ -399,16 +155,16 @@ h1, h2, h3, h4, h5, h6 {
   left: 50%;
   transform: translateX(-50%);
   z-index: 9999;
-  background: var(--ds-gray-1000);
-  color: #fff;
+  background: hsl(var(--foreground));
+  color: hsl(var(--background));
   padding: 10px 20px;
-  border-radius: var(--r-lg);
-  font-size: var(--text-14);
+  border-radius: var(--radius);
+  font-size: 14px;
   font-weight: 500;
   display: flex;
   align-items: center;
   gap: 8px;
-  box-shadow: var(--shadow-lg);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.12);
   white-space: nowrap;
   animation: toastIn 0.18s var(--ease);
 }
@@ -423,63 +179,91 @@ h1, h2, h3, h4, h5, h6 {
   to   { opacity: 1; transform: scale(1) translateY(0); }
 }
 
-/* ── Sidebar nav item ── */
-.nav-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 7px 10px;
-  border-radius: var(--r-md);
-  font-size: var(--text-13);
-  font-weight: 500;
-  color: var(--color-text-secondary);
-  text-decoration: none;
-  transition: background var(--duration-fast) var(--ease),
-              color var(--duration-fast) var(--ease);
-  cursor: pointer;
-  border: none;
-  background: none;
-  width: 100%;
-  text-align: left;
-  font-family: var(--font);
-}
-.nav-item:hover {
-  background: var(--ds-gray-100);
-  color: var(--color-text-primary);
-}
-.nav-item.active {
-  background: var(--ds-blue-100);
-  color: var(--ds-blue-700);
-  font-weight: 600;
-  border-left: 2px solid var(--ds-blue-400);
+@theme inline {
+  --font-heading: var(--font-sans);
+  --font-sans: 'Geist Variable', sans-serif;
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-/* ── Label ── */
-.field-label {
-  display: block;
-  font-size: var(--text-12);
-  font-weight: 600;
-  color: var(--color-text-secondary);
-  margin-bottom: 6px;
-  letter-spacing: 0.01em;
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
 }
-.field-label .required { color: var(--ds-red-400); margin-left: 2px; }
 
-/* ── Section header ── */
-.section-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px 20px;
-  cursor: pointer;
-  border-bottom: 1px solid var(--color-border);
-  font-size: var(--text-14);
-  font-weight: 600;
-  color: var(--color-text-primary);
-  background: none;
-  border: none;
-  width: 100%;
-  text-align: left;
-  font-family: var(--font);
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
 }
-.section-header:hover { background: var(--ds-bg-200); }

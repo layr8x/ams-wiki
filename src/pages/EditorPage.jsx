@@ -8,7 +8,7 @@ import {
   User, Calendar, Hash, Layers, Tag, ShieldCheck, MessageCircle
 } from 'lucide-react';
 
-// ─── Mock Data ─────────────────────────────────────────────────────────────
+// ─── 테스트 데이터 ─────────────────────────────────────────────────────────────
 const GUIDES_LIST = [
   { id: 'member-merge',    title: 'AMS 회원 병합 가이드',          module: '고객(원생) 관리',       type: 'SOP'      },
   { id: 'refund-policy',   title: '환불 승인 기준 판단 가이드',     module: '청구/수납/결제/환불',    type: 'DECISION' },
@@ -30,9 +30,9 @@ const VERSION_HISTORY = [
   { version:'v0.1', date:'2026-03-10', author:'김명준', summary:'초안 작성' },
 ];
 
-// ─── Geist / Catalyst Design Tokens ────────────────────────────────────────
+// ─── Geist / Catalyst 디자인 토큰 ────────────────────────────────────────
 const C = {
-  // Geist-style neutral scale
+  // Geist 스타일 중립 색상
   gray50:  '#fafafa',
   gray100: '#f4f4f5',
   gray200: '#e4e4e7',
@@ -44,14 +44,14 @@ const C = {
   gray800: '#27272a',
   gray900: '#18181b',
   gray950: '#09090b',
-  // Blue accent (Geist blue)
+  // 파란색 강조 (Geist 파란색)
   blue50:  '#eff6ff',
   blue100: '#dbeafe',
   blue200: '#bfdbfe',
   blue500: '#3b82f6',
   blue600: '#2563eb',
   blue700: '#1d4ed8',
-  // Semantic
+  // 의미 있는 색상
   green50:  '#f0fdf4',
   green100: '#dcfce7',
   green600: '#16a34a',
@@ -66,14 +66,14 @@ const C = {
   red700:   '#b91c1c',
 };
 
-// Catalyst-exact shadows
+// Catalyst 정확한 그림자
 const SHADOW = {
   xs:  '0 1px 2px 0 rgba(0,0,0,0.05)',
   sm:  '0 0 0 1px rgba(9,9,11,0.07), 0 2px 2px 0 rgba(9,9,11,0.05)',
   md:  '0 0 0 1px rgba(9,9,11,0.07), 0 4px 8px -2px rgba(9,9,11,0.08)',
   lg:  '0 0 0 1px rgba(9,9,11,0.07), 0 8px 24px -4px rgba(9,9,11,0.12)',
   xl:  '0 0 0 1px rgba(9,9,11,0.07), 0 24px 48px -8px rgba(9,9,11,0.18)',
-  // Dropdown specific — sharp & elevated
+  // 드롭다운 특화 — 선명하고 높은 수준
   dropdown: '0 0 0 1px rgba(9,9,11,0.08), 0 8px 32px -4px rgba(9,9,11,0.16), 0 2px 8px 0 rgba(9,9,11,0.06)',
 };
 
@@ -88,7 +88,7 @@ const TYPE_BADGE = {
   POLICY:    { bg:'#fff1f2', color:'#be123c', border:'#fecdd3' },
 };
 
-// ─── Input base style (Catalyst-exact) ─────────────────────────────────────
+// ─── 입력 기본 스타일 (Catalyst 정확) ─────────────────────────────────────
 const inputBase = {
   width: '100%', padding: '9px 12px',
   border: `1px solid ${C.gray200}`,
@@ -107,8 +107,8 @@ const onBlur  = e => {
   e.target.style.boxShadow   = 'none';
 };
 
-// ─── Portal Dropdown ─────────────────────────────────────────────────────────
-// Renders children into document.body so overflow:hidden parents can't clip it
+// ─── 포탈 드롭다운 ─────────────────────────────────────────────────────────
+// 자식을 document.body에 렌더링하여 overflow:hidden 부모가 자를 수 없게 함
 function PortalDropdown({ anchorRef, isOpen, children }) {
   const [rect, setRect] = useState(null);
 
@@ -129,7 +129,7 @@ function PortalDropdown({ anchorRef, isOpen, children }) {
 
   if (!isOpen || !rect) return null;
 
-  // Decide: open below or above
+  // 아래 또는 위에 열지 결정
   const spaceBelow = window.innerHeight - rect.bottom;
   const spaceAbove = rect.top;
   const maxH = 320;
@@ -164,12 +164,12 @@ function PortalDropdown({ anchorRef, isOpen, children }) {
   );
 }
 
-// ─── Related Guide Combobox ───────────────────────────────────────────────
+// ─── 관련 가이드 콤보박스 ───────────────────────────────────────────────
 function RelatedGuideCombobox({ selected, onSelect, onRemove }) {
   const [query,      setQuery]      = useState('');
   const [isOpen,     setIsOpen]     = useState(false);
   const [focusedIdx, setFocusedIdx] = useState(0);
-  const anchorRef = useRef(null);  // anchor = input wrapper div
+  const anchorRef = useRef(null);  // 앵커 = 입력 래퍼 div
   const inputRef  = useRef(null);
   const listRef   = useRef(null);
 
@@ -183,18 +183,18 @@ function RelatedGuideCombobox({ selected, onSelect, onRemove }) {
     setFocusedIdx(0);
   }, [query]);
 
-  // Auto-scroll focused item into view
+  // 포커스된 항목을 자동으로 뷰로 스크롤
   useEffect(() => {
     if (!listRef.current) return;
     const el = listRef.current.querySelector(`[data-idx="${focusedIdx}"]`);
     el?.scrollIntoView({ block: 'nearest' });
   }, [focusedIdx]);
 
-  // Close on outside click
+  // 외부 클릭 시 닫기
   useEffect(() => {
     const handler = (e) => {
       if (anchorRef.current?.contains(e.target)) return;
-      // Also allow clicks inside the portal dropdown
+      // 포탈 드롭다운 내부 클릭도 허용
       const portal = document.querySelector('[data-combobox-portal]');
       if (portal?.contains(e.target)) return;
       setIsOpen(false);
@@ -221,7 +221,7 @@ function RelatedGuideCombobox({ selected, onSelect, onRemove }) {
 
   return (
     <div>
-      {/* Selected chips */}
+      {/* 선택된 칩 */}
       {selected.length > 0 && (
         <div style={{ display:'flex', flexWrap:'wrap', gap:'6px', marginBottom:'10px' }}>
           {selected.map(g => {
@@ -245,7 +245,7 @@ function RelatedGuideCombobox({ selected, onSelect, onRemove }) {
         </div>
       )}
 
-      {/* Input anchor */}
+      {/* 입력 앵커 */}
       <div ref={anchorRef} style={{ position:'relative' }}>
         <Search size={14} color={C.gray400} style={{ position:'absolute', left:'10px', top:'50%', transform:'translateY(-50%)', pointerEvents:'none' }} />
         <input
@@ -264,7 +264,7 @@ function RelatedGuideCombobox({ selected, onSelect, onRemove }) {
         <ChevronDown size={14} color={C.gray400} style={{ position:'absolute', right:'10px', top:'50%', transform: isOpen ? 'translateY(-50%) rotate(180deg)' : 'translateY(-50%)', transition:'transform 0.15s', pointerEvents:'none' }} />
       </div>
 
-      {/* Portal Dropdown — never clipped by parents */}
+      {/* 포탈 드롭다운 — 부모에 의해 절단되지 않음 */}
       <PortalDropdown anchorRef={anchorRef} isOpen={isOpen}>
         <div data-combobox-portal style={{ overflowY:'auto', maxHeight:'320px' }} ref={listRef}>
           {filtered.length > 0 ? (
@@ -311,7 +311,7 @@ function RelatedGuideCombobox({ selected, onSelect, onRemove }) {
   );
 }
 
-// ─── Image Upload Slot ────────────────────────────────────────────────────
+// ─── 이미지 업로드 슬롯 ────────────────────────────────────────────────────
 function ImageUploadSlot({ image, onUpload, onRemove }) {
   const [isDragging, setIsDragging] = useState(false);
   const fileRef = useRef(null);
@@ -369,7 +369,7 @@ function ImageUploadSlot({ image, onUpload, onRemove }) {
   );
 }
 
-// ─── Version Drawer ───────────────────────────────────────────────────────
+// ─── 버전 드롤 ───────────────────────────────────────────────────────
 function VersionDrawer({ isOpen, onClose }) {
   const [expanded, setExpanded] = useState(null);
 
@@ -377,7 +377,7 @@ function VersionDrawer({ isOpen, onClose }) {
     <>
       <div onClick={onClose} style={{ position:'fixed', inset:0, backgroundColor:'rgba(0,0,0,0.25)', backdropFilter:'blur(2px)', zIndex:400, opacity: isOpen ? 1 : 0, pointerEvents: isOpen ? 'all' : 'none', transition:'opacity 0.2s' }} />
       <div style={{ position:'fixed', top:0, right:0, bottom:0, width:'460px', backgroundColor:'#fff', zIndex:401, boxShadow:'-1px 0 0 0 ' + C.gray100 + ', -20px 0 60px rgba(0,0,0,0.1)', transform: isOpen ? 'translateX(0)' : 'translateX(100%)', transition:'transform 0.28s cubic-bezier(0.4,0,0.2,1)', display:'flex', flexDirection:'column' }}>
-        {/* Header */}
+        {/* 헤더 */}
         <div style={{ padding:'20px 24px', borderBottom:`1px solid ${C.gray100}`, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
           <div style={{ display:'flex', alignItems:'center', gap:'10px' }}>
             <div style={{ width:'32px', height:'32px', borderRadius: R.md, backgroundColor: C.gray100, display:'flex', alignItems:'center', justifyContent:'center' }}>
@@ -393,7 +393,7 @@ function VersionDrawer({ isOpen, onClose }) {
           </button>
         </div>
 
-        {/* Current version banner */}
+        {/* 현재 버전 배너 */}
         <div style={{ margin:'16px 20px 8px', padding:'14px 18px', backgroundColor: C.green50, borderRadius: R.lg, border:`1px solid ${C.green100}`, display:'flex', alignItems:'center', gap:'10px' }}>
           <div style={{ width:'8px', height:'8px', borderRadius:'50%', backgroundColor:'#22c55e', flexShrink:0 }} />
           <div style={{ flex:1 }}>
@@ -405,7 +405,7 @@ function VersionDrawer({ isOpen, onClose }) {
           </div>
         </div>
 
-        {/* Version list */}
+        {/* 버전 목록 */}
         <div style={{ flex:1, overflowY:'auto', padding:'4px 20px 24px' }}>
           <p style={{ fontSize:'11px', fontWeight:700, color: C.gray400, textTransform:'uppercase', letterSpacing:'0.08em', margin:'16px 0 10px' }}>전체 이력</p>
           {VERSION_HISTORY.map((v, i) => {
@@ -443,7 +443,7 @@ function VersionDrawer({ isOpen, onClose }) {
   );
 }
 
-// ─── Section Block ─────────────────────────────────────────────────────────
+// ─── 섹션 블록 ─────────────────────────────────────────────────────────
 // eslint-disable-next-line no-unused-vars
 function Section({ icon: Icon, title, badge, badgeColor = 'blue', children, defaultOpen = true }) {
   const [open, setOpen] = useState(defaultOpen);
@@ -472,7 +472,7 @@ function Section({ icon: Icon, title, badge, badgeColor = 'blue', children, defa
   );
 }
 
-// ─── Field ─────────────────────────────────────────────────────────────────
+// ─── 필드 ─────────────────────────────────────────────────────────────────
 function Field({ label, required, hint, children }) {
   return (
     <div>
@@ -487,7 +487,7 @@ function Field({ label, required, hint, children }) {
   );
 }
 
-// ─── Step Card ──────────────────────────────────────────────────────────────
+// ─── 단계 카드 ──────────────────────────────────────────────────────────────
 function StepCard({ step, index, onUpdate, onRemove }) {
   return (
     <div style={{ border:`1px solid ${C.gray200}`, borderRadius: R.xl, backgroundColor:'#fff', marginBottom:'12px', boxShadow: SHADOW.xs }}>
@@ -520,7 +520,7 @@ function StepCard({ step, index, onUpdate, onRemove }) {
   );
 }
 
-// ─── Case Card ──────────────────────────────────────────────────────────────
+// ─── 사례 카드 ──────────────────────────────────────────────────────────────
 function CaseCard({ item, index, onUpdate, onRemove }) {
   return (
     <div style={{ border:`1px solid ${C.gray200}`, borderRadius: R.xl, backgroundColor:'#fff', marginBottom:'10px', boxShadow: SHADOW.xs }}>
@@ -544,7 +544,7 @@ function CaseCard({ item, index, onUpdate, onRemove }) {
   );
 }
 
-// ─── Icon Button ────────────────────────────────────────────────────────────
+// ─── 아이콘 버튼 ────────────────────────────────────────────────────────────
 function Btn({ children, onClick, variant = 'default', icon: Icon, active }) {
   const styles = {
     default: { padding:'7px 14px', border:`1px solid ${C.gray200}`, borderRadius: R.md, backgroundColor: active ? C.gray100 : '#fff', color: active ? C.gray900 : C.gray700, fontWeight:600, fontSize:'13px' },
@@ -652,7 +652,7 @@ function Toast({ message, onClose }) {
   );
 }
 
-// ─── Main ──────────────────────────────────────────────────────────────────
+// ─── 메인 ──────────────────────────────────────────────────────────────────
 export default function EditorPage() {
   const navigate = useNavigate();
   const [versionDrawer,  setVersionDrawer]  = useState(false);
@@ -691,7 +691,7 @@ export default function EditorPage() {
     return () => window.removeEventListener('keydown', handler);
   }, [save]);
 
-  // Auto-save simulation (3s debounce)
+  // 자동 저장 시뮬레이션 (3초 디바운스)
   useEffect(() => {
     if (!form.title) return;
     const t = setTimeout(() => {
@@ -704,19 +704,19 @@ export default function EditorPage() {
     return () => clearTimeout(t);
   }, [form]);
 
-  // Steps
+  // 단계
   const addStep   = () => set('steps', [...form.steps, { title:'', desc:'', image:null }]);
   const updStep   = (i, v) => { const s=[...form.steps]; s[i]=v; set('steps', s); };
   const delStep   = i => set('steps', form.steps.filter((_,idx)=>idx!==i));
-  // Cases
+  // 사례
   const addCase   = () => set('cases', [...form.cases, { label:'', action:'', note:'' }]);
   const updCase   = (i, v) => { const c=[...form.cases]; c[i]=v; set('cases', c); };
   const delCase   = i => set('cases', form.cases.filter((_,idx)=>idx!==i));
-  // Cautions
+  // 주의사항
   const addCaut   = () => set('cautions', [...form.cautions, '']);
   const updCaut   = (i, v) => { const c=[...form.cautions]; c[i]=v; set('cautions', c); };
   const delCaut   = i => set('cautions', form.cautions.filter((_,idx)=>idx!==i));
-  // Tags
+  // 태그
   const handleTag = e => {
     if ((e.key==='Enter'||e.key===',') && tagInput.trim()) {
       e.preventDefault();
@@ -726,13 +726,13 @@ export default function EditorPage() {
   };
   const toggleTarget = t => set('targets', form.targets.includes(t) ? form.targets.filter(x=>x!==t) : [...form.targets, t]);
 
-  // ── Render ──────────────────────────────────────────────────────────────
+  // ── 렌더링 ──────────────────────────────────────────────────────────────
   return (
     <div style={{ minHeight:'100vh', backgroundColor: C.gray50, fontFamily:'-apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", sans-serif' }}>
 
-      {/* ── Top Bar ─────────────────────────────────────────────────────── */}
+      {/* ── 상단 바 ─────────────────────────────────────────────────────── */}
       <header style={{ position:'sticky', top:0, zIndex:100, height:'56px', backgroundColor:'rgba(255,255,255,0.9)', borderBottom:`1px solid ${C.gray100}`, backdropFilter:'blur(16px)', display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 28px' }}>
-        {/* Left */}
+        {/* 왼쪽 */}
         <div style={{ display:'flex', alignItems:'center', gap:'12px' }}>
           <Btn icon={ArrowLeft} onClick={() => navigate(-1)}>가이드 목록</Btn>
           <div style={{ width:'1px', height:'20px', backgroundColor: C.gray200 }} />
@@ -747,7 +747,7 @@ export default function EditorPage() {
             }}>{form.status}</span>
           )}
         </div>
-        {/* Right */}
+        {/* 오른쪽 */}
         <div style={{ display:'flex', alignItems:'center', gap:'6px' }}>
           <span style={{ fontSize:'12px', color: C.gray400, marginRight:'6px' }}>
             {isSaving ? '저장 중…' : lastSaved ? `${lastSaved} 자동 저장` : ''}
@@ -791,10 +791,10 @@ export default function EditorPage() {
       {/* ── 토스트 ── */}
       {toast && <Toast message={toast} onClose={() => setToast(null)} />}
 
-      {/* ── Body ────────────────────────────────────────────────────────── */}
+      {/* ── 본문 ────────────────────────────────────────────────────────── */}
       <div style={{ display:'flex', maxWidth:'1440px', margin:'0 auto', gap:'20px', padding:'28px 28px 100px' }}>
 
-        {/* ── Editor Panel ──────────────────────────────────────────────── */}
+        {/* ── 편집 패널 ──────────────────────────────────────────────── */}
         <div style={{ flex:1, minWidth:0 }}>
 
           {/* ① 기본 정보 */}
@@ -883,7 +883,7 @@ export default function EditorPage() {
           {/* ② 본문 작성 */}
           <Section icon={FileText} title="본문 작성" badge="필수">
 
-            {/* TL;DR */}
+            {/* 요약 */}
             <div style={{ marginBottom:'28px' }}>
               <Field label="핵심 요약 (TL;DR)" required hint="2~3줄, 30초 내 읽기">
                 <textarea value={form.summary} onChange={e=>set('summary',e.target.value)} placeholder="이 가이드의 핵심 내용을 요약하세요. CS 응대 중 30초 내에 읽을 수 있어야 합니다." rows={3} maxLength={300} style={{ ...inputBase, resize:'vertical', lineHeight:1.7 }} onFocus={onFocus} onBlur={onBlur} />
@@ -891,7 +891,7 @@ export default function EditorPage() {
               </Field>
             </div>
 
-            {/* Steps */}
+            {/* 단계 */}
             <div style={{ marginBottom:'28px' }}>
               <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'12px' }}>
                 <Field label="사용 방법 (Steps)" required><span /></Field>
@@ -900,7 +900,7 @@ export default function EditorPage() {
               {form.steps.map((s,i) => <StepCard key={i} step={s} index={i} onUpdate={v=>updStep(i,v)} onRemove={()=>delStep(i)} />)}
             </div>
 
-            {/* Cases */}
+            {/* 사례 */}
             <div style={{ marginBottom:'28px' }}>
               <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'6px' }}>
                 <Field label="운영 케이스" required><span /></Field>
@@ -910,7 +910,7 @@ export default function EditorPage() {
               {form.cases.map((c,i) => <CaseCard key={i} item={c} index={i} onUpdate={v=>updCase(i,v)} onRemove={()=>delCase(i)} />)}
             </div>
 
-            {/* Cautions */}
+            {/* 주의사항 */}
             <div style={{ marginBottom:'28px' }}>
               <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'12px' }}>
                 <Field label="유의사항" required><span /></Field>
@@ -975,7 +975,7 @@ export default function EditorPage() {
           </Section>
         </div>
 
-        {/* ── Preview Panel ──────────────────────────────────────────────── */}
+        {/* ── 미리보기 패널 ──────────────────────────────────────────────── */}
         {showPreview && (
           <div style={{ width:'480px', flexShrink:0, position:'sticky', top:'72px', maxHeight:'calc(100vh - 88px)', overflowY:'auto' }}>
             <div style={{ backgroundColor:'#fff', border:`1px solid ${C.gray200}`, borderRadius: R.xl, overflow:'hidden', boxShadow: SHADOW.md }}>
@@ -985,7 +985,7 @@ export default function EditorPage() {
                 <span style={{ fontSize:'11px', color: C.gray300, marginLeft:'auto' }}>GuidePage 기준</span>
               </div>
               <div style={{ padding:'28px 24px' }}>
-                {/* Meta */}
+                {/* 메타 정보 */}
                 <div style={{ display:'flex', gap:'6px', marginBottom:'16px' }}>
                   {form.module    && <span style={{ fontSize:'11px', fontWeight:700, padding:'3px 9px', backgroundColor: C.blue50, color: C.blue700, borderRadius: R.full, border:`1px solid ${C.blue200}` }}>{form.module}</span>}
                   {form.guideType && <span style={{ fontSize:'11px', fontWeight:700, padding:'3px 9px', ...(() => { const tc=TYPE_BADGE[form.guideType]; return { backgroundColor:tc.bg, color:tc.color, border:`1px solid ${tc.border}` }; })(), borderRadius: R.full }}>{form.guideType}</span>}
@@ -1011,7 +1011,7 @@ export default function EditorPage() {
                     ))}
                   </div>
                 )}
-                {/* Steps preview */}
+                {/* 단계 미리보기 */}
                 {form.steps.filter(s=>s.title).length > 0 && (
                   <div style={{ position:'relative', paddingLeft:'14px', marginBottom:'20px' }}>
                     <div style={{ position:'absolute', top:'8px', bottom:'8px', left:'23px', width:'1.5px', backgroundColor: C.gray100 }} />
@@ -1027,7 +1027,7 @@ export default function EditorPage() {
                     ))}
                   </div>
                 )}
-                {/* Related guides preview */}
+                {/* 관련 가이드 미리보기 */}
                 {form.relatedGuides.length > 0 && (
                   <div>
                     <p style={{ fontSize:'11px', fontWeight:700, color: C.gray400, textTransform:'uppercase', letterSpacing:'0.07em', margin:'0 0 8px' }}>관련 가이드</p>
@@ -1049,7 +1049,7 @@ export default function EditorPage() {
         )}
       </div>
 
-      {/* Version Drawer */}
+      {/* 버전 드롤 */}
       <VersionDrawer isOpen={versionDrawer} onClose={() => setVersionDrawer(false)} />
     </div>
   );

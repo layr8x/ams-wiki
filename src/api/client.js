@@ -1,7 +1,7 @@
 /**
- * AMS Wiki API Client
+ * AMS Wiki API 클라이언트
  * Base: /api/v1/wiki
- * Auth: Bearer token (JWT) in Authorization header
+ * Auth: Authorization 헤더의 Bearer token (JWT)
  */
 import axios from 'axios'
 

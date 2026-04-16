@@ -1,82 +1,82 @@
-# AMS Wiki - Deployment Guide
+# AMS Wiki - 배포 가이드
 
-## Overview
+## 개요
 
-This project is configured for automated deployment to Vercel with full shadcn/ui component library integration. The deployment pipeline includes automated builds, linting, and environment variable management.
+이 프로젝트는 완벽한 shadcn/ui 컴포넌트 라이브러리 통합을 통해 Vercel로 자동 배포되도록 설정되었습니다. 배포 파이프라인에는 자동 빌드, 린팅 및 환경 변수 관리가 포함됩니다.
 
-## Prerequisites
+## 필수 요구사항
 
-- Node.js 18+ installed locally
-- npm installed
-- Vercel account (vercel.com)
-- GitHub account
+- Node.js 18 이상 설치 필요
+- npm 설치 필요
+- Vercel 계정 (vercel.com)
+- GitHub 계정
 
-## Local Development
+## 로컬 개발 환경
 
-### Setup
+### 설정
 
-1. **Clone the repository**
+1. **저장소 복제**
    ```bash
    git clone https://github.com/layr8x/ams-wiki.git
    cd ams-wiki
    ```
 
-2. **Install dependencies**
+2. **의존성 설치**
    ```bash
    npm install
    ```
 
-3. **Configure environment variables**
+3. **환경 변수 설정**
    ```bash
    cp .env.example .env.local
    ```
    
-   Edit `.env.local` with your Confluence credentials:
-   - `VITE_CONFLUENCE_EMAIL`: Your Atlassian email
-   - `VITE_CONFLUENCE_TOKEN`: Your API token from https://id.atlassian.com/manage-profile/security/api-tokens
+   Confluence 자격증명으로 `.env.local` 수정:
+   - `VITE_CONFLUENCE_EMAIL`: 귀하의 Atlassian 이메일
+   - `VITE_CONFLUENCE_TOKEN`: https://id.atlassian.com/manage-profile/security/api-tokens에서 발급받은 API 토큰
 
-4. **Start development server**
+4. **개발 서버 시작**
    ```bash
    npm run dev
    ```
-   The app will be available at `http://localhost:5173`
+   앱이 `http://localhost:5173`에서 사용 가능합니다.
 
-### Available Scripts
+### 사용 가능한 스크립트
 
-- `npm run dev` - Start development server with HMR
-- `npm run build` - Build for production
-- `npm run lint` - Run ESLint
-- `npm run preview` - Preview production build locally
+- `npm run dev` - HMR을 포함한 개발 서버 시작
+- `npm run build` - 프로덕션용 빌드
+- `npm run lint` - ESLint 실행
+- `npm run preview` - 프로덕션 빌드를 로컬에서 미리보기
 
-## Vercel Deployment
+## Vercel 배포
 
-### Initial Setup
+### 초기 설정
 
-1. **Connect GitHub Repository to Vercel**
-   - Go to https://vercel.com
-   - Click "New Project"
-   - Select your GitHub repository (layr8x/ams-wiki)
-   - Configure project settings:
+1. **GitHub 저장소를 Vercel에 연결**
+   - https://vercel.com으로 이동
+   - "New Project" 클릭
+   - GitHub 저장소 선택 (layr8x/ams-wiki)
+   - 프로젝트 설정 구성:
      - Framework: Vite
      - Build command: `npm run build`
      - Output directory: `dist`
 
-2. **Set Environment Variables in Vercel**
-   - Go to your project on Vercel: https://vercel.com/layr8xs-projects/ams-wiki
-   - Click "Settings" → "Environment Variables"
-   - Add the following environment variables:
-     - **Name**: `VITE_CONFLUENCE_EMAIL` | **Value**: Your Atlassian email (e.g., your-email@hiconsy.com)
-     - **Name**: `VITE_CONFLUENCE_TOKEN` | **Value**: Your API token from https://id.atlassian.com/manage-profile/security/api-tokens
-   - Make sure both are set to available in: **Production**, **Preview**, and **Development**
-   - Click "Save" and redeploy to apply the changes
+2. **Vercel에서 환경 변수 설정**
+   - Vercel의 프로젝트로 이동: https://vercel.com/layr8xs-projects/ams-wiki
+   - "Settings" → "Environment Variables" 클릭
+   - 다음 환경 변수 추가:
+     - **Name**: `VITE_CONFLUENCE_EMAIL` | **Value**: 귀하의 Atlassian 이메일 (예: your-email@hiconsy.com)
+     - **Name**: `VITE_CONFLUENCE_TOKEN` | **Value**: https://id.atlassian.com/manage-profile/security/api-tokens에서 발급받은 API 토큰
+   - 둘 다 **Production**, **Preview**, **Development**에서 사용 가능하도록 설정
+   - "Save" 클릭 후 다시 배포하여 변경사항 적용
 
-3. **Configure Deployment Branches**
-   - Production deployment: main (disabled in vercel.json)
-   - Preview/Development: claude/* branches (enabled)
+3. **배포 브랜치 구성**
+   - 프로덕션 배포: main (vercel.json에서 비활성화됨)
+   - 프리뷰/개발: claude/* 브랜치 (활성화됨)
 
-### Automatic Deployments
+### 자동 배포
 
-The project uses `vercel.json` to configure automatic deployments:
+프로젝트는 `vercel.json`을 사용하여 자동 배포를 구성합니다:
 
 ```json
 {
@@ -92,28 +92,28 @@ The project uses `vercel.json` to configure automatic deployments:
 }
 ```
 
-**Deploy on push to:**
-- Branches matching `claude/*` (e.g., `claude/setup-deployment-shadcn-Kx1RH`)
+**다음 브랜치로 푸시 시 배포:**
+- `claude/*`와 일치하는 브랜치 (예: `claude/setup-deployment-shadcn-Kx1RH`)
 
-**Skipped for:**
-- `main` branch (controlled merging to production)
+**다음의 경우 건너뜀:**
+- `main` 브랜치 (프로덕션으로의 제어된 병합)
 
-### Manual Deployment
+### 수동 배포
 
-To manually deploy a branch to Vercel:
+Vercel에 브랜치를 수동으로 배포하려면:
 
 ```bash
 npm install -g vercel
 vercel --prod
 ```
 
-### Production Deployment
+### 프로덕션 배포
 
-To deploy to production on the main branch:
+main 브랜치에 프로덕션 배포:
 
-1. Create a pull request from your feature branch to main
-2. After review and approval, merge to main
-3. Create a release tag:
+1. feature 브랜치에서 main으로 풀 요청 생성
+2. 검토 및 승인 후 main으로 병합
+3. 릴리스 태그 생성:
    ```bash
    git tag -a v1.0.0 -m "Release version 1.0.0"
    git push origin v1.0.0
@@ -121,71 +121,71 @@ To deploy to production on the main branch:
 
 ## GitHub Actions CI/CD
 
-The project includes automated CI/CD via GitHub Actions (`.github/workflows/deploy.yml`):
+프로젝트는 GitHub Actions를 통한 자동화된 CI/CD를 포함합니다 (`.github/workflows/deploy.yml`):
 
-### Workflow Triggers
+### 워크플로우 트리거
 
-- Push to `claude/*` branches
-- Pull requests to `claude/*` branches
+- `claude/*` 브랜치로 푸시
+- `claude/*` 브랜치로의 풀 요청
 
-### Workflow Steps
+### 워크플로우 단계
 
-1. **Checkout code** - Fetch repository
-2. **Setup Node.js** - Install Node 18 with npm caching
-3. **Install dependencies** - Run `npm ci`
-4. **Run linting** - Execute ESLint (non-blocking)
-5. **Build project** - Run `npm run build` with environment variables
-6. **Deploy to Vercel** - Automatic deployment to Vercel
+1. **코드 체크아웃** - 저장소 가져오기
+2. **Node.js 설정** - Node 18을 npm 캐싱으로 설치
+3. **의존성 설치** - `npm ci` 실행
+4. **린팅 실행** - ESLint 실행 (차단하지 않음)
+5. **프로젝트 빌드** - 환경 변수와 함께 `npm run build` 실행
+6. **Vercel로 배포** - Vercel로 자동 배포
 
-### Required GitHub Secrets
+### 필수 GitHub 시크릿
 
-Configure these secrets in GitHub repository settings:
+GitHub 저장소 설정에서 다음 시크릿 설정:
 
-- `VERCEL_TOKEN` - Token from https://vercel.com/account/tokens
-- `VERCEL_ORG_ID` - Organization ID from Vercel
-- `VERCEL_PROJECT_ID` - Project ID from Vercel
-- `VITE_CONFLUENCE_EMAIL` - Atlassian email (optional, can be in Vercel env vars)
-- `VITE_CONFLUENCE_TOKEN` - API token (optional, can be in Vercel env vars)
+- `VERCEL_TOKEN` - https://vercel.com/account/tokens의 토큰
+- `VERCEL_ORG_ID` - Vercel의 조직 ID
+- `VERCEL_PROJECT_ID` - Vercel의 프로젝트 ID
+- `VITE_CONFLUENCE_EMAIL` - Atlassian 이메일 (선택사항, Vercel 환경 변수에도 설정 가능)
+- `VITE_CONFLUENCE_TOKEN` - API 토큰 (선택사항, Vercel 환경 변수에도 설정 가능)
 
-### Getting Vercel Credentials
+### Vercel 자격증명 얻기
 
 1. **VERCEL_TOKEN**
-   - Go to https://vercel.com/account/tokens
-   - Click "Create Token"
-   - Select appropriate scope
-   - Copy the token
+   - https://vercel.com/account/tokens로 이동
+   - "Create Token" 클릭
+   - 적절한 범위 선택
+   - 토큰 복사
 
 2. **VERCEL_ORG_ID & VERCEL_PROJECT_ID**
-   - Go to your project on Vercel
-   - Go to "Settings"
-   - Find "Project ID" and copy it
-   - Find "Org ID" in Settings > General
+   - Vercel의 프로젝트로 이동
+   - "Settings" 로 이동
+   - "Project ID" 찾아 복사
+   - Settings > General에서 "Org ID" 찾기
 
-## Component Library
+## 컴포넌트 라이브러리
 
-The project includes a comprehensive shadcn/ui component library:
+프로젝트는 포괄적인 shadcn/ui 컴포넌트 라이브러리를 포함합니다:
 
-### Available Components
+### 사용 가능한 컴포넌트
 
-- **Button** - Customizable button with variants
-- **Card** - Container component with hover states
-- **Badge** - Label component with multiple variants
-- **Input** - Text input field
-- **Textarea** - Multi-line text input
-- **Checkbox** - Checkbox input
-- **Radio** - Radio button input
-- **Select** - Dropdown select
-- **Label** - Form label
-- **Dialog** - Modal dialog (Radix UI)
-- **Tabs** - Tab navigation (Radix UI)
-- **Tooltip** - Tooltip component (Radix UI)
-- **ScrollArea** - Scrollable area (Radix UI)
-- **Alert** - Alert message component
-- **Separator** - Divider line
+- **Button** - 변형 가능한 버튼
+- **Card** - 호버 상태를 가진 컨테이너 컴포넌트
+- **Badge** - 여러 변형을 가진 레이블 컴포넌트
+- **Input** - 텍스트 입력 필드
+- **Textarea** - 다중 라인 텍스트 입력
+- **Checkbox** - 체크박스 입력
+- **Radio** - 라디오 버튼 입력
+- **Select** - 드롭다운 선택
+- **Label** - 폼 레이블
+- **Dialog** - 모달 다이얼로그 (Radix UI)
+- **Tabs** - 탭 네비게이션 (Radix UI)
+- **Tooltip** - 툴팁 컴포넌트 (Radix UI)
+- **ScrollArea** - 스크롤 가능한 영역 (Radix UI)
+- **Alert** - 알림 메시지 컴포넌트
+- **Separator** - 구분선
 
-### Using Components
+### 컴포넌트 사용
 
-Import from the component library:
+컴포넌트 라이브러리에서 임포트:
 
 ```jsx
 import { Button, Input, Dialog, DialogContent } from '@/components/ui'
@@ -193,64 +193,64 @@ import { Button, Input, Dialog, DialogContent } from '@/components/ui'
 function MyComponent() {
   return (
     <div>
-      <Input placeholder="Enter text" />
-      <Button variant="primary">Click me</Button>
+      <Input placeholder="텍스트 입력" />
+      <Button variant="primary">클릭하기</Button>
     </div>
   )
 }
 ```
 
-## Security
+## 보안
 
-### API Token Management
+### API 토큰 관리
 
-- **Never commit** `.env.local` or similar files with credentials
-- Use `.env.example` as a template
-- Store secrets in Vercel environment variables
-- Use GitHub secrets for CI/CD pipelines
+- 자격증명이 포함된 `.env.local` 또는 유사 파일을 **절대 커밋하지 마세요**
+- 템플릿으로 `.env.example` 사용
+- 시크릿을 Vercel 환경 변수에 저장
+- CI/CD 파이프라인에는 GitHub 시크릿 사용
 
-### Best Practices
+### 모범 사례
 
-1. Rotate API tokens regularly
-2. Use the principle of least privilege
-3. Monitor API usage and access logs
-4. Keep dependencies updated
+1. API 토큰을 정기적으로 회전
+2. 최소 권한의 원칙 사용
+3. API 사용 및 접근 로그 모니터링
+4. 의존성 최신 상태 유지
 
-## Troubleshooting
+## 문제 해결
 
-### Build Failures
+### 빌드 실패
 
-1. Check Node version: `node --version` (should be 18+)
-2. Clear cache: `rm -rf node_modules package-lock.json && npm install`
-3. Check environment variables in `.env.local`
-4. Review build logs in Vercel dashboard
+1. Node 버전 확인: `node --version` (18 이상이어야 함)
+2. 캐시 정리: `rm -rf node_modules package-lock.json && npm install`
+3. `.env.local`에서 환경 변수 확인
+4. Vercel 대시보드에서 빌드 로그 검토
 
-### Deployment Issues
+### 배포 문제
 
-1. Verify Vercel project settings
-2. Check environment variables in Vercel dashboard
-3. Review GitHub Actions workflow logs
-4. Check branch protection rules
+1. Vercel 프로젝트 설정 확인
+2. Vercel 대시보드에서 환경 변수 확인
+3. GitHub Actions 워크플로우 로그 검토
+4. 브랜치 보호 규칙 확인
 
-### Environment Variables Not Loading
+### 환경 변수가 로드되지 않음
 
-1. Ensure `.env.local` exists locally
-2. Verify variable names in Vercel dashboard
-3. Check for typos in variable names
-4. Redeploy after adding new variables
+1. 로컬에서 `.env.local` 존재 확인
+2. Vercel 대시보드에서 변수명 확인
+3. 변수명의 오타 확인
+4. 새 변수 추가 후 재배포
 
-## Useful Links
+## 유용한 링크
 
-- [Vercel Documentation](https://vercel.com/docs)
-- [Vite Documentation](https://vitejs.dev/)
-- [shadcn/ui Documentation](https://ui.shadcn.com/)
-- [Tailwind CSS Documentation](https://tailwindcss.com/)
-- [GitHub Actions Documentation](https://docs.github.com/en/actions)
+- [Vercel 문서](https://vercel.com/docs)
+- [Vite 문서](https://vitejs.dev/)
+- [shadcn/ui 문서](https://ui.shadcn.com/)
+- [Tailwind CSS 문서](https://tailwindcss.com/)
+- [GitHub Actions 문서](https://docs.github.com/en/actions)
 
-## Support
+## 지원
 
-For issues or questions:
-1. Check the deployment logs in Vercel or GitHub Actions
-2. Review error messages carefully
-3. Consult the documentation links above
-4. Contact the development team
+문제 또는 질문이 있을 경우:
+1. Vercel 또는 GitHub Actions의 배포 로그 확인
+2. 오류 메시지 주의 깊게 검토
+3. 위의 문서 링크 참조
+4. 개발팀에 문의

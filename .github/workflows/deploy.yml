@@ -1,4 +1,4 @@
-name: Deploy to Vercel
+name: Pre-deployment Checks
 
 on:
   push:
@@ -11,7 +11,7 @@ on:
       - claude/*
 
 jobs:
-  build-and-deploy:
+  build-and-test:
     runs-on: ubuntu-latest
 
     steps:
@@ -30,36 +30,10 @@ jobs:
         run: npm ci
 
       - name: Run linting
-        run: npm run lint || true
+        run: npm run lint
 
       - name: Build project
         run: npm run build
         env:
           VITE_CONFLUENCE_EMAIL: ${{ secrets.VITE_CONFLUENCE_EMAIL || '' }}
           VITE_CONFLUENCE_TOKEN: ${{ secrets.VITE_CONFLUENCE_TOKEN || '' }}
-
-      - name: Install Vercel CLI
-        if: secrets.VERCEL_TOKEN != ''
-        run: npm install -g vercel@latest
-
-      - name: Deploy to Vercel (Preview)
-        if: github.event_name == 'pull_request' && secrets.VERCEL_TOKEN != ''
-        run: vercel --token ${{ secrets.VERCEL_TOKEN }}
-        env:
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-
-      - name: Deploy to Vercel (Production)
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && secrets.VERCEL_TOKEN != ''
-        run: vercel --prod --token ${{ secrets.VERCEL_TOKEN }}
-        env:
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-
-      - name: Setup Custom Domain
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && secrets.VERCEL_TOKEN != ''
-        run: |
-          curl -X POST "https://api.vercel.com/v10/projects/${{ secrets.VERCEL_PROJECT_ID }}/domains" \
-            -H "Authorization: Bearer ${{ secrets.VERCEL_TOKEN }}" \
-            -H "Content-Type: application/json" \
-            -d '{"name": "sdij-ams-wiki.app"}' || echo "Domain may already be configured"

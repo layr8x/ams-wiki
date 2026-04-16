@@ -3,28 +3,24 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
   Search, ClipboardList, BookOpen, Calendar, CreditCard, Gift,
-  MessageSquare, Users, Building, GraduationCap, Shield, BarChart3,
+  MessageSquare, Users, Building, GraduationCap, Shield, BarChart3, Settings,
   HelpCircle, Bell, ExternalLink, ArrowRight, ChevronRight
 } from 'lucide-react'
 import { useSearchStore } from '@/store/searchStore.jsx'
+import { MODULE_TREE, RECENT_GUIDES, GUIDES } from '@/data/mockData'
 
-const ICON_MAP = { ClipboardList, BookOpen, Calendar, CreditCard, Gift, MessageSquare, Users, Building, GraduationCap, Shield, BarChart3 }
+const ICON_MAP = { ClipboardList, BookOpen, Calendar, CreditCard, Gift, MessageSquare, Users, Building, GraduationCap, Shield, BarChart3, Settings }
 const POPULAR = ['계정이관', '환불 처리', 'QR 출석', '중복결제', '전반']
 
-const FALLBACK_MODULES = [
-  { id:'recruit',   label:'모집/접수 관리',     icon:'ClipboardList', guide_count:2,  description:'모집 신청, 접수 관리, 대기번호 처리' },
-  { id:'course',    label:'강좌/교재관리',       icon:'BookOpen',      guide_count:3,  description:'강좌 생성, 교재 등록, 회차 관리' },
-  { id:'operation', label:'수업운영 관리',       icon:'Calendar',      guide_count:5,  description:'입/퇴반, 전반, 출결 처리, 동보/복습영상' },
-  { id:'billing',   label:'청구/수납/결제/환불', icon:'CreditCard',    guide_count:8,  description:'청구 생성, 결제 처리, 전환결제, 환불 관리' },
-  { id:'benefit',   label:'장학혜택 관리',       icon:'Gift',          guide_count:1,  description:'장학혜택(쿠폰) 등록, 적용, 관리' },
-  { id:'message',   label:'메시지발송 관리',     icon:'MessageSquare', guide_count:2,  description:'문자 발송, 가상계좌 안내, 결제 문자' },
-]
-
-const FALLBACK_RECENT = [
-  { id:'member-merge',       module:'고객(원생) 관리',     title:'AMS 회원 병합 가이드',        updated_at:'2026-04-13' },
-  { id:'billing-decision',   module:'청구/수납/결제/환불', title:'환불 승인 기준 판단 가이드',   updated_at:'2026-04-10' },
-  { id:'policy-refund-2026', module:'청구/수납/결제/환불', title:'2026년 환불 정책 변경 안내',   updated_at:'2026-04-01' },
-]
+const MODULE_DESCRIPTIONS = {
+  recruit:   '모집 신청, 접수 관리, 대기번호 처리',
+  course:    '강좌 생성, 교재 등록, 회차 관리',
+  operation: '입/퇴반, 전반, 출결 처리, 동보/복습영상',
+  billing:   '청구 생성, 결제 처리, 전환결제, 환불 관리',
+  customer:  '회원 조회, 계정 통합, 휴강 처리',
+  message:   '문자 발송, 가상계좌 안내, 결제 문자',
+  system:    '공통 용어, CS 대응 매뉴얼, 정책 공지',
+}
 
 // 인라인 스타일로 완벽하게 제어되는 모듈 카드
 function ModuleCard({ m }) {
@@ -108,8 +104,15 @@ function RecentItem({ g, isLast }) {
 
 export default function HomePage() {
   const { open } = useSearchStore()
-  const mods = FALLBACK_MODULES
-  const recents = FALLBACK_RECENT
+
+  // MODULE_TREE에서 실제 가이드 수 계산
+  const mods = MODULE_TREE.map(m => ({
+    ...m,
+    description: MODULE_DESCRIPTIONS[m.id] || '',
+    guide_count: m.guides.length,
+  }))
+
+  const recents = RECENT_GUIDES.slice(0, 5)
 
   return (
     <div style={{ flex: 1, width: '100%', maxWidth: '1100px', margin: '0 auto', padding: '64px 40px', boxSizing: 'border-box' }}>

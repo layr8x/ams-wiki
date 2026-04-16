@@ -26,7 +26,7 @@ export default function App() {
               <Route path="/guides/:id" element={<GuidePage />} />
               <Route path="/faq" element={<FaqPage />} />
               <Route path="/updates" element={<UpdatesPage />} />
-              <Route path="/modules/:moduleId" element={<HomePage />} />
+              <Route path="/modules/:moduleId" element={<GuideListPage />} />
               <Route path="/404" element={<ErrorPage statusCode={404} message="찾을 수 없는 페이지입니다. 홈으로 돌아가주세요." />} />
               <Route path="*" element={<ErrorPage statusCode={404} message="찾을 수 없는 페이지입니다. 홈으로 돌아가주세요." />} />
             </Route>

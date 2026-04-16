@@ -1,12 +1,56 @@
 // src/pages/GuideListPage.jsx — 가이드 목록 페이지
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useMemo } from 'react';
+import { Link, useParams } from 'react-router-dom';
 import { GUIDES, MODULE_TREE } from '../data/mockData';
-import { Search, Filter, ChevronRight, Eye, ThumbsUp, Clock } from 'lucide-react';
+import { Search, ChevronRight, Eye, ThumbsUp, Clock } from 'lucide-react';
+
+const TYPE_LABELS = {
+  SOP: '절차 가이드', DECISION: '판단 기준', REFERENCE: '참조 자료',
+  TROUBLE: '트러블슈팅', RESPONSE: '대응 매뉴얼', POLICY: '정책 공지',
+};
+
+const TYPE_COLORS = {
+  SOP:      { bg: '#eff6ff', color: '#1d4ed8' },
+  DECISION: { bg: '#fef2f2', color: '#be123c' },
+  REFERENCE:{ bg: '#f0fdf4', color: '#15803d' },
+  TROUBLE:  { bg: '#fff7ed', color: '#c2410c' },
+  RESPONSE: { bg: '#fdf4ff', color: '#7e22ce' },
+  POLICY:   { bg: '#f0f9ff', color: '#0369a1' },
+};
+
+function Chip({ label, active, onClick, colorActive = '#0070f3' }) {
+  return (
+    <button
+      onClick={onClick}
+      style={{
+        padding: '7px 16px', borderRadius: '99px',
+        backgroundColor: active ? colorActive : '#f2f2f2',
+        color: active ? '#ffffff' : '#1a1a1a',
+        border: 'none', cursor: 'pointer', fontSize: '13px', fontWeight: 600,
+        fontFamily: "'Pretendard', sans-serif", transition: 'all 120ms ease',
+        whiteSpace: 'nowrap',
+      }}
+      onMouseEnter={e => { if (!active) e.currentTarget.style.backgroundColor = '#ebebeb'; }}
+      onMouseLeave={e => { if (!active) e.currentTarget.style.backgroundColor = active ? colorActive : '#f2f2f2'; }}
+    >
+      {label}
+    </button>
+  );
+}
 
 export default function GuideListPage() {
-  const [selectedModule, setSelectedModule] = useState(null);
-  const [sortBy, setSortBy] = useState('recent'); // recent, popular, title
+  const { moduleId } = useParams();
+
+  // moduleId로 모듈 이름 조회
+  const moduleFromParam = useMemo(() => {
+    if (!moduleId) return null;
+    const found = MODULE_TREE.find(m => m.id === moduleId);
+    return found ? found.label : null;
+  }, [moduleId]);
+
+  const [selectedModule, setSelectedModule] = useState(moduleFromParam);
+  const [selectedType, setSelectedType] = useState(null);
+  const [sortBy, setSortBy] = useState('recent');
   const [searchQuery, setSearchQuery] = useState('');
 
   // 필터링 및 정렬
@@ -15,6 +59,11 @@ export default function GuideListPage() {
   // 모듈 필터
   if (selectedModule) {
     filteredGuides = filteredGuides.filter(g => g.module === selectedModule);
+  }
+
+  // 타입 필터
+  if (selectedType) {
+    filteredGuides = filteredGuides.filter(g => g.type === selectedType);
   }
 
   // 검색어 필터
@@ -35,41 +84,39 @@ export default function GuideListPage() {
   }
 
   const modules = [...new Set(Object.values(GUIDES).map(g => g.module))];
+  const types = [...new Set(Object.values(GUIDES).map(g => g.type))];
 
   return (
     <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '40px 32px', fontFamily: "'Pretendard', sans-serif" }}>
       {/* 헤더 */}
-      <div style={{ marginBottom: '40px' }}>
-        <h1 style={{ fontSize: '32px', fontWeight: 800, color: '#1a1a1a', marginBottom: '12px' }}>
+      <div style={{ marginBottom: '32px' }}>
+        <h1 style={{ fontSize: '28px', fontWeight: 800, color: '#111827', marginBottom: '8px' }}>
           가이드 목록
         </h1>
-        <p style={{ fontSize: '16px', color: '#666666' }}>
-          총 {filteredGuides.length}개의 가이드 • {GUIDES && Object.keys(GUIDES).length}개 전체
+        <p style={{ fontSize: '14px', color: '#6b7280' }}>
+          {filteredGuides.length}개 표시 중 (전체 {Object.keys(GUIDES).length}개)
         </p>
       </div>
 
-      {/* 검색 & 필터 */}
-      <div style={{ display: 'flex', gap: '12px', marginBottom: '32px', flexWrap: 'wrap' }}>
-        {/* 검색 */}
-        <div style={{ flex: 1, minWidth: '300px', display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 16px', backgroundColor: '#f2f2f2', borderRadius: '8px', border: '1px solid #e2e2e2' }}>
-          <Search size={16} color="#8f8f8f" />
+      {/* 검색 & 정렬 */}
+      <div style={{ display: 'flex', gap: '12px', marginBottom: '20px', flexWrap: 'wrap' }}>
+        <div style={{ flex: 1, minWidth: '280px', display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 16px', backgroundColor: '#f9fafb', borderRadius: '10px', border: '1px solid #e5e7eb' }}>
+          <Search size={16} color="#9ca3af" />
           <input
             type="text"
-            placeholder="가이드 검색..."
+            placeholder="가이드 제목, 내용 검색..."
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
-            style={{ flex: 1, border: 'none', backgroundColor: 'transparent', outline: 'none', fontSize: '14px', fontFamily: "'Pretendard', sans-serif" }}
+            style={{ flex: 1, border: 'none', backgroundColor: 'transparent', outline: 'none', fontSize: '14px', fontFamily: "'Pretendard', sans-serif", color: '#111827' }}
           />
+          {searchQuery && (
+            <button onClick={() => setSearchQuery('')} style={{ border: 'none', background: 'none', cursor: 'pointer', color: '#9ca3af', fontSize: '16px', lineHeight: 1, padding: 0 }}>×</button>
+          )}
         </div>
-
-        {/* 정렬 */}
         <select
           value={sortBy}
           onChange={e => setSortBy(e.target.value)}
-          style={{
-            padding: '10px 16px', borderRadius: '8px', border: '1px solid #e2e2e2',
-            backgroundColor: '#ffffff', fontSize: '14px', fontFamily: "'Pretendard', sans-serif", cursor: 'pointer'
-          }}
+          style={{ padding: '10px 16px', borderRadius: '10px', border: '1px solid #e5e7eb', backgroundColor: '#ffffff', fontSize: '14px', fontFamily: "'Pretendard', sans-serif", cursor: 'pointer', color: '#374151' }}
         >
           <option value="recent">최신 순</option>
           <option value="popular">인기 순</option>
@@ -77,50 +124,21 @@ export default function GuideListPage() {
         </select>
       </div>
 
-      {/* 모듈 필터 칩 */}
-      <div style={{ display: 'flex', gap: '8px', marginBottom: '32px', flexWrap: 'wrap' }}>
-        <button
-          onClick={() => setSelectedModule(null)}
-          style={{
-            padding: '8px 16px', borderRadius: '99px',
-            backgroundColor: selectedModule === null ? '#0070f3' : '#f2f2f2',
-            color: selectedModule === null ? '#ffffff' : '#1a1a1a',
-            border: 'none', cursor: 'pointer', fontSize: '13px', fontWeight: 600,
-            fontFamily: "'Pretendard', sans-serif", transition: 'all 120ms ease'
-          }}
-          onMouseEnter={e => {
-            if (selectedModule === null) return;
-            e.currentTarget.style.backgroundColor = '#ebebeb';
-          }}
-          onMouseLeave={e => {
-            if (selectedModule === null) return;
-            e.currentTarget.style.backgroundColor = '#f2f2f2';
-          }}
-        >
-          전체
-        </button>
-        {modules.map(module => (
-          <button
-            key={module}
-            onClick={() => setSelectedModule(module)}
-            style={{
-              padding: '8px 16px', borderRadius: '99px',
-              backgroundColor: selectedModule === module ? '#0070f3' : '#f2f2f2',
-              color: selectedModule === module ? '#ffffff' : '#1a1a1a',
-              border: 'none', cursor: 'pointer', fontSize: '13px', fontWeight: 600,
-              fontFamily: "'Pretendard', sans-serif", transition: 'all 120ms ease'
-            }}
-            onMouseEnter={e => {
-              if (selectedModule === module) return;
-              e.currentTarget.style.backgroundColor = '#ebebeb';
-            }}
-            onMouseLeave={e => {
-              if (selectedModule === module) return;
-              e.currentTarget.style.backgroundColor = '#f2f2f2';
-            }}
-          >
-            {module}
-          </button>
+      {/* 모듈 필터 */}
+      <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', flexWrap: 'wrap', alignItems: 'center' }}>
+        <span style={{ fontSize: '12px', fontWeight: 600, color: '#9ca3af', marginRight: '4px' }}>카테고리</span>
+        <Chip label="전체" active={selectedModule === null} onClick={() => setSelectedModule(null)} />
+        {modules.map(m => (
+          <Chip key={m} label={m} active={selectedModule === m} onClick={() => setSelectedModule(selectedModule === m ? null : m)} />
+        ))}
+      </div>
+
+      {/* 타입 필터 */}
+      <div style={{ display: 'flex', gap: '8px', marginBottom: '32px', flexWrap: 'wrap', alignItems: 'center' }}>
+        <span style={{ fontSize: '12px', fontWeight: 600, color: '#9ca3af', marginRight: '4px' }}>유형</span>
+        <Chip label="전체" active={selectedType === null} onClick={() => setSelectedType(null)} />
+        {types.map(t => (
+          <Chip key={t} label={TYPE_LABELS[t] || t} active={selectedType === t} onClick={() => setSelectedType(selectedType === t ? null : t)} colorActive={TYPE_COLORS[t]?.color || '#0070f3'} />
         ))}
       </div>
 
@@ -149,18 +167,18 @@ export default function GuideListPage() {
                 }}
               >
                 {/* 타입 배지 */}
-                <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', flexWrap: 'wrap' }}>
+                <div style={{ display: 'flex', gap: '6px', marginBottom: '12px', flexWrap: 'wrap' }}>
                   <span style={{
-                    fontSize: '10px', fontWeight: 700, padding: '4px 10px',
-                    backgroundColor: guide.type === 'SOP' ? '#eff6ff' : guide.type === 'DECISION' ? '#fef2f2' : '#f0fdf4',
-                    color: guide.type === 'SOP' ? '#1d4ed8' : guide.type === 'DECISION' ? '#be123c' : '#15803d',
-                    borderRadius: '99px'
+                    fontSize: '10px', fontWeight: 700, padding: '3px 9px',
+                    backgroundColor: TYPE_COLORS[guide.type]?.bg || '#f2f2f2',
+                    color: TYPE_COLORS[guide.type]?.color || '#666',
+                    borderRadius: '99px',
                   }}>
-                    {guide.type}
+                    {TYPE_LABELS[guide.type] || guide.type}
                   </span>
                   <span style={{
-                    fontSize: '10px', fontWeight: 700, padding: '4px 10px',
-                    backgroundColor: '#f2f2f2', color: '#666666', borderRadius: '99px'
+                    fontSize: '10px', fontWeight: 600, padding: '3px 9px',
+                    backgroundColor: '#f3f4f6', color: '#6b7280', borderRadius: '99px'
                   }}>
                     {guide.module}
                   </span>

@@ -3,9 +3,11 @@ name: Deploy to Vercel
 on:
   push:
     branches:
+      - main
       - claude/*
   pull_request:
     branches:
+      - main
       - claude/*
 
 jobs:
@@ -48,7 +50,7 @@ jobs:
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
       - name: Deploy to Vercel (Production)
-        if: github.event_name == 'push' && github.ref == 'refs/heads/claude/setup-deployment-shadcn-Kx1RH' && secrets.VERCEL_TOKEN != ''
+        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/claude/setup-deployment-shadcn-Kx1RH') && secrets.VERCEL_TOKEN != ''
         run: vercel --prod --token ${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}

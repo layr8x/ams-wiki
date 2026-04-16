@@ -26,7 +26,7 @@ describe('Performance Utils', () => {
 
     it('should return url for valid input', () => {
       const url = 'https://example.com/image.jpg';
-      expect(getOptimizedImageUrl(url, 800, 600)).toBe(url);
+      expect(getOptimizedImageUrl(url)).toBe(url);
     });
   });
 });

@@ -62,8 +62,6 @@ jobs:
 
       - name: Run unit tests
         run: npm run test -- --run
-        env:
-          NODE_ENV: test
 
   security-audit:
     runs-on: ubuntu-latest

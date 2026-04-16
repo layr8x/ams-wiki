@@ -347,7 +347,7 @@ export default function GuidePage() {
     guide.type==='SOP'      && guide.steps       && { id:'sec-steps',    label:'단계별 가이드' },
     guide.type==='DECISION' && guide.decisionTable && { id:'sec-decision', label:'판단 기준' },
     guide.type==='REFERENCE'&& guide.referenceData && { id:'sec-reference',label:'용어 참조' },
-    guide.type==='TROUBLE'  && guide.troubleTable  && { id:'sec-trouble',  label:'트러블슈팅' },
+    guide.troubleTable?.length > 0 && { id:'sec-trouble', label:'트러블슈팅' },
     guide.type==='RESPONSE' && guide.responses     && { id:'sec-response', label:'응대 스크립트' },
     guide.type==='POLICY'   && guide.policyDiff    && { id:'sec-policy',   label:'정책 변경' },
     guide.mainItemsTable    && { id:'sec-items',    label:'주요 항목 설명' },
@@ -515,8 +515,8 @@ export default function GuidePage() {
           </section>
         )}
 
-        {/* ── TROUBLE 트러블슈팅 ── */}
-        {guide.type==='TROUBLE' && guide.troubleTable && (
+        {/* ── 트러블슈팅 (TROUBLE 유형 또는 troubleTable이 있는 모든 가이드) ── */}
+        {guide.troubleTable?.length > 0 && (
           <section style={{ marginBottom:'72px' }}>
             <SecHeading id="sec-trouble">문제 → 원인 → 해결</SecHeading>
             <div style={{ borderRadius:'12px', border:`1px solid ${G.g200}`, overflow:'hidden', boxShadow:G.sm }}>

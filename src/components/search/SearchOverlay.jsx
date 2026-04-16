@@ -3,12 +3,24 @@ import { useState, useEffect, useRef } from 'react';
 import { Search, FileText, CornerDownLeft } from 'lucide-react';
 import { useSearchStore } from '@/store/searchStore.jsx';
 import { useNavigate } from 'react-router-dom';
+import { SEARCH_SYNONYMS } from '@/data/mockData.js';
 
 const GUIDES_LIST = [
   { id: 'member-merge', title: 'AMS 회원 병합 가이드', module: '고객 관리', snippet: '중복 계정 통합 절차 및 유의사항' },
   { id: 'billing-decision', title: '환불 승인 기준 판단 가이드', module: '결제/환불', snippet: '위약금 및 환불 가능 여부 판단 기준' },
   { id: 'qr-trouble', title: 'QR 출석 인식 실패 대응', module: '수업 운영', snippet: '인식 실패 시 원인 파악 및 수동 처리' },
 ];
+
+// 동의어 사전을 통한 검색어 변환
+const expandSearchQuery = (query) => {
+  let expanded = [query];
+  for (const [term, synonyms] of Object.entries(SEARCH_SYNONYMS)) {
+    if (synonyms.some(syn => query.includes(syn))) {
+      expanded.push(term);
+    }
+  }
+  return expanded;
+};
 
 export default function SearchOverlay() {
   const { isOpen, close, open } = useSearchStore();
@@ -17,8 +29,12 @@ export default function SearchOverlay() {
   const inputRef = useRef(null);
   const navigate = useNavigate();
 
-  const results = GUIDES_LIST.filter(g => 
-    g.title.includes(query) || g.snippet.includes(query) || g.module.includes(query)
+  // 동의어 포함 검색
+  const expandedQueries = expandSearchQuery(query);
+  const results = GUIDES_LIST.filter(g =>
+    expandedQueries.some(q =>
+      g.title.includes(q) || g.snippet.includes(q) || g.module.includes(q)
+    )
   );
 
   // 검색어가 바뀔 때마다 선택 인덱스를 다시 첫 번째(0)로 초기화

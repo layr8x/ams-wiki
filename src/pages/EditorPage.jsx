@@ -253,7 +253,6 @@ function RelatedGuideCombobox({ selected, onSelect, onRemove }) {
           type="text"
           value={query}
           onChange={e => { setQuery(e.target.value); setIsOpen(true); }}
-          onFocus={() => setIsOpen(true)}
           onKeyDown={handleKeyDown}
           placeholder="가이드 제목, 모듈, 유형으로 검색…"
           style={{ ...inputBase, paddingLeft:'34px' }}

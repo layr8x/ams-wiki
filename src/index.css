@@ -105,29 +105,29 @@ h1, h2, h3, h4, h5, h6 {
 
 /* ── Focus ── */
 :focus-visible {
-  outline: 2px solid hsl(var(--ring));
+  outline: 2px solid var(--ring);
   outline-offset: 2px;
   border-radius: 4px;
 }
 
 /* ── Selection ── */
 ::selection {
-  background: hsl(var(--primary));
-  color: hsl(var(--primary-foreground));
+  background: var(--primary);
+  color: var(--primary-foreground);
 }
 
 /* ── Scrollbar (thin) ── */
 ::-webkit-scrollbar { width: 4px; height: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: hsl(var(--border)); border-radius: 9999px; }
-::-webkit-scrollbar-thumb:hover { background: hsl(var(--muted-foreground)); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 9999px; }
+::-webkit-scrollbar-thumb:hover { background: var(--muted-foreground); }
 
 /* ═══════════════════════════════════════════════════════
    LAYOUT HELPERS
    ═══════════════════════════════════════════════════════ */
 .divider {
   height: 1px;
-  background: hsl(var(--border));
+  background: var(--border);
   border: none;
 }
 
@@ -150,8 +150,8 @@ h1, h2, h3, h4, h5, h6 {
   left: 50%;
   transform: translateX(-50%);
   z-index: 9999;
-  background: hsl(var(--foreground));
-  color: hsl(var(--background));
+  background: var(--foreground);
+  color: var(--background);
   padding: 10px 20px;
   border-radius: var(--radius);
   font-size: 14px;

@@ -49,9 +49,8 @@ test.describe('AMS Wiki - 고급 기능', () => {
     // 같은 localStorage를 사용하도록 로드
     await page.goto('/');
 
-    // 예상: dark 클래스가 유지될 것 (localStorage에 저장되었기 때문)
-    const htmlElement = page.locator('html');
     // 주의: 이 테스트는 실제 localStorage 구현에 따라 달라질 수 있음
+    // 예상: dark 클래스가 유지될 것 (localStorage에 저장되었기 때문)
 
     await context.close();
   });

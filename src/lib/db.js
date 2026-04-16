@@ -1,0 +1,256 @@
+// src/lib/db.js
+// Supabase 데이터 접근 레이어 — mockData 폴백 포함
+// Supabase 미설정 시 로컬 mockData.js에서 자동으로 데이터를 읽습니다.
+
+import { supabase, isSupabaseEnabled } from './supabase'
+import { GUIDES, MODULE_TREE, RECENT_GUIDES, POPULAR_GUIDES } from '../data/mockData'
+
+// ─── helpers ────────────────────────────────────────────────────────────────
+
+/** Supabase row → 앱 내부 guide 객체 변환 */
+function rowToGuide(row) {
+  return {
+    id:            row.id,
+    type:          row.type,
+    module:        row.module,
+    title:         row.title,
+    tldr:          row.tldr,
+    path:          row.path,
+    amsUrl:        row.ams_url,
+    confluenceId:  row.confluence_id,
+    confluenceUrl: row.confluence_url,
+    targets:       row.targets || [],
+    tags:          row.tags   || [],
+    author:        row.author,
+    version:       row.version,
+    status:        row.status,
+    views:         row.views,
+    helpful:       row.helpful,
+    helpfulRate:   row.helpful_rate,
+    steps:         row.steps,
+    mainItemsTable:row.main_items_table,
+    cases:         row.cases,
+    cautions:      row.cautions,
+    troubleTable:  row.trouble_table,
+    responses:     row.responses,
+    decisionTable: row.decision_table,
+    referenceData: row.reference_data,
+    policyDiff:    row.policy_diff,
+    updated:       row.updated_at?.slice(0, 10),
+    updated_at:    row.updated_at,
+  }
+}
+
+// ─── 가이드 조회 ─────────────────────────────────────────────────────────────
+
+/** 전체 가이드 목록 (Supabase 또는 mockData 폴백) */
+export async function fetchGuides({ module: mod, type, search, limit = 100, offset = 0 } = {}) {
+  if (isSupabaseEnabled) {
+    let q = supabase
+      .from('guides')
+      .select('id,type,module,title,tldr,author,version,views,helpful,helpful_rate,targets,tags,updated_at,status')
+      .eq('status', 'published')
+      .order('updated_at', { ascending: false })
+      .range(offset, offset + limit - 1)
+
+    if (mod)    q = q.eq('module', mod)
+    if (type)   q = q.eq('type', type)
+    if (search) q = q.or(`title.ilike.%${search}%,tldr.ilike.%${search}%`)
+
+    const { data, error } = await q
+    if (error) throw error
+    return (data || []).map(rowToGuide)
+  }
+
+  // ── mockData 폴백 ──────────────────────────────────────────────────────────
+  let list = Object.entries(GUIDES).map(([id, g]) => ({ id, ...g }))
+  if (mod)    list = list.filter(g => g.module === mod)
+  if (type)   list = list.filter(g => g.type  === type)
+  if (search) {
+    const q = search.toLowerCase()
+    list = list.filter(g =>
+      g.title?.toLowerCase().includes(q) ||
+      g.tldr?.toLowerCase().includes(q)
+    )
+  }
+  return list.slice(offset, offset + limit)
+}
+
+/** 단일 가이드 조회 */
+export async function fetchGuide(id) {
+  if (isSupabaseEnabled) {
+    const { data, error } = await supabase
+      .from('guides')
+      .select('*')
+      .eq('id', id)
+      .single()
+    if (error) throw error
+    return rowToGuide(data)
+  }
+  const g = GUIDES[id]
+  if (!g) throw new Error(`가이드를 찾을 수 없습니다: ${id}`)
+  return { id, ...g }
+}
+
+/** 모듈별 가이드 수 집계 */
+export async function fetchModuleStats() {
+  if (isSupabaseEnabled) {
+    const { data, error } = await supabase
+      .from('guides')
+      .select('module')
+      .eq('status', 'published')
+    if (error) throw error
+    const counts = {}
+    for (const row of data || []) {
+      counts[row.module] = (counts[row.module] || 0) + 1
+    }
+    return counts
+  }
+  const counts = {}
+  for (const g of Object.values(GUIDES)) {
+    counts[g.module] = (counts[g.module] || 0) + 1
+  }
+  return counts
+}
+
+/** 최근 업데이트 가이드 */
+export async function fetchRecentGuides(n = 8) {
+  if (isSupabaseEnabled) {
+    const { data, error } = await supabase
+      .from('guides')
+      .select('id,type,module,title,views,helpful,helpful_rate,author,version,tags,updated_at')
+      .eq('status', 'published')
+      .order('updated_at', { ascending: false })
+      .limit(n)
+    if (error) throw error
+    return (data || []).map(rowToGuide)
+  }
+  return RECENT_GUIDES.slice(0, n)
+}
+
+/** 인기 가이드 (조회수 기준) */
+export async function fetchPopularGuides(n = 5) {
+  if (isSupabaseEnabled) {
+    const { data, error } = await supabase
+      .from('guides')
+      .select('id,type,module,title,views,helpful,helpful_rate,author,version,tags,updated_at')
+      .eq('status', 'published')
+      .order('views', { ascending: false })
+      .limit(n)
+    if (error) throw error
+    return (data || []).map(rowToGuide)
+  }
+  return POPULAR_GUIDES.slice(0, n)
+}
+
+// ─── 전문 검색 ───────────────────────────────────────────────────────────────
+
+/** 빠른 검색 (title + tldr ilike) */
+export async function searchGuides(query, limit = 20) {
+  if (!query?.trim()) return []
+  if (isSupabaseEnabled) {
+    const { data, error } = await supabase
+      .from('guides')
+      .select('id,type,module,title,tldr,updated_at')
+      .eq('status', 'published')
+      .or(`title.ilike.%${query}%,tldr.ilike.%${query}%,tags.cs.{${query}}`)
+      .limit(limit)
+    if (error) throw error
+
+    // 검색 로그 기록 (비동기, 실패 무시)
+    supabase.from('search_logs').insert({ query, result_count: data?.length || 0 }).then(() => {})
+
+    return (data || []).map(rowToGuide)
+  }
+  const q = query.toLowerCase()
+  return Object.entries(GUIDES)
+    .filter(([, g]) =>
+      g.title?.toLowerCase().includes(q) ||
+      g.tldr?.toLowerCase().includes(q) ||
+      g.module?.toLowerCase().includes(q)
+    )
+    .slice(0, limit)
+    .map(([id, g]) => ({ id, ...g }))
+}
+
+// ─── 피드백 ──────────────────────────────────────────────────────────────────
+
+/** 가이드 피드백 저장 */
+export async function submitFeedback({ guideId, vote, comment }) {
+  if (isSupabaseEnabled) {
+    const { error } = await supabase
+      .from('guide_feedback')
+      .insert({ guide_id: guideId, vote, comment: comment || null })
+    if (error) throw error
+
+    // helpful 카운터 업데이트
+    if (vote === 'helpful') {
+      await supabase.rpc('increment_guide_views', { guide_id_param: guideId })
+    }
+    return true
+  }
+  // mock: 로컬 스토리지에 임시 저장
+  const key = `feedback_${guideId}`
+  localStorage.setItem(key, JSON.stringify({ vote, comment, ts: Date.now() }))
+  return true
+}
+
+/** 피드백 통계 조회 */
+export async function fetchFeedbackStats(guideId) {
+  if (isSupabaseEnabled) {
+    const { data, error } = await supabase.rpc('get_guide_stats', { guide_id_param: guideId })
+    if (error) throw error
+    return data
+  }
+  const guide = GUIDES[guideId]
+  if (!guide) return { total: 0, helpful: 0, helpfulRate: 0 }
+  return {
+    total:      guide.helpful || 0,
+    helpful:    guide.helpful || 0,
+    helpfulRate:guide.helpfulRate || 0,
+    needsImprovement: 0,
+  }
+}
+
+// ─── 조회수 증가 ─────────────────────────────────────────────────────────────
+
+export async function incrementViews(guideId) {
+  if (isSupabaseEnabled) {
+    await supabase.rpc('increment_guide_views', { guide_id_param: guideId })
+  }
+  // mockData는 in-memory이므로 변경 불필요
+}
+
+// ─── 통계 대시보드 ───────────────────────────────────────────────────────────
+
+export async function fetchDashboardStats() {
+  if (isSupabaseEnabled) {
+    const [guidesRes, feedbackRes, , searchRes] = await Promise.all([
+      supabase.from('guides').select('id,views,helpful').eq('status', 'published'),
+      supabase.from('guide_feedback').select('vote', { count: 'exact', head: false }),
+      supabase.from('guide_views').select('id', { count: 'exact', head: true }),
+      supabase.from('search_logs').select('id', { count: 'exact', head: true }),
+    ])
+    const guides  = guidesRes.data  || []
+    const totalGuides = guides.length
+    const totalViews  = guides.reduce((s, g) => s + (g.views || 0), 0)
+    const helpful     = (feedbackRes.data || []).filter(f => f.vote === 'helpful').length
+    const feedbackTotal = feedbackRes.data?.length || 0
+    return {
+      totalGuides,
+      totalViews,
+      helpfulRate: feedbackTotal > 0 ? Math.round(100 * helpful / feedbackTotal) : 0,
+      searchCount: searchRes.count || 0,
+    }
+  }
+  const guides = Object.values(GUIDES)
+  return {
+    totalGuides: guides.length,
+    totalViews:  guides.reduce((s, g) => s + (g.views || 0), 0),
+    helpfulRate: 89,
+    searchCount: 0,
+  }
+}
+
+// ─── 모듈 트리 (항상 mockData) ───────────────────────────────────────────────
+export function getModuleTree() { return MODULE_TREE }

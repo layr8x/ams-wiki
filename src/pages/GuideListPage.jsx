@@ -1,244 +1,217 @@
-// src/pages/GuideListPage.jsx — 가이드 목록 페이지
-import { useState, useMemo } from 'react';
-import { Link, useParams } from 'react-router-dom';
-import { GUIDES, MODULE_TREE } from '../data/mockData';
-import { Search, ChevronRight, Eye, ThumbsUp, Clock } from 'lucide-react';
+// src/pages/GuideListPage.jsx — shadcn/ui 표준
+import { useState, useMemo } from 'react'
+import { Link, useParams } from 'react-router-dom'
+import { GUIDES, MODULE_TREE } from '@/data/mockData'
+import { Search, ChevronRight, Eye, ThumbsUp, Clock, Filter, SortAsc } from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
+import { Input } from '@/components/ui/input'
+import { cn } from '@/lib/utils'
 
-const TYPE_LABELS = {
-  SOP: '절차 가이드', DECISION: '판단 기준', REFERENCE: '참조 자료',
-  TROUBLE: '트러블슈팅', RESPONSE: '대응 매뉴얼', POLICY: '정책 공지',
-};
-
-const TYPE_COLORS = {
-  SOP:      { bg: '#eff6ff', color: '#1d4ed8' },
-  DECISION: { bg: '#fef2f2', color: '#be123c' },
-  REFERENCE:{ bg: '#f0fdf4', color: '#15803d' },
-  TROUBLE:  { bg: '#fff7ed', color: '#c2410c' },
-  RESPONSE: { bg: '#fdf4ff', color: '#7e22ce' },
-  POLICY:   { bg: '#f0f9ff', color: '#0369a1' },
-};
-
-function Chip({ label, active, onClick, colorActive = '#0070f3' }) {
-  return (
-    <button
-      onClick={onClick}
-      style={{
-        padding: '7px 16px', borderRadius: '99px',
-        backgroundColor: active ? colorActive : '#f2f2f2',
-        color: active ? '#ffffff' : '#1a1a1a',
-        border: 'none', cursor: 'pointer', fontSize: '13px', fontWeight: 600,
-        fontFamily: "'Pretendard', sans-serif", transition: 'all 120ms ease',
-        whiteSpace: 'nowrap',
-      }}
-      onMouseEnter={e => { if (!active) e.currentTarget.style.backgroundColor = '#ebebeb'; }}
-      onMouseLeave={e => { if (!active) e.currentTarget.style.backgroundColor = active ? colorActive : '#f2f2f2'; }}
-    >
-      {label}
-    </button>
-  );
+const TYPE_META = {
+  SOP:      { label:'절차 가이드', variant:'sop' },
+  DECISION: { label:'판단 기준',   variant:'decision' },
+  REFERENCE:{ label:'참조 자료',   variant:'reference' },
+  TROUBLE:  { label:'트러블슈팅',  variant:'trouble' },
+  RESPONSE: { label:'대응 매뉴얼', variant:'response' },
+  POLICY:   { label:'정책 공지',   variant:'policy' },
 }
 
+const SORT_OPTIONS = [
+  { value: 'updated', label: '최신순' },
+  { value: 'views',   label: '인기순' },
+  { value: 'title',   label: '제목순' },
+]
+
 export default function GuideListPage() {
-  const { moduleId } = useParams();
+  const { moduleId }   = useParams()
+  const [search, setSearch]   = useState('')
+  const [typeFilter, setType] = useState('ALL')
+  const [modFilter,  setMod]  = useState(moduleId || 'ALL')
+  const [sort, setSort]       = useState('updated')
 
-  // moduleId로 모듈 이름 조회
-  const moduleFromParam = useMemo(() => {
-    if (!moduleId) return null;
-    const found = MODULE_TREE.find(m => m.id === moduleId);
-    return found ? found.label : null;
-  }, [moduleId]);
+  const moduleLabel = useMemo(() => {
+    if (!moduleId) return null
+    return MODULE_TREE.find(m => m.id === moduleId)?.label || null
+  }, [moduleId])
 
-  const [selectedModule, setSelectedModule] = useState(moduleFromParam);
-  const [selectedType, setSelectedType] = useState(null);
-  const [sortBy, setSortBy] = useState('recent');
-  const [searchQuery, setSearchQuery] = useState('');
+  const allGuides = useMemo(() =>
+    Object.entries(GUIDES).map(([id, g]) => ({ id, ...g })),
+  [])
 
-  // 필터링 및 정렬
-  let filteredGuides = Object.entries(GUIDES).map(([id, guide]) => ({ id, ...guide }));
+  const filtered = useMemo(() => {
+    let list = allGuides
+    if (modFilter !== 'ALL') list = list.filter(g => g.module === modFilter)
+    if (typeFilter !== 'ALL') list = list.filter(g => g.type === typeFilter)
+    if (search.trim()) {
+      const q = search.toLowerCase()
+      list = list.filter(g =>
+        g.title?.toLowerCase().includes(q) ||
+        g.tldr?.toLowerCase().includes(q) ||
+        g.module?.toLowerCase().includes(q)
+      )
+    }
+    if (sort === 'updated') list = [...list].sort((a, b) => (b.updated || '').localeCompare(a.updated || ''))
+    if (sort === 'views')   list = [...list].sort((a, b) => (b.views || 0) - (a.views || 0))
+    if (sort === 'title')   list = [...list].sort((a, b) => a.title.localeCompare(b.title, 'ko'))
+    return list
+  }, [allGuides, modFilter, typeFilter, search, sort])
 
-  // 모듈 필터
-  if (selectedModule) {
-    filteredGuides = filteredGuides.filter(g => g.module === selectedModule);
-  }
+  const modules   = useMemo(() => [...new Set(allGuides.map(g => g.module))].sort(), [allGuides])
+  const typeCount = useMemo(() => {
+    const c = {}
+    allGuides.forEach(g => { c[g.type] = (c[g.type] || 0) + 1 })
+    return c
+  }, [allGuides])
 
-  // 타입 필터
-  if (selectedType) {
-    filteredGuides = filteredGuides.filter(g => g.type === selectedType);
-  }
-
-  // 검색어 필터
-  if (searchQuery) {
-    filteredGuides = filteredGuides.filter(g =>
-      g.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      g.tldr.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-  }
-
-  // 정렬
-  if (sortBy === 'popular') {
-    filteredGuides.sort((a, b) => (b.views || 0) - (a.views || 0));
-  } else if (sortBy === 'title') {
-    filteredGuides.sort((a, b) => a.title.localeCompare(b.title, 'ko'));
-  } else {
-    filteredGuides.sort((a, b) => new Date(b.updated) - new Date(a.updated));
-  }
-
-  const modules = [...new Set(Object.values(GUIDES).map(g => g.module))];
-  const types = [...new Set(Object.values(GUIDES).map(g => g.type))];
+  // 렌더 시점 기준 — 7일 이내 업데이트 판단용
+  const sevenDaysAgo = useMemo(() => {
+    const d = new Date(); d.setDate(d.getDate() - 7); return d.getTime()
+  }, [])
 
   return (
-    <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '40px 32px', fontFamily: "'Pretendard', sans-serif" }}>
+    <div className="mx-auto w-full max-w-5xl px-6 py-10">
+
       {/* 헤더 */}
-      <div style={{ marginBottom: '32px' }}>
-        <h1 style={{ fontSize: '28px', fontWeight: 800, color: '#111827', marginBottom: '8px' }}>
-          가이드 목록
+      <div className="mb-8">
+        <nav className="mb-3 flex items-center gap-1.5 text-xs text-muted-foreground">
+          <Link to="/" className="hover:text-foreground transition-colors">홈</Link>
+          <ChevronRight size={12} />
+          <span className="font-medium text-foreground">
+            {moduleLabel ? moduleLabel : '전체 가이드'}
+          </span>
+        </nav>
+        <h1 className="text-2xl font-bold tracking-tight text-foreground">
+          {moduleLabel ? moduleLabel : '전체 가이드'}
         </h1>
-        <p style={{ fontSize: '14px', color: '#6b7280' }}>
-          {filteredGuides.length}개 표시 중 (전체 {Object.keys(GUIDES).length}개)
+        <p className="mt-1 text-sm text-muted-foreground">
+          총 {allGuides.length}개 가이드 · {filtered.length}개 표시 중
         </p>
       </div>
 
-      {/* 검색 & 정렬 */}
-      <div style={{ display: 'flex', gap: '12px', marginBottom: '20px', flexWrap: 'wrap' }}>
-        <div style={{ flex: 1, minWidth: '280px', display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 16px', backgroundColor: '#f9fafb', borderRadius: '10px', border: '1px solid #e5e7eb' }}>
-          <Search size={16} color="#9ca3af" />
-          <input
-            type="text"
-            placeholder="가이드 제목, 내용 검색..."
-            value={searchQuery}
-            onChange={e => setSearchQuery(e.target.value)}
-            style={{ flex: 1, border: 'none', backgroundColor: 'transparent', outline: 'none', fontSize: '14px', fontFamily: "'Pretendard', sans-serif", color: '#111827' }}
+      {/* 필터 바 */}
+      <div className="mb-6 space-y-3">
+        {/* 검색 */}
+        <div className="relative">
+          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            placeholder="가이드 검색..."
+            className="pl-9"
           />
-          {searchQuery && (
-            <button onClick={() => setSearchQuery('')} style={{ border: 'none', background: 'none', cursor: 'pointer', color: '#9ca3af', fontSize: '16px', lineHeight: 1, padding: 0 }}>×</button>
-          )}
         </div>
-        <select
-          value={sortBy}
-          onChange={e => setSortBy(e.target.value)}
-          style={{ padding: '10px 16px', borderRadius: '10px', border: '1px solid #e5e7eb', backgroundColor: '#ffffff', fontSize: '14px', fontFamily: "'Pretendard', sans-serif", cursor: 'pointer', color: '#374151' }}
-        >
-          <option value="recent">최신 순</option>
-          <option value="popular">인기 순</option>
-          <option value="title">제목 순</option>
-        </select>
-      </div>
 
-      {/* 모듈 필터 */}
-      <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', flexWrap: 'wrap', alignItems: 'center' }}>
-        <span style={{ fontSize: '12px', fontWeight: 600, color: '#9ca3af', marginRight: '4px' }}>카테고리</span>
-        <Chip
-          label={`전체 ${Object.keys(GUIDES).length}`}
-          active={selectedModule === null}
-          onClick={() => setSelectedModule(null)}
-        />
-        {modules.map(m => {
-          const cnt = Object.values(GUIDES).filter(g => g.module === m).length;
-          return (
-            <Chip key={m} label={`${m} ${cnt}`} active={selectedModule === m} onClick={() => setSelectedModule(selectedModule === m ? null : m)} />
-          );
-        })}
-      </div>
+        {/* 필터 칩 그룹 */}
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="flex items-center gap-1.5 text-xs text-muted-foreground mr-1">
+            <Filter size={12} />
+            <span>유형:</span>
+          </div>
+          <button
+            onClick={() => setType('ALL')}
+            className={cn('rounded-full px-3 py-1 text-xs font-medium transition-colors', typeFilter === 'ALL' ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground hover:bg-secondary/80')}
+          >
+            전체 ({allGuides.length})
+          </button>
+          {Object.entries(TYPE_META).map(([type, meta]) => (
+            <button
+              key={type}
+              onClick={() => setType(type)}
+              className={cn('rounded-full px-3 py-1 text-xs font-medium transition-colors', typeFilter === type ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground hover:bg-secondary/80')}
+            >
+              {meta.label} ({typeCount[type] || 0})
+            </button>
+          ))}
+        </div>
 
-      {/* 타입 필터 */}
-      <div style={{ display: 'flex', gap: '8px', marginBottom: '32px', flexWrap: 'wrap', alignItems: 'center' }}>
-        <span style={{ fontSize: '12px', fontWeight: 600, color: '#9ca3af', marginRight: '4px' }}>유형</span>
-        <Chip label="전체" active={selectedType === null} onClick={() => setSelectedType(null)} />
-        {types.map(t => {
-          const cnt = Object.values(GUIDES).filter(g => g.type === t && (!selectedModule || g.module === selectedModule)).length;
-          return (
-            <Chip key={t} label={`${TYPE_LABELS[t] || t} ${cnt}`} active={selectedType === t} onClick={() => setSelectedType(selectedType === t ? null : t)} colorActive={TYPE_COLORS[t]?.color || '#0070f3'} />
-          );
-        })}
+        {/* 모듈 필터 + 정렬 */}
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="flex items-center gap-1.5 text-xs text-muted-foreground mr-1">
+            <Filter size={12} />
+            <span>카테고리:</span>
+          </div>
+          <button
+            onClick={() => setMod('ALL')}
+            className={cn('rounded-full px-3 py-1 text-xs font-medium transition-colors', modFilter === 'ALL' ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground hover:bg-secondary/80')}
+          >전체</button>
+          {modules.map(m => (
+            <button key={m} onClick={() => setMod(m)}
+              className={cn('rounded-full px-3 py-1 text-xs font-medium transition-colors truncate max-w-32',
+                modFilter === m ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
+              )}
+            >{m.split('/')[0]}</button>
+          ))}
+
+          <div className="ml-auto flex items-center gap-1.5">
+            <SortAsc size={12} className="text-muted-foreground" />
+            <select
+              value={sort}
+              onChange={e => setSort(e.target.value)}
+              className="h-7 rounded border border-input bg-background px-2 text-xs text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+            >
+              {SORT_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+            </select>
+          </div>
+        </div>
       </div>
 
       {/* 가이드 목록 */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
-        {filteredGuides.length > 0 ? (
-          filteredGuides.map(guide => (
-            <Link
-              key={guide.id}
-              to={`/guides/${guide.id}`}
-              style={{ textDecoration: 'none' }}
-            >
-              <div
-                style={{
-                  padding: '20px', borderRadius: '12px', border: '1px solid #e2e2e2',
-                  backgroundColor: '#ffffff', cursor: 'pointer',
-                  transition: 'all 120ms ease', height: '100%', display: 'flex', flexDirection: 'column'
-                }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.borderColor = '#0070f3';
-                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,112,243,0.1)';
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.borderColor = '#e2e2e2';
-                  e.currentTarget.style.boxShadow = 'none';
-                }}
+      {filtered.length === 0 ? (
+        <div className="flex flex-col items-center gap-3 py-20 text-center">
+          <Search size={36} className="text-muted-foreground/40" />
+          <p className="text-sm font-medium text-foreground">검색 결과가 없습니다</p>
+          <p className="text-xs text-muted-foreground">필터를 변경하거나 다른 키워드로 검색해보세요</p>
+          <button onClick={() => { setSearch(''); setType('ALL'); setMod('ALL') }} className="mt-2 text-xs text-blue-600 hover:underline">
+            필터 초기화
+          </button>
+        </div>
+      ) : (
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {filtered.map(g => {
+            const tm = TYPE_META[g.type] || TYPE_META.SOP
+            const isNew = g.updated && new Date(g.updated).getTime() > sevenDaysAgo
+            return (
+              <Link
+                key={g.id}
+                to={`/guides/${g.id}`}
+                className="group flex flex-col gap-3 rounded-lg border border-border bg-card p-4 transition-all hover:border-ring/30 hover:shadow-md"
               >
-                {/* 타입 배지 */}
-                <div style={{ display: 'flex', gap: '6px', marginBottom: '12px', flexWrap: 'wrap' }}>
-                  <span style={{
-                    fontSize: '10px', fontWeight: 700, padding: '3px 9px',
-                    backgroundColor: TYPE_COLORS[guide.type]?.bg || '#f2f2f2',
-                    color: TYPE_COLORS[guide.type]?.color || '#666',
-                    borderRadius: '99px',
-                  }}>
-                    {TYPE_LABELS[guide.type] || guide.type}
-                  </span>
-                  <span style={{
-                    fontSize: '10px', fontWeight: 600, padding: '3px 9px',
-                    backgroundColor: '#f3f4f6', color: '#6b7280', borderRadius: '99px'
-                  }}>
-                    {guide.module}
-                  </span>
+                <div className="flex items-start justify-between gap-2">
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    <Badge variant={tm.variant} size="sm">{tm.label}</Badge>
+                    {isNew && <Badge variant="new" size="sm">NEW</Badge>}
+                  </div>
+                  <ChevronRight size={14} className="mt-0.5 shrink-0 text-muted-foreground/40 transition-transform group-hover:translate-x-0.5" />
                 </div>
 
-                {/* 제목 */}
-                <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#1a1a1a', marginBottom: '8px', flex: 1 }}>
-                  {guide.title}
-                </h3>
-
-                {/* TL;DR */}
-                <p style={{ fontSize: '13px', color: '#666666', marginBottom: '16px', lineHeight: 1.5 }}>
-                  {guide.tldr.split('\n')[0]}
-                </p>
-
-                {/* 메타데이터 */}
-                <div style={{ display: 'flex', gap: '16px', fontSize: '12px', color: '#8f8f8f', borderTop: '1px solid #e2e2e2', paddingTop: '12px' }}>
-                  {guide.views && (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                      <Eye size={12} /> {guide.views}
-                    </div>
-                  )}
-                  {guide.helpful && (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                      <ThumbsUp size={12} /> {guide.helpful}
-                    </div>
-                  )}
-                  {guide.updated && (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                      <Clock size={12} /> {guide.updated}
-                    </div>
-                  )}
+                <div className="flex-1">
+                  <p className="text-sm font-semibold text-foreground leading-tight">{g.title}</p>
+                  <p className="mt-1.5 text-xs text-muted-foreground line-clamp-2 leading-relaxed">
+                    {g.tldr?.split('\n')[0]}
+                  </p>
                 </div>
-              </div>
-            </Link>
-          ))
-        ) : (
-          <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '80px 20px', color: '#8f8f8f' }}>
-            <p style={{ fontSize: '32px', margin: '0 0 16px' }}>🔍</p>
-            <p style={{ fontSize: '16px', fontWeight: 700, color: '#374151', margin: '0 0 8px' }}>검색 결과가 없습니다.</p>
-            <p style={{ fontSize: '14px', color: '#9ca3af', margin: '0 0 20px' }}>다른 검색어나 필터를 사용해보세요.</p>
-            <button
-              onClick={() => { setSelectedModule(null); setSelectedType(null); setSearchQuery(''); }}
-              style={{ padding: '10px 24px', borderRadius: '99px', backgroundColor: '#111827', color: '#fff', border: 'none', fontSize: '14px', fontWeight: 600, cursor: 'pointer', fontFamily: "'Pretendard', sans-serif" }}
-            >
-              필터 초기화
-            </button>
-          </div>
-        )}
-      </div>
+
+                <div className="flex items-center gap-3 text-[11px] text-muted-foreground border-t border-border pt-3">
+                  <span className="truncate">{g.module?.split('/')[0]}</span>
+                  {g.views && (
+                    <span className="flex items-center gap-1 shrink-0">
+                      <Eye size={10} /> {g.views}
+                    </span>
+                  )}
+                  {g.helpful && (
+                    <span className="flex items-center gap-1 shrink-0">
+                      <ThumbsUp size={10} /> {g.helpful}
+                    </span>
+                  )}
+                  <span className="ml-auto flex items-center gap-1 shrink-0">
+                    <Clock size={10} /> {g.updated?.slice(0, 10)}
+                  </span>
+                </div>
+              </Link>
+            )
+          })}
+        </div>
+      )}
     </div>
-  );
+  )
 }

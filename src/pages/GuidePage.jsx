@@ -134,7 +134,7 @@ function CautionBlock({ items }) {
         {items.map((c,i)=>(
           <div key={i} className={`flex gap-3 py-3 px-4.5 bg-white ${i<items.length-1 ? 'border-b border-amber-100' : ''}`}>
             <div className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0 mt-1.5" />
-            <p className="m-0 text-sm text-zinc-600 leading-relaxed">{c}</p>
+            <p className="m-0 text-sm text-muted-foreground leading-relaxed">{c}</p>
           </div>
         ))}
       </AlertDescription>
@@ -146,15 +146,15 @@ function CautionBlock({ items }) {
 function CaseItem({ item, index }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className={`border rounded-xl mb-2 transition-all duration-150 overflow-hidden ${open ? 'border-blue-200 bg-zinc-50' : 'border-zinc-100 bg-white'}`}>
+    <div className={`border rounded-xl mb-2 transition-all duration-150 overflow-hidden ${open ? 'border-blue-200 bg-muted' : 'border-border bg-white'}`}>
       <button onClick={()=>setOpen(o=>!o)} className="w-full flex items-center gap-3.5 py-3.5 px-5 bg-transparent border-none cursor-pointer text-left">
-        <div className={`w-6.5 h-6.5 rounded-full text-xs font-extrabold flex items-center justify-center shrink-0 transition-all duration-150 ${open ? 'bg-blue-500 text-white' : 'bg-zinc-200 text-zinc-500'}`}>{index+1}</div>
-        <span className="flex-1 text-[15px] font-bold text-zinc-900">{item.label}</span>
-        <ChevronDown size={14} className={`text-zinc-400 shrink-0 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
+        <div className={`w-6.5 h-6.5 rounded-full text-xs font-extrabold flex items-center justify-center shrink-0 transition-all duration-150 ${open ? 'bg-blue-500 text-white' : 'bg-zinc-200 text-muted-foreground'}`}>{index+1}</div>
+        <span className="flex-1 text-[15px] font-bold text-foreground">{item.label}</span>
+        <ChevronDown size={14} className={`text-muted-foreground shrink-0 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
       </button>
       {open && (
         <div className="pr-5 pb-4.5 pl-15">
-          <p className="text-sm leading-7 text-zinc-600 mb-2.5 whitespace-pre-wrap">{item.action}</p>
+          <p className="text-sm leading-7 text-muted-foreground mb-2.5 whitespace-pre-wrap">{item.action}</p>
           {item.note && (
             <Alert variant="warning" className="py-2 px-3.5 rounded-lg text-[13px] flex gap-2 leading-relaxed">
               <AlertTriangle size={12} className="text-amber-500 shrink-0 mt-0.5" />
@@ -182,7 +182,7 @@ function FeedbackWidget() {
   );
   return (
     <div className="text-center">
-      <p className="text-[15px] font-bold text-zinc-700 mb-4.5">이 가이드가 업무에 도움이 되었나요?</p>
+      <p className="text-[15px] font-bold text-foreground mb-4.5">이 가이드가 업무에 도움이 되었나요?</p>
       <div className={`flex gap-2.5 justify-center ${voted===false ? 'mb-4' : ''}`}>
         <Button variant={voted===true ? 'secondary' : 'outline'} size="sm" onClick={()=>setVoted(true)} className={`rounded-full px-5.5 ${voted===true ? 'border-green-500 bg-green-100 text-green-700' : ''}`}>
           <ThumbsUp size={14} /> 도움됨

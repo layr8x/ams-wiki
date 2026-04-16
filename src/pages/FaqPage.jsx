@@ -1,7 +1,7 @@
 // src/pages/FaqPage.jsx
 import { useState } from 'react'
 import { HelpCircle, ChevronDown, ChevronUp, MessageSquare } from 'lucide-react'
-import { Card } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 
@@ -28,11 +28,11 @@ export default function FaqPage() {
 
       {/* 헤더 영역 */}
       <div className="mb-12 text-center">
-        <div className="inline-flex items-center justify-center w-12 h-12 rounded-[14px] bg-blue-50 mb-4">
-          <HelpCircle size={24} className="text-blue-600" />
+        <div className="inline-flex items-center justify-center w-12 h-12 rounded-[14px] bg-primary/5 mb-4">
+          <HelpCircle size={24} className="text-primary" />
         </div>
-        <h1 className="text-[32px] font-extrabold text-zinc-900 mb-3 tracking-tight">운영 FAQ</h1>
-        <p className="text-base text-zinc-500">상담실장님들이 가장 자주 묻는 반복 문의들을 모았습니다.</p>
+        <h1 className="text-[32px] font-extrabold text-foreground mb-3 tracking-tight">운영 FAQ</h1>
+        <p className="text-base text-muted-foreground">상담실장님들이 가장 자주 묻는 반복 문의들을 모았습니다.</p>
       </div>
 
       {/* 카테고리 필터 */}
@@ -51,27 +51,29 @@ export default function FaqPage() {
       </div>
 
       {/* FAQ 리스트 */}
-      <div className="border-t border-zinc-200">
+      <div className="border-t border-border">
         {filteredFaqs.map((faq, idx) => {
           const isOpen = openIndex === idx
           return (
-            <div key={idx} className="border-b border-zinc-200 transition-colors duration-200 hover:bg-zinc-50">
+            <div key={idx} className="border-b border-border transition-colors duration-200 hover:bg-muted">
               <button
                 onClick={() => toggle(idx)}
                 className="w-full flex items-center justify-between px-4 py-6 bg-transparent border-none cursor-pointer text-left"
               >
                 <div className="flex items-center gap-4">
                   <Badge variant="default" size="default" className="font-bold">{faq.category}</Badge>
-                  <span className={`text-base transition-colors duration-200 ${isOpen ? 'font-bold text-blue-600' : 'font-medium text-zinc-900'}`}>{faq.q}</span>
+                  <span className={`text-base transition-colors duration-200 ${isOpen ? 'font-bold text-primary' : 'font-medium text-foreground'}`}>{faq.q}</span>
                 </div>
-                {isOpen ? <ChevronUp size={20} className="text-zinc-400" /> : <ChevronDown size={20} className="text-zinc-400" />}
+                {isOpen ? <ChevronUp size={20} className="text-muted-foreground" /> : <ChevronDown size={20} className="text-muted-foreground" />}
               </button>
 
               {isOpen && (
                 <div className="px-4 pb-6 pl-20">
-                  <Card className="flex gap-3 p-5 bg-zinc-50 border-zinc-200">
-                    <MessageSquare size={18} className="text-zinc-500 mt-0.5 shrink-0" />
-                    <p className="text-[15px] text-zinc-600 m-0 leading-relaxed">{faq.a}</p>
+                  <Card>
+                    <CardContent className="flex gap-3">
+                      <MessageSquare size={18} className="text-muted-foreground mt-0.5 shrink-0" />
+                      <p className="text-sm text-muted-foreground leading-relaxed">{faq.a}</p>
+                    </CardContent>
                   </Card>
                 </div>
               )}

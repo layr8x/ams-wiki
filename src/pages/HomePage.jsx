@@ -9,7 +9,7 @@ import {
 import { useSearchStore } from '@/store/searchStore.jsx'
 import { MODULES } from '@/api/mockData'
 import { RECENT_GUIDES } from '@/data/mockData'
-import { Card } from '@/components/ui/card'
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 
@@ -20,20 +20,22 @@ function ModuleCard({ m }) {
   const Icon = ICON_MAP[m.icon] || BookOpen
   return (
     <Link to={`/modules/${m.id}`} className="group no-underline">
-      <Card className="flex flex-col gap-3 p-5">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-[10px] bg-zinc-50 flex items-center justify-center transition-all group-hover:bg-blue-50">
-            <Icon size={18} strokeWidth={2.5} className="text-zinc-500 transition-colors group-hover:text-blue-600" />
+      <Card>
+        <CardHeader>
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center transition-all group-hover:bg-accent">
+              <Icon size={18} strokeWidth={2.5} className="text-muted-foreground transition-colors group-hover:text-primary" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <CardTitle>{m.label}</CardTitle>
+              <CardDescription>{m.guide_count}개 가이드</CardDescription>
+            </div>
+            <ChevronRight size={16} className="text-muted-foreground/50" />
           </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-zinc-900 m-0 truncate">{m.label}</p>
-            <p className="text-xs font-medium text-zinc-400 mt-0.5 mb-0">{m.guide_count}개 가이드</p>
-          </div>
-          <ChevronRight size={16} className="text-zinc-300" />
-        </div>
-        <p className="text-[13px] text-zinc-500 m-0 leading-relaxed line-clamp-2">
-          {m.description}
-        </p>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">{m.description}</p>
+        </CardContent>
       </Card>
     </Link>
   )
@@ -44,12 +46,12 @@ function RecentItem({ g, isLast }) {
   return (
     <Link
       to={`/guides/${g.id}`}
-      className={`flex items-center gap-4 px-5 py-3.5 no-underline transition-colors hover:bg-zinc-50 ${isLast ? '' : 'border-b border-zinc-100'}`}
+      className={`flex items-center gap-4 px-5 py-3.5 no-underline transition-colors hover:bg-muted ${isLast ? '' : 'border-b border-border'}`}
     >
       <Badge variant="default" size="sm" className="whitespace-nowrap font-semibold">
         {g.module}
       </Badge>
-      <span className="flex-1 text-sm font-medium text-zinc-900 truncate">
+      <span className="flex-1 text-sm font-medium text-foreground truncate">
         {g.title}
       </span>
       {isNew && (
@@ -57,10 +59,10 @@ function RecentItem({ g, isLast }) {
           업데이트됨
         </Badge>
       )}
-      <span className="text-xs font-medium text-zinc-400 font-mono">
+      <span className="text-xs font-medium text-muted-foreground font-mono">
         {g.updated_at?.slice(0,10)}
       </span>
-      <ArrowRight size={14} className="text-zinc-300" />
+      <ArrowRight size={14} className="text-muted-foreground/50" />
     </Link>
   )
 }
@@ -75,24 +77,24 @@ export default function HomePage() {
 
       {/* ── 히어로 영역 ── */}
       <section className="flex flex-col items-center text-center gap-5 mb-20">
-        <Badge variant="default" size="default" className="gap-2 px-3.5 py-1.5 border border-blue-100 font-bold tracking-wide text-xs">
+        <Badge variant="secondary" size="default" className="gap-2 px-3.5 py-1.5 border border-blue-100 font-bold tracking-wide text-xs">
           <span className="w-1.5 h-1.5 rounded-full bg-blue-600" />
           AMS 운영 위키
         </Badge>
 
-        <h1 className="text-[40px] font-extrabold tracking-tight text-zinc-900 m-0 leading-tight">
+        <h1 className="text-[40px] font-extrabold tracking-tight text-foreground m-0 leading-tight">
           어떤 가이드를 찾으시나요?
         </h1>
-        <p className="text-base text-zinc-500 font-medium m-0">
+        <p className="text-base text-muted-foreground font-medium m-0">
           AMS 기능 사용법, 운영 케이스, 정책 기준을 한 곳에서 검색하세요.
         </p>
 
         {/* 검색바 */}
         <button
           onClick={open}
-          className="group mt-4 flex items-center gap-3 w-full max-w-[560px] h-[52px] px-5 rounded-2xl border border-zinc-200 bg-white shadow-sm cursor-pointer transition-all hover:border-zinc-300 hover:shadow-md box-border"
+          className="group mt-4 flex items-center gap-3 w-full max-w-[560px] h-[52px] px-5 rounded-2xl border border-border bg-background shadow-sm cursor-pointer transition-all hover:border-zinc-300 hover:shadow-md box-border"
         >
-          <Search size={18} className="text-zinc-400 transition-colors group-hover:text-blue-500" />
+          <Search size={18} className="text-muted-foreground transition-colors group-hover:text-primary" />
           <span className="flex-1 text-left text-[15px] text-zinc-400 font-medium">가이드 검색 (단축키 '/')</span>
           <div className="flex items-center gap-1">
             <kbd className="font-mono text-[11px] font-semibold text-zinc-400 bg-zinc-50 border border-zinc-200 rounded px-2 py-0.5">⌘</kbd>

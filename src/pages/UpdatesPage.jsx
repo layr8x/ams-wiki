@@ -1,6 +1,6 @@
 // src/pages/UpdatesPage.jsx
 import { Bell, Sparkles, FileCog } from 'lucide-react'
-import { Card } from '@/components/ui/card'
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 
 const UPDATES_DATA = [
@@ -33,14 +33,14 @@ export default function UpdatesPage() {
         <div className="inline-flex items-center justify-center w-12 h-12 rounded-[14px] bg-red-50 mb-4">
           <Bell size={24} className="text-red-600" />
         </div>
-        <h1 className="text-[32px] font-extrabold text-zinc-900 mb-3 tracking-tight">업데이트 이력</h1>
-        <p className="text-base text-zinc-500">AMS 기능 개선 및 주요 정책 변경 사항을 확인하세요.</p>
+        <h1 className="text-[32px] font-extrabold text-foreground mb-3 tracking-tight">업데이트 이력</h1>
+        <p className="text-base text-muted-foreground">AMS 기능 개선 및 주요 정책 변경 사항을 확인하세요.</p>
       </div>
 
       {/* 타임라인 영역 */}
       <div className="relative">
         {/* 세로 선 */}
-        <div className="absolute top-0 bottom-0 left-[23px] w-0.5 bg-zinc-200"></div>
+        <div className="absolute top-0 bottom-0 left-[23px] w-0.5 bg-border"></div>
 
         {UPDATES_DATA.map((item, idx) => {
           const isFeature = item.type === 'feature'
@@ -48,22 +48,26 @@ export default function UpdatesPage() {
             <div key={idx} className="relative flex gap-8 mb-12">
 
               {/* 타임라인 아이콘 노드 */}
-              <div className="relative z-10 w-12 h-12 rounded-full bg-white border-2 border-zinc-200 flex items-center justify-center shrink-0">
-                {isFeature ? <Sparkles size={20} className="text-blue-600" /> : <FileCog size={20} className="text-emerald-600" />}
+              <div className="relative z-10 w-12 h-12 rounded-full bg-white border-2 border-border flex items-center justify-center shrink-0">
+                {isFeature ? <Sparkles size={20} className="text-primary" /> : <FileCog size={20} className="text-emerald-600" />}
               </div>
 
               {/* 콘텐츠 카드 */}
               <div className="flex-1 mt-0.5">
                 <div className="flex items-center gap-3 mb-3">
-                  <span className="text-[13px] font-bold font-mono text-zinc-500">{item.date}</span>
+                  <span className="text-[13px] font-bold font-mono text-muted-foreground">{item.date}</span>
                   <Badge variant={isFeature ? 'blue' : 'green'} size="sm" className="font-bold">
                     {isFeature ? '기능 개선' : '정책 변경'}
                   </Badge>
                 </div>
 
-                <Card className="p-6 cursor-default">
-                  <h3 className="text-lg font-extrabold text-zinc-900 mb-3">{item.title}</h3>
-                  <p className="text-[15px] text-zinc-600 m-0 leading-relaxed">{item.desc}</p>
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg">{item.title}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
+                  </CardContent>
                 </Card>
               </div>
 

@@ -178,7 +178,10 @@ function RelatedGuideCombobox({ selected, onSelect, onRemove }) {
     (g.title.includes(query) || g.module.includes(query) || g.type.includes(query))
   );
 
-  useEffect(() => { setFocusedIdx(0); }, [query]);
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setFocusedIdx(0);
+  }, [query]);
 
   // Auto-scroll focused item into view
   useEffect(() => {
@@ -441,6 +444,7 @@ function VersionDrawer({ isOpen, onClose }) {
 }
 
 // ─── Section Block ─────────────────────────────────────────────────────────
+// eslint-disable-next-line no-unused-vars
 function Section({ icon: Icon, title, badge, badgeColor = 'blue', children, defaultOpen = true }) {
   const [open, setOpen] = useState(defaultOpen);
   const bc = badgeColor === 'blue' ? { bg: C.blue50, color: C.blue700, border: C.blue200 }
@@ -638,7 +642,7 @@ function PublishModal({ title, version, onClose, onConfirm }) {
 
 // ─── 발행 완료 토스트 ─────────────────────────────────────────────────────────
 function Toast({ message, onClose }) {
-  useEffect(() => { const t = setTimeout(onClose, 3500); return () => clearTimeout(t); }, []);
+  useEffect(() => { const t = setTimeout(onClose, 3500); return () => clearTimeout(t); }, [onClose]);
   return createPortal(
     <div style={{ position:'fixed', bottom:'32px', left:'50%', transform:'translateX(-50%)', zIndex:9999, backgroundColor:'#111827', color:'#fff', padding:'12px 22px', borderRadius:'12px', fontSize:'14px', fontWeight:600, display:'flex', alignItems:'center', gap:'10px', boxShadow:'0 8px 32px rgba(0,0,0,0.2)', animation:'toastIn 0.2s ease', whiteSpace:'nowrap' }}>
       <style>{`@keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}`}</style>
@@ -660,15 +664,6 @@ export default function EditorPage() {
   const [showPublish,    setShowPublish]    = useState(false);   // 발행 모달
   const [toast,          setToast]          = useState(null);    // 토스트 메시지
 
-  // Ctrl+S 저장
-  useEffect(() => {
-    const handler = (e) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); save(); }
-    };
-    window.addEventListener('keydown', handler);
-    return () => window.removeEventListener('keydown', handler);
-  }, []);
-
   const [form, setForm] = useState({
     module:'', guideType:'SOP', guideGroup:'', title:'', menuPath:'',
     targets:[], tags:[],
@@ -682,6 +677,20 @@ export default function EditorPage() {
 
   const set = (k, v) => setForm(p => ({ ...p, [k]: v }));
 
+  const save = useCallback(() => {
+    setIsSaving(true);
+    setTimeout(() => { setIsSaving(false); setLastSaved(new Date().toLocaleTimeString('ko-KR', { hour:'2-digit', minute:'2-digit' })); }, 600);
+  }, []);
+
+  // Ctrl+S 저장
+  useEffect(() => {
+    const handler = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); save(); }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [save]);
+
   // Auto-save simulation (3s debounce)
   useEffect(() => {
     if (!form.title) return;
@@ -694,11 +703,6 @@ export default function EditorPage() {
     }, 3000);
     return () => clearTimeout(t);
   }, [form]);
-
-  const save = () => {
-    setIsSaving(true);
-    setTimeout(() => { setIsSaving(false); setLastSaved(new Date().toLocaleTimeString('ko-KR', { hour:'2-digit', minute:'2-digit' })); }, 600);
-  };
 
   // Steps
   const addStep   = () => set('steps', [...form.steps, { title:'', desc:'', image:null }]);
@@ -761,7 +765,7 @@ export default function EditorPage() {
       {showReview && (
         <ReviewModal
           onClose={() => setShowReview(false)}
-          onConfirm={(reviewer, note) => {
+          onConfirm={(reviewer) => {
             set('status', '검수중');
             setShowReview(false);
             setToast(`${reviewer}에게 검수 요청을 보냈습니다.`);

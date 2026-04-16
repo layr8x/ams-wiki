@@ -5,7 +5,7 @@
 // • 주요항목테이블, 운영케이스 아코디언, 유의사항, 피드백위젯 완비
 
 import { useParams, Link } from 'react-router-dom';
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import {
   ExternalLink, Clock, Search as SearchIcon,
   AlertTriangle, CheckCircle2, ChevronRight, MessageCircle,

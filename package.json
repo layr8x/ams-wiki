@@ -9,7 +9,8 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "db:seed": "node scripts/seed-guides.js"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.15",

@@ -1,0 +1,75 @@
+{
+  "common": {
+    "appName": "AMS Wiki",
+    "appDescription": "AMS Operational Guide Wiki",
+    "search": "Search",
+    "loading": "Loading",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "back": "Back",
+    "home": "Home",
+    "guides": "Guides",
+    "settings": "Settings",
+    "logout": "Logout",
+    "login": "Login"
+  },
+  "navigation": {
+    "modules": "Modules",
+    "recentGuides": "Recent Guides",
+    "favorites": "Favorites",
+    "onThisPage": "On This Page",
+    "modulesTree": "Modules Tree"
+  },
+  "guide": {
+    "title": "Title",
+    "updated": "Updated",
+    "author": "Author",
+    "views": "Views",
+    "helpful": "Helpful",
+    "version": "Version",
+    "tldr": "Summary",
+    "steps": "Steps",
+    "cases": "Cases",
+    "cautions": "Cautions",
+    "troubleTable": "Troubleshooting",
+    "responses": "Responses",
+    "mainItems": "Main Items",
+    "decision": "Decision",
+    "reference": "Reference",
+    "policyDiff": "Policy Changes"
+  },
+  "search": {
+    "placeholder": "Search guides...",
+    "noResults": "No results found",
+    "synonyms": "Synonyms",
+    "filters": "Filters",
+    "sort": "Sort",
+    "sortBy": {
+      "recent": "Recent",
+      "popular": "Popular",
+      "title": "Title"
+    }
+  },
+  "theme": {
+    "light": "Light Mode",
+    "dark": "Dark Mode",
+    "system": "System"
+  },
+  "errors": {
+    "notFound": "Not Found",
+    "notFoundDesc": "The page you requested could not be found",
+    "unauthorized": "Unauthorized",
+    "serverError": "Server Error",
+    "loadError": "Load Error"
+  },
+  "feedback": {
+    "helpful": "Helpful",
+    "notHelpful": "Not Helpful",
+    "thanks": "Thank you for your feedback",
+    "feedbackTitle": "Was this guide helpful?"
+  }
+}

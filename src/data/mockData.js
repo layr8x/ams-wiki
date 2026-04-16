@@ -14,6 +14,7 @@ export const GUIDES = {
   'member-merge': {
     type: 'SOP', module: '회원관리', title: 'AMS 회원 병합 가이드',
     updated: '2026-01-30', confluenceId: '1815216142',
+    author: '김명준', version: 'v2.1', views: 342, helpful: 28, helpfulRate: 92,
     targets: ['운영자', '실장'],
     tldr: "학생이 마이클래스에서 직접 수강정보 연동을 하지 못하는 경우 관리자가 AMS 데이터를 옮겨줄 수 있는 기능입니다.\n병합은 '동일 회원의 계정'임을 확인한 계정끼리만 가능합니다. 이름 등 개인정보가 다른 경우 확인 후 작업 필요합니다.",
     path: 'AMS 어드민 > 고객(원생) 관리 > 회원조회',
@@ -309,6 +310,71 @@ export const GUIDES = {
     },
     steps: null, mainItemsTable: null, cases: null, cautions: null, troubleTable: null, responses: null, decisionTable: null, referenceData: null,
   },
+
+  // ── 추가 가이드 ─────────────────────────────────────────────────────────────
+  'payment-method': {
+    type: 'SOP', module: '청구/수납/결제/환불', title: '결제 수단 등록 가이드',
+    updated: '2026-04-05', confluenceId: '1920234567', targets: ['운영자'],
+    tldr: "학부모가 AMS에 신용카드, 체크카드, 계좌이체 등을 등록하는 방법을 안내합니다.",
+    path: 'AMS 모바일앱 > 결제 관리',
+    amsUrl: `${AMS}/payment/method`,
+    confluenceUrl: `${CONFLUENCE}/1920234567`,
+    steps: [
+      { title: "앱에서 [결제 관리] 메뉴 진입", desc: "AMS 모바일앱 메인 > 결제 관리 탭 클릭" },
+      { title: "[결제 수단 추가] 클릭", desc: "카드 또는 계좌이체 선택" },
+      { title: "결제 수단 정보 입력", desc: "카드번호, 유효기간, CVC 또는 계좌정보 입력" },
+    ],
+    mainItemsTable: null, cases: null, cautions: ["결제 수단은 최대 3개까지 등록 가능"],
+    troubleTable: null, responses: null, decisionTable: null, referenceData: null, policyDiff: null,
+  },
+
+  'class-schedule': {
+    type: 'REFERENCE', module: '수업운영관리', title: '강좌 스케줄 관리 가이드',
+    updated: '2026-03-30', confluenceId: '1920345678', targets: ['운영자', '실장', '관리자'],
+    tldr: "AMS에서 강좌의 개강일, 종강일, 수업요일, 시간을 관리하는 방법입니다.",
+    path: 'AMS 어드민 > 강좌/교재 관리 > 강좌관리',
+    amsUrl: `${AMS}/course/manage`,
+    confluenceUrl: `${CONFLUENCE}/1920345678`,
+    referenceData: [
+      { term: "개강일", def: "강좌의 첫 수업일. 이 날짜부터 청구가 시작됩니다." },
+      { term: "종강일", def: "강좌의 마지막 수업일. 이후 자동으로 강좌 상태가 종료됨." },
+      { term: "수업요일", def: "주중 반복되는 수업 요일 (예: 월, 수, 금)" },
+      { term: "수업 시간", def: "하루에 구성된 시간 (예: 2시간, 3시간)" },
+    ],
+    steps: null, mainItemsTable: null, cases: null, cautions: ["개강일 변경 시 기존 청구 이력이 영향받을 수 있음"],
+    troubleTable: null, responses: null, decisionTable: null, policyDiff: null,
+  },
+
+  'student-suspension': {
+    type: 'SOP', module: '고객(원생) 관리', title: '휴강 처리 절차',
+    updated: '2026-03-15', confluenceId: '1920456789',
+    targets: ['운영자', '실장'],
+    tldr: "학생이 일시적으로 수강을 중단하고자 할 때 휴강 처리하는 방법입니다.\n휴강 기간 동안 수강료는 청구되지 않으며, 복강 시 원래 강좌로 복귀합니다.",
+    path: 'AMS 어드민 > 고객(원생) 관리 > 회원조회 > 회원상세',
+    amsUrl: `${AMS}/customer/member/detail`,
+    confluenceUrl: `${CONFLUENCE}/1920456789`,
+    steps: [
+      { title: '회원 상세 페이지 진입', desc: '고객(원생) 관리 > 회원조회에서 휴강할 회원을 검색하여 선택합니다.', image: null },
+      { title: '입반 정보 탭 선택', desc: '회원상세 화면의 [입반정보] 탭을 클릭합니다.', image: null },
+      { title: '휴강 버튼 클릭', desc: '[휴강처리] 버튼을 클릭하고 휴강 시작일과 예상 복강일을 입력합니다.', image: null },
+      { title: '휴강 승인 및 저장', desc: '입력한 정보를 검토 후 [저장] 버튼을 클릭하여 휴강을 완료합니다.', image: null },
+    ],
+    cases: [
+      { label: '질병으로 인한 단기 휴강', action: '진단서 또는 확인서 첨부 후 [의료사유 휴강] 선택', note: '보험 처리 시 필수 문서' },
+      { label: '군입대 또는 타 지역 이동', action: '[정상 휴강]으로 처리 후 복강일 미정 설정', note: '복강 시 실장 승인 필요 가능' },
+      { label: '월 중간 휴강', action: '휴강 시작일을 일자 단위로 입력 (예: 2026-03-15)', note: '해당 월 청구에서 청구제외 처리됨' },
+    ],
+    cautions: [
+      '휴강 중 해당 강좌에 청구 불가 — 자동으로 청구 대상에서 제외',
+      '휴강 후 복강 시 새로운 입반일로 재입반 처리됨',
+      '장기 휴강(3개월 이상)은 실장에게 사전 보고 권장',
+    ],
+    troubleTable: [
+      { issue: '"해당 회원은 이미 휴강 상태입니다"', cause: '동일 강좌에 이미 활성 휴강 존재', solution: '기존 휴강을 복강하거나 일시중단 상태 확인', severity: 'medium' },
+      { issue: '"복강일이 휴강일보다 앞설 수 없습니다"', cause: '예상 복강일을 휴강 시작일 이전으로 설정', solution: '복강일을 휴강 시작일 이후로 수정', severity: 'low' },
+    ],
+    mainItemsTable: null, responses: null, decisionTable: null, referenceData: null, policyDiff: null,
+  },
 };
 
 // AMS 실제 메뉴 구조 (https://ams.sdij.com 기준)
@@ -348,6 +414,7 @@ export const MODULE_TREE = [
     guides: [
       { id: 'member-merge',      label: 'AMS 회원 병합 가이드' },
       { id: 'duplicate-account', label: '중복 계정 통합 프로세스' },
+      { id: 'student-suspension', label: '휴강 처리 절차' },
     ],
   },
   {
@@ -367,9 +434,29 @@ export const MODULE_TREE = [
 ];
 
 export const RECENT_GUIDES = [
-  { id:'member-merge',    module:'고객(원생) 관리',     title:'AMS 회원 병합 가이드',           updated_at:'2026-04-15' },
-  { id:'billing-guide',   module:'청구/수납/결제/환불', title:'청구 생성 가이드',                updated_at:'2026-04-10' },
-  { id:'payment-switch',  module:'청구/수납/결제/환불', title:'전환결제 처리 가이드',             updated_at:'2026-04-08' },
-  { id:'class-transfer',  module:'수업운영관리',         title:'전반 처리 가이드',                updated_at:'2026-04-05' },
-  { id:'qr-trouble',      module:'수업운영관리',         title:'QR 출석 인식 실패 트러블슈팅',    updated_at:'2026-04-03' },
+  { id:'member-merge',    module:'고객(원생) 관리',     title:'AMS 회원 병합 가이드',           updated_at:'2026-04-15', views: 342, helpful: 28, version: 'v2.1', author: '김명준', tags: ['회원관리', '필수'] },
+  { id:'billing-guide',   module:'청구/수납/결제/환불', title:'청구 생성 가이드',                updated_at:'2026-04-10', views: 215, helpful: 18, version: 'v1.8', author: '이준호', tags: ['청구', '필수'] },
+  { id:'payment-switch',  module:'청구/수납/결제/환불', title:'전환결제 처리 가이드',             updated_at:'2026-04-08', views: 187, helpful: 14, version: 'v2.0', author: '김명준', tags: ['결제', '자주묻는질문'] },
+  { id:'class-transfer',  module:'수업운영관리',         title:'전반 처리 가이드',                updated_at:'2026-04-05', views: 156, helpful: 11, version: 'v1.5', author: '박소연', tags: ['입반', '필수'] },
+  { id:'qr-trouble',      module:'수업운영관리',         title:'QR 출석 인식 실패 트러블슈팅',    updated_at:'2026-04-03', views: 423, helpful: 35, version: 'v3.2', author: '이준호', tags: ['출석', '트러블슈팅'] },
+  { id:'duplicate-account', module:'고객(원생) 관리', title:'중복 계정 통합 프로세스',      updated_at:'2026-04-01', views: 98, helpful: 7, version: 'v1.2', author: '박소연', tags: ['회원관리', '실장'] },
+  { id:'refund-policy', module:'청구/수납/결제/환불', title:'환불 승인 기준 판단 가이드',    updated_at:'2026-03-28', views: 567, helpful: 45, version: 'v2.5', author: '이준호', tags: ['환불', '필수', '실장'] },
+  { id:'ams-glossary', module:'공통/시스템', title:'AMS 주요 용어 사전', updated_at:'2026-03-25', views: 234, helpful: 18, version: 'v1.9', author: '김명준', tags: ['용어', '공통'] },
+  { id:'unpaid-withdraw', module:'수업운영관리', title:'미납자 퇴반처리 가이드', updated_at:'2026-03-20', views: 145, helpful: 12, version: 'v1.4', author: '박소연', tags: ['퇴반', '청구'] },
+  { id:'student-suspension', module:'고객(원생) 관리', title:'휴강 처리 절차', updated_at:'2026-03-15', views: 89, helpful: 6, version: 'v1.1', author: '김명준', tags: ['휴강', 'SOP'] },
 ];
+
+// 인기 가이드 (조회수 기준)
+export const POPULAR_GUIDES = RECENT_GUIDES
+  .sort((a, b) => (b.views || 0) - (a.views || 0))
+  .slice(0, 5);
+
+// 검색 동의어 사전 — 사용자 자연어 검색을 AMS 용어로 매핑
+export const SEARCH_SYNONYMS = {
+  '환불': ['돈 돌려받기', '수강료 반환', '환불 신청', '환불 거절'],
+  '회원 병합': ['계정 통합', '중복 계정', '계정 합치기', '회원 통합'],
+  '청구': ['수강료 청구', '결제', '청구서', '결제 생성'],
+  '출석': ['출석 처리', 'QR', '출결', '출석 인식'],
+  '수업 관리': ['수업 운영', '강좌 관리', '수강', '수업'],
+  '결제': ['카드 결제', '결제 수단', '결제 변경', '전환 결제'],
+};

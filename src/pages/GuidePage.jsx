@@ -246,6 +246,42 @@ function FeedbackWidget() {
   );
 }
 
+// ─── 관련 가이드 ──────────────────────────────────────────────────────────────
+const TYPE_LABELS_MINI = { SOP:'절차', DECISION:'판단기준', REFERENCE:'참조', TROUBLE:'트러블슈팅', RESPONSE:'대응', POLICY:'정책' };
+const TYPE_BG = { SOP:'#eff6ff', DECISION:'#fef2f2', REFERENCE:'#f0fdf4', TROUBLE:'#fff7ed', RESPONSE:'#fdf4ff', POLICY:'#f0f9ff' };
+const TYPE_CLR = { SOP:'#1d4ed8', DECISION:'#be123c', REFERENCE:'#15803d', TROUBLE:'#c2410c', RESPONSE:'#7e22ce', POLICY:'#0369a1' };
+
+function RelatedGuides({ currentId, module: mod }) {
+  const related = Object.entries(GUIDES)
+    .filter(([id, g]) => id !== currentId && g.module === mod)
+    .slice(0, 3);
+  if (related.length === 0) return null;
+  return (
+    <section style={{ marginTop:'72px', marginBottom:'8px' }}>
+      <h2 style={{ fontSize:'17px', fontWeight:800, color:G.g900, margin:'0 0 16px', fontFamily:G.font }}>같은 카테고리 가이드</h2>
+      <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(220px, 1fr))', gap:'12px' }}>
+        {related.map(([id, g]) => (
+          <Link key={id} to={`/guides/${id}`} style={{ textDecoration:'none' }}>
+            <div
+              style={{ padding:'18px 20px', borderRadius:'12px', border:`1px solid ${G.g200}`, backgroundColor:'#ffffff', transition:'all 0.15s', cursor:'pointer', height:'100%', boxSizing:'border-box' }}
+              onMouseEnter={e=>{ e.currentTarget.style.borderColor=G.b400; e.currentTarget.style.boxShadow=`0 4px 12px rgba(0,112,243,0.1)`; }}
+              onMouseLeave={e=>{ e.currentTarget.style.borderColor=G.g200; e.currentTarget.style.boxShadow='none'; }}
+            >
+              <span style={{ display:'inline-block', fontSize:'10px', fontWeight:700, padding:'3px 8px', borderRadius:'99px', backgroundColor: TYPE_BG[g.type]||'#f3f4f6', color: TYPE_CLR[g.type]||'#666', marginBottom:'10px', fontFamily:G.font }}>
+                {TYPE_LABELS_MINI[g.type]||g.type}
+              </span>
+              <p style={{ fontSize:'14px', fontWeight:700, color:G.g900, margin:'0 0 6px', lineHeight:1.4, fontFamily:G.font }}>{g.title}</p>
+              <p style={{ fontSize:'12px', color:G.g400, margin:0, lineHeight:1.5, fontFamily:G.font, display:'-webkit-box', WebkitLineClamp:2, WebkitBoxOrient:'vertical', overflow:'hidden' }}>
+                {g.tldr.split('\n')[0]}
+              </p>
+            </div>
+          </Link>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 // ─── On This Page 미니맵 (IntersectionObserver) ──────────────────────────────
 function OnThisPage({ sections }) {
   const [active, setActive] = useState(sections[0]?.id || '');
@@ -611,8 +647,11 @@ export default function GuidePage() {
           </section>
         )}
 
+        {/* ── 관련 가이드 ── */}
+        <RelatedGuides currentId={id} module={guide.module} />
+
         {/* ── 피드백 ── */}
-        <div id="sec-feedback" style={{ marginTop:'96px', padding:'48px 40px', borderTop:`1px solid ${G.g100}`, scrollMarginTop:'80px' }}>
+        <div id="sec-feedback" style={{ marginTop:'64px', padding:'48px 40px', borderTop:`1px solid ${G.g100}`, scrollMarginTop:'80px' }}>
           <FeedbackWidget />
         </div>
       </article>

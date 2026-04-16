@@ -44,10 +44,12 @@ export const analyzeBundleSize = () => {
 };
 
 // 이미지 최적화 - 크기별 제공
-export const getOptimizedImageUrl = (url) => {
+// eslint-disable-next-line no-unused-vars
+export const getOptimizedImageUrl = (url, width, height) => {
   if (!url) return null;
   // 실제로는 CDN 또는 이미지 최적화 서비스 사용
   // 예: Cloudinary, ImageKit 등
+  // 너비와 높이는 향후 CDN 쿼리 파라미터로 사용 가능
   return url;
 };
 

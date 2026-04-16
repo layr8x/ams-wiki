@@ -76,7 +76,7 @@ import { Button, Input, Card } from '@/components/ui'
 
 ## 프로젝트 링크
 
-- [라이브 데모](https://ams-wiki.vercel.app)
+- [라이브 데모](https://sdij-ams-wiki.app)
 - [Vercel 대시보드](https://vercel.com/layr8xs-projects/ams-wiki)
 - [shadcn/ui 문서](https://ui.shadcn.com)
 

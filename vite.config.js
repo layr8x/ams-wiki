@@ -22,9 +22,12 @@ export default defineConfig({
   resolve: {
     alias: { '@': '/src' },
   },
+  build: {
+    minify: 'esbuild',
+    sourcemap: false,
+  },
   server: {
     proxy: {
-      // Confluence 이미지 인증 프록시
       '/confluence-img': {
         target: 'https://hiconsy.atlassian.net',
         changeOrigin: true,

@@ -1,0 +1,112 @@
+// src/hooks/useGuides.js
+// React Query 기반 가이드 데이터 훅 — Supabase/mockData 자동 전환
+
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import {
+  fetchGuides,
+  fetchGuide,
+  fetchRecentGuides,
+  fetchPopularGuides,
+  searchGuides,
+  submitFeedback,
+  fetchFeedbackStats,
+  incrementViews,
+  fetchDashboardStats,
+  fetchModuleStats,
+} from '../lib/db'
+
+// ─── 전체 가이드 목록 ─────────────────────────────────────────────────────────
+export function useGuideList({ module: mod, type, search } = {}) {
+  return useQuery({
+    queryKey: ['guides', { mod, type, search }],
+    queryFn: () => fetchGuides({ module: mod, type, search }),
+    staleTime: 5 * 60 * 1000,
+    gcTime:    10 * 60 * 1000,
+  })
+}
+
+// ─── 단일 가이드 상세 ─────────────────────────────────────────────────────────
+export function useGuide(id) {
+  const qc = useQueryClient()
+  return useQuery({
+    queryKey: ['guide', id],
+    queryFn: async () => {
+      const guide = await fetchGuide(id)
+      // 조회수 증가 (fire-and-forget)
+      incrementViews(id).catch(() => {})
+      return guide
+    },
+    enabled: Boolean(id),
+    staleTime: 5 * 60 * 1000,
+    placeholderData: () =>
+      qc.getQueryData(['guides'])?.find(g => g.id === id) ?? undefined,
+  })
+}
+
+// ─── 최근 업데이트 ───────────────────────────────────────────────────────────
+export function useRecentGuides(n = 8) {
+  return useQuery({
+    queryKey: ['guides', 'recent', n],
+    queryFn: () => fetchRecentGuides(n),
+    staleTime: 2 * 60 * 1000,
+  })
+}
+
+// ─── 인기 가이드 ─────────────────────────────────────────────────────────────
+export function usePopularGuides(n = 5) {
+  return useQuery({
+    queryKey: ['guides', 'popular', n],
+    queryFn: () => fetchPopularGuides(n),
+    staleTime: 5 * 60 * 1000,
+  })
+}
+
+// ─── 검색 ────────────────────────────────────────────────────────────────────
+export function useSearchGuides(query) {
+  return useQuery({
+    queryKey: ['guides', 'search', query],
+    queryFn: () => searchGuides(query),
+    enabled: Boolean(query?.trim()),
+    staleTime: 30 * 1000,
+  })
+}
+
+// ─── 피드백 제출 ─────────────────────────────────────────────────────────────
+export function useSubmitFeedback(guideId) {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ vote, comment }) => submitFeedback({ guideId, vote, comment }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['feedback', guideId] })
+      qc.invalidateQueries({ queryKey: ['guide', guideId] })
+    },
+  })
+}
+
+// ─── 피드백 통계 ─────────────────────────────────────────────────────────────
+export function useFeedbackStats(guideId) {
+  return useQuery({
+    queryKey: ['feedback', guideId],
+    queryFn: () => fetchFeedbackStats(guideId),
+    enabled: Boolean(guideId),
+    staleTime: 60 * 1000,
+  })
+}
+
+// ─── 대시보드 통계 ───────────────────────────────────────────────────────────
+export function useDashboardStats() {
+  return useQuery({
+    queryKey: ['stats', 'dashboard'],
+    queryFn: fetchDashboardStats,
+    staleTime: 5 * 60 * 1000,
+  })
+}
+
+// ─── 모듈별 가이드 수 ────────────────────────────────────────────────────────
+export function useModuleStats() {
+  return useQuery({
+    queryKey: ['stats', 'modules'],
+    queryFn: fetchModuleStats,
+    staleTime: 10 * 60 * 1000,
+  })
+}

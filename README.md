@@ -1,77 +1,155 @@
 # AMS Wiki
 
-Vite와 shadcn/ui 컴포넌트로 구축된 최신 React 애플리케이션으로, Vercel에 자동 배포 기능이 포함되어 있습니다.
+학원 운영 시스템(AMS) 가이드 통합 위키. **shadcn/ui + Supabase + Confluence API** 기반의 엔터프라이즈급 지식 베이스.
 
 ## 기술 스택
 
-- **프레임워크**: React 19 + Vite
-- **스타일링**: Tailwind CSS 4 + shadcn/ui
-- **컴포넌트**: Radix UI primitives
+- **프레임워크**: React 19 + Vite 8
+- **UI/디자인**: Tailwind CSS 4 + shadcn/ui 표준
+- **컴포넌트**: Radix UI primitives (25개+)
 - **라우팅**: React Router v7
-- **상태 관리**: React Query
-- **배포**: GitHub Actions CI/CD를 포함한 Vercel
+- **상태 관리**: React Query (TanStack Query)
+- **데이터베이스**: Supabase (PostgreSQL + Auth + Realtime)
+- **외부 연동**: Confluence REST API v2
+- **배포**: Vercel (자동 배포) + GitHub Actions CI/CD
 
 ## 빠른 시작
 
-### 로컬 개발 환경
+### 1. 로컬 개발 환경
 
 ```bash
 # 의존성 설치
 npm install
 
 # 환경 변수 설정
-cp .env.example .env.local
-# .env.local을 Confluence 자격증명으로 수정
+cp .env.example .env
+# .env 파일을 열어 Supabase/Confluence 자격증명 입력
 
 # 개발 서버 시작
 npm run dev
 ```
 
-[http://localhost:5173](http://localhost:5173)을 브라우저에서 열어 애플리케이션을 확인합니다.
+브라우저에서 [http://localhost:5173](http://localhost:5173) 접속.
 
-### 사용 가능한 스크립트
+### 2. Supabase 설정 (선택)
 
-- `npm run dev` - 개발 서버 시작
-- `npm run build` - 프로덕션 빌드
-- `npm run lint` - ESLint 실행
-- `npm run preview` - 프로덕션 빌드 미리보기
+Supabase 미설정 시 `src/data/mockData.js`의 로컬 데이터로 자동 폴백됩니다.
 
-## 기능
+```bash
+# (1) https://supabase.com 에서 프로젝트 생성
+# (2) SQL Editor에 아래 순서로 실행:
+#     - supabase/schema.sql  (테이블·인덱스·RLS 정책)
+#     - supabase/seed.sql    (24개 가이드 시드 데이터)
+# (3) Project Settings > API 에서 URL + anon key 복사하여 .env 에 설정
 
-- ✅ 완벽한 shadcn/ui 컴포넌트 라이브러리 (15개 이상)
-- ✅ Tailwind CSS를 이용한 반응형 디자인
-- ✅ Vercel로의 자동 배포
-- ✅ GitHub Actions CI/CD 파이프라인
-- ✅ 환경 변수 관리
-- ✅ ESLint 설정
+# (4) 시드 SQL 재생성 (mockData.js 변경 시)
+npm run db:seed
+```
 
-## 배포
+### 3. 사용 가능한 스크립트
 
-### 자동 배포
+| 명령어 | 설명 |
+|--------|------|
+| `npm run dev`       | 개발 서버 시작 (HMR) |
+| `npm run build`     | 프로덕션 빌드 |
+| `npm run preview`   | 빌드 미리보기 |
+| `npm run lint`      | ESLint 실행 |
+| `npm run test`      | Vitest 단위 테스트 |
+| `npm run test:e2e`  | Playwright E2E 테스트 |
+| `npm run db:seed`   | Supabase 시드 SQL 재생성 |
 
-- **프리뷰**: `claude/*` 브랜치로 푸시 시 배포
-- **프로덕션**: main 브랜치로의 수동 배포
+## 주요 기능
 
-자세한 배포 지침은 [DEPLOYMENT.md](./DEPLOYMENT.md)를 참조하세요.
+### 🎯 가이드 시스템 (6유형)
+- **SOP**: 절차형 단계별 가이드 (이미지 포함)
+- **DECISION**: 판단분기 테이블 (조건/처리/상태)
+- **REFERENCE**: 용어 사전 (검색 가능)
+- **TROUBLE**: 트러블슈팅 (오류/원인/해결/심각도)
+- **RESPONSE**: CS 대응 매뉴얼 스크립트
+- **POLICY**: 정책 변경 전/후 비교
 
-### 환경 설정
+### 🔐 인증 시스템 (Supabase Auth)
+- **구글 OAuth** 원클릭 로그인
+- **이메일/비밀번호** 로그인 + 회원가입
+- 역할 기반 권한 (OPERATOR, ADMIN, MANAGER, GUEST)
+- 세션 자동 동기화
 
-필수 환경 변수:
+### 📚 Confluence API 연동
+- 페이지 조회/생성/수정
+- 첨부파일 관리 (이미지 업로드)
+- CQL 전문 검색
+- 스페이스 트리 네비게이션
+
+### 🔍 검색 & 네비게이션
+- **⌘K 명령 팔레트** (shadcn/ui Command)
+- 동의어 확장 검색 (예: "병합" → 계정통합)
+- On This Page 자동 목차 (IntersectionObserver)
+- 최근 조회 / 인기 가이드
+
+### 🎨 UI/UX
+- **shadcn/ui 표준** 컴포넌트 25개+
+- 다크모드 (CSS 변수 기반)
+- Pretendard 한글 최적화 폰트
+- 반응형 디자인 (모바일·태블릿·데스크톱)
+- Toast 알림, Sheet 드로어, Dialog 모달
+
+### 📊 통계 & 피드백
+- 조회수 자동 추적 (Supabase RPC)
+- 가이드별 피드백 수집 (도움됨/보완필요)
+- 검색 로그 기록
+
+## 환경 변수
+
+필수 (Supabase):
+- `VITE_SUPABASE_URL` - Supabase 프로젝트 URL
+- `VITE_SUPABASE_ANON_KEY` - Supabase anon 공개 키
+
+선택 (Confluence):
 - `VITE_CONFLUENCE_EMAIL` - Atlassian 이메일
-- `VITE_CONFLUENCE_TOKEN` - [Atlassian](https://id.atlassian.com/manage-profile/security/api-tokens)에서 발급받은 API 토큰
+- `VITE_CONFLUENCE_TOKEN` - [API 토큰](https://id.atlassian.com/manage-profile/security/api-tokens)
+- `VITE_CONFLUENCE_DOMAIN` - 도메인 (기본: hiconsy.atlassian.net)
+- `VITE_CONFLUENCE_SPACE_KEY` - 스페이스 키 (기본: FVSOL)
 
 ## 컴포넌트 라이브러리
 
-포함된 완벽한 shadcn/ui 컴포넌트 라이브러리:
-- Button, Badge, Card
-- Input, Textarea, Select, Checkbox, Radio
-- Dialog, Tabs, Tooltip, Alert
-- ScrollArea, Separator, Label
-
-`@/components/ui`에서 임포트:
+25개+ shadcn/ui 표준 컴포넌트:
 
 ```jsx
-import { Button, Input, Card } from '@/components/ui'
+import {
+  Button, Badge, Card, Input, Textarea, Label, Separator,
+  Dialog, Tabs, Tooltip, Alert, ScrollArea, Checkbox, Select,
+  Toast, Toaster, useToast,
+  Command, CommandInput, CommandList, CommandItem,
+  Sheet, SheetContent, SheetHeader,
+  Skeleton, Progress, Avatar, Collapsible,
+  Table, TableHeader, TableBody, TableCell, TableRow,
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem,
+} from '@/components/ui'
+```
+
+## 프로젝트 구조
+
+```
+src/
+├── components/
+│   ├── common/      # Layout, Header, Sidebar, UserMenu 등
+│   ├── search/      # SearchOverlay (⌘K 팔레트)
+│   └── ui/          # shadcn/ui 25개+ 컴포넌트
+├── pages/           # 8개 페이지 (Home, Guide, List, FAQ, etc.)
+├── hooks/           # useGuides (React Query 훅)
+├── lib/
+│   ├── supabase.js  # Supabase 클라이언트
+│   ├── db.js        # DB 데이터 레이어 (폴백 포함)
+│   ├── confluence.js# Confluence API 클라이언트
+│   └── utils.js     # cn() 등 유틸리티
+├── store/           # AuthStore, SearchStore, I18nStore
+├── data/            # mockData (폴백용)
+└── locales/         # 다국어 (ko.json, en.json)
+
+supabase/
+├── schema.sql       # PostgreSQL 테이블·인덱스·RPC·RLS
+├── seed.sql         # 24개 가이드 시드 데이터
+└── generate-seed.mjs # mockData → SQL 자동 생성 스크립트
 ```
 
 ## 프로젝트 링크
@@ -79,9 +157,11 @@ import { Button, Input, Card } from '@/components/ui'
 - [라이브 데모](https://sdij-ams-wiki.app)
 - [Vercel 대시보드](https://vercel.com/layr8xs-projects/ams-wiki)
 - [shadcn/ui 문서](https://ui.shadcn.com)
+- [Supabase 문서](https://supabase.com/docs)
 
 ## 도움말
 
-- 배포 문제는 [DEPLOYMENT.md](./DEPLOYMENT.md) 참조
-- 린팅 규칙은 [ESLint 문서](https://eslint.org) 참조
-- 빌드 설정은 [Vite 문서](https://vitejs.dev) 참조
+- **배포 이슈**: [DEPLOYMENT.md](./DEPLOYMENT.md)
+- **기여 가이드**: [CONTRIBUTING.md](./CONTRIBUTING.md)
+- **린팅 규칙**: [ESLint 문서](https://eslint.org)
+- **빌드 설정**: [Vite 문서](https://vitejs.dev)

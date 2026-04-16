@@ -1,30 +1,38 @@
+// src/components/ui/button.jsx — shadcn/ui 표준
 import { cva } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
 
-const button = cva(
-  'inline-flex items-center justify-center gap-1.5 font-medium rounded-lg transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-1 disabled:opacity-50 disabled:pointer-events-none select-none',
+export const buttonVariants = cva(
+  'inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 select-none',
   {
     variants: {
       variant: {
-        primary:  'bg-zinc-900 text-white hover:bg-zinc-700 active:bg-zinc-800 shadow-xs',
-        secondary:'bg-white text-zinc-700 border border-zinc-200 hover:border-zinc-300 hover:bg-zinc-50 shadow-xs',
-        ghost:    'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900',
-        danger:   'bg-red-600 text-white hover:bg-red-700',
-        blue:     'bg-blue-600 text-white hover:bg-blue-700 shadow-xs',
-        outline:  'border border-zinc-200 text-zinc-700 bg-transparent hover:bg-zinc-50',
+        default:     'bg-primary text-primary-foreground hover:bg-primary/90',
+        destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
+        outline:     'border border-input bg-background hover:bg-accent hover:text-accent-foreground',
+        secondary:   'bg-secondary text-secondary-foreground hover:bg-secondary/80',
+        ghost:       'hover:bg-accent hover:text-accent-foreground',
+        link:        'text-primary underline-offset-4 hover:underline',
+        // AMS 전용
+        primary:     'bg-zinc-900 text-white hover:bg-zinc-700',
+        blue:        'bg-blue-600 text-white hover:bg-blue-700',
       },
       size: {
-        xs: 'text-xs px-2.5 py-1.5 gap-1',
-        sm: 'text-xs px-3 py-2',
-        md: 'text-sm px-4 py-2',
-        lg: 'text-sm px-5 py-2.5',
-        icon:'w-8 h-8 p-0',
+        default: 'h-9 px-4 py-2',
+        sm:      'h-8 rounded-md px-3 text-xs',
+        lg:      'h-10 rounded-md px-6',
+        icon:    'h-9 w-9 p-0',
+        xs:      'h-7 px-2.5 text-xs',
       },
     },
-    defaultVariants: { variant: 'secondary', size: 'md' },
+    defaultVariants: { variant: 'default', size: 'default' },
   }
 )
 
 export function Button({ variant, size, className, children, ...props }) {
-  return <button className={cn(button({ variant, size }), className)} {...props}>{children}</button>
+  return (
+    <button className={cn(buttonVariants({ variant, size }), className)} {...props}>
+      {children}
+    </button>
+  )
 }

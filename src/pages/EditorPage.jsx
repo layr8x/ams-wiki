@@ -30,53 +30,26 @@ const VERSION_HISTORY = [
   { version:'v0.1', date:'2026-03-10', author:'김명준', summary:'초안 작성' },
 ];
 
-// ─── Geist / Catalyst 디자인 토큰 ────────────────────────────────────────
+// ─── shadcn/ui 디자인 토큰 (CSS 변수 참조) ─────────────────────────────────
 const C = {
-  // Geist 스타일 중립 색상
-  gray50:  '#fafafa',
-  gray100: '#f4f4f5',
-  gray200: '#e4e4e7',
-  gray300: '#d4d4d8',
-  gray400: '#a1a1aa',
-  gray500: '#71717a',
-  gray600: '#52525b',
-  gray700: '#3f3f46',
-  gray800: '#27272a',
-  gray900: '#18181b',
-  gray950: '#09090b',
-  // 파란색 강조 (Geist 파란색)
-  blue50:  '#eff6ff',
-  blue100: '#dbeafe',
-  blue200: '#bfdbfe',
-  blue500: '#3b82f6',
-  blue600: '#2563eb',
-  blue700: '#1d4ed8',
-  // 의미 있는 색상
-  green50:  '#f0fdf4',
-  green100: '#dcfce7',
-  green600: '#16a34a',
-  green700: '#15803d',
-  amber50:  '#fffbeb',
-  amber100: '#fef3c7',
-  amber600: '#d97706',
-  amber900: '#78350f',
-  red50:    '#fef2f2',
-  red100:   '#fee2e2',
-  red500:   '#ef4444',
-  red700:   '#b91c1c',
+  gray50:  'var(--color-secondary)',    gray100: 'var(--color-muted)',
+  gray200: 'var(--color-border)',       gray300: 'var(--color-border)',
+  gray400: 'var(--color-muted-foreground)', gray500: 'var(--color-muted-foreground)',
+  gray600: 'var(--color-muted-foreground)', gray700: 'var(--color-foreground)',
+  gray800: 'var(--color-foreground)',   gray900: 'var(--color-foreground)',
+  gray950: 'var(--color-foreground)',
+  blue50:  '#eff6ff', blue100: '#dbeafe', blue200: '#bfdbfe',
+  blue500: '#3b82f6', blue600: '#2563eb', blue700: '#1d4ed8',
+  green50: '#f0fdf4', green100: '#dcfce7', green600: '#16a34a', green700: '#15803d',
+  amber50: '#fffbeb', amber100: '#fef3c7', amber600: '#d97706', amber900: '#78350f',
+  red50:   '#fef2f2', red100:  '#fee2e2', red500:  '#ef4444', red700:  '#b91c1c',
 };
-
-// Catalyst 정확한 그림자
 const SHADOW = {
-  xs:  '0 1px 2px 0 rgba(0,0,0,0.05)',
-  sm:  '0 0 0 1px rgba(9,9,11,0.07), 0 2px 2px 0 rgba(9,9,11,0.05)',
-  md:  '0 0 0 1px rgba(9,9,11,0.07), 0 4px 8px -2px rgba(9,9,11,0.08)',
-  lg:  '0 0 0 1px rgba(9,9,11,0.07), 0 8px 24px -4px rgba(9,9,11,0.12)',
-  xl:  '0 0 0 1px rgba(9,9,11,0.07), 0 24px 48px -8px rgba(9,9,11,0.18)',
-  // 드롭다운 특화 — 선명하고 높은 수준
-  dropdown: '0 0 0 1px rgba(9,9,11,0.08), 0 8px 32px -4px rgba(9,9,11,0.16), 0 2px 8px 0 rgba(9,9,11,0.06)',
+  xs: '0 1px 2px 0 rgba(0,0,0,0.05)', sm: '0 1px 3px 0 rgba(0,0,0,0.1)',
+  md: '0 4px 6px -1px rgba(0,0,0,0.1)', lg: '0 10px 15px -3px rgba(0,0,0,0.1)',
+  xl: '0 20px 25px -5px rgba(0,0,0,0.1)',
+  dropdown: '0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1)',
 };
-
 const R = { sm:'6px', md:'8px', lg:'12px', xl:'16px', '2xl':'20px', full:'9999px' };
 
 const TYPE_BADGE = {

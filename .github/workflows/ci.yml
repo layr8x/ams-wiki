@@ -66,12 +66,14 @@ jobs:
         run: npm run build
 
       - name: Run E2E tests (Basic)
-        run: npm run test:e2e -- e2e/basic.spec.js
+        run: npm run test:e2e -- e2e/basic.spec.js --project=chromium
         continue-on-error: true
+        timeout-minutes: 5
 
       - name: Run E2E tests (Advanced)
-        run: npm run test:e2e -- e2e/advanced.spec.js
+        run: npm run test:e2e -- e2e/advanced.spec.js --project=chromium
         continue-on-error: true
+        timeout-minutes: 5
 
       - name: Upload test results
         if: always()

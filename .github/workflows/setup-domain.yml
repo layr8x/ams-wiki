@@ -1,0 +1,35 @@
+name: Setup Custom Domain
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  setup-domain:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Add Custom Domain to Vercel
+        run: |
+          curl -s -X POST "https://api.vercel.com/v10/projects/${{ secrets.VERCEL_PROJECT_ID }}/domains" \
+            -H "Authorization: Bearer ${{ secrets.VERCEL_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d '{"name":"sdij-ams-wiki.app"}' | jq '.'
+
+      - name: Update README with custom domain
+        run: |
+          sed -i 's|ams-wiki-xqqu.vercel.app|sdij-ams-wiki.app|g' README.md
+          sed -i 's|https://ams-wiki.vercel.app|https://sdij-ams-wiki.app|g' README.md
+
+      - name: Commit and push
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add README.md
+          git commit -m "docs: Update URL to custom domain (sdij-ams-wiki.app)" || true
+          git push origin main || true
+

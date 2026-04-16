@@ -8,8 +8,5 @@
       "main": false,
       "claude/*": true
     }
-  },
-  "buildCache": {
-    "enabled": true
   }
 }

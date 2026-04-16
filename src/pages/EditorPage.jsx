@@ -322,7 +322,7 @@ function ImageUploadSlot({ image, onUpload, onRemove }) {
         <span className="text-xs text-zinc-400">{image.name} · {image.size ? `${(image.size/1024).toFixed(1)} KB` : ''}</span>
         <div className="flex gap-1.5">
           <Button variant="secondary" size="xs" onClick={() => fileRef.current?.click()}>교체</Button>
-          <Button variant="danger" size="xs" onClick={onRemove}>삭제</Button>
+          <Button variant="destructive" size="xs" onClick={onRemove}>삭제</Button>
         </div>
       </div>
       <input ref={fileRef} type="file" accept="image/*" onChange={handleFile} className="hidden" />
@@ -575,8 +575,8 @@ function ReviewModal({ isOpen, onClose, onConfirm }) {
           </div>
         </div>
         <DialogFooter className="px-7 pt-4 pb-6 border-t border-zinc-100 flex-row justify-end gap-2">
-          <Button variant="secondary" size="md" onClick={onClose}>취소</Button>
-          <Button variant="primary" size="md" onClick={() => { if(reviewer) { onConfirm(reviewer, note); } }} disabled={!reviewer}>검수 요청 보내기</Button>
+          <Button variant="secondary" size="default" onClick={onClose}>취소</Button>
+          <Button variant="default" size="default" onClick={() => { if(reviewer) { onConfirm(reviewer, note); } }} disabled={!reviewer}>검수 요청 보내기</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
@@ -605,8 +605,8 @@ function PublishModal({ isOpen, title, version, onClose, onConfirm }) {
           <span className="text-[13px] text-zinc-700 font-medium">내용을 최종 검토했으며 발행에 동의합니다.</span>
         </label>
         <DialogFooter className="flex-row justify-end gap-2">
-          <Button variant="secondary" size="md" onClick={onClose}>취소</Button>
-          <Button variant="primary" size="md" onClick={() => confirmed && onConfirm()} disabled={!confirmed}>발행하기</Button>
+          <Button variant="secondary" size="default" onClick={onClose}>취소</Button>
+          <Button variant="default" size="default" onClick={() => confirmed && onConfirm()} disabled={!confirmed}>발행하기</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
@@ -728,7 +728,7 @@ export default function EditorPage() {
           <Btn icon={showPreview ? EyeOff : Eye} onClick={() => setShowPreview(p=>!p)} active={showPreview}>{showPreview ? '편집 전용' : '미리보기'}</Btn>
           <div className="w-px h-5 bg-zinc-200" />
           <Btn icon={Send} onClick={() => setShowReview(true)}>검수 요청</Btn>
-          <Btn variant="primary" onClick={() => setShowPublish(true)}>발행하기</Btn>
+          <Btn variant="default" onClick={() => setShowPublish(true)}>발행하기</Btn>
         </div>
       </header>
 

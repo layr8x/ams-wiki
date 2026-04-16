@@ -53,7 +53,7 @@ function RecentItem({ g, isLast }) {
         {g.title}
       </span>
       {isNew && (
-        <Badge variant="blue" size="sm" className="whitespace-nowrap font-bold">
+        <Badge variant="default" size="sm" className="whitespace-nowrap font-bold">
           업데이트됨
         </Badge>
       )}
@@ -75,7 +75,7 @@ export default function HomePage() {
 
       {/* ── 히어로 영역 ── */}
       <section className="flex flex-col items-center text-center gap-5 mb-20">
-        <Badge variant="blue" size="md" className="gap-2 px-3.5 py-1.5 border border-blue-100 font-bold tracking-wide text-xs">
+        <Badge variant="default" size="default" className="gap-2 px-3.5 py-1.5 border border-blue-100 font-bold tracking-wide text-xs">
           <span className="w-1.5 h-1.5 rounded-full bg-blue-600" />
           AMS 운영 위키
         </Badge>
@@ -131,7 +131,7 @@ export default function HomePage() {
       <div className="grid grid-cols-[2fr_1fr] gap-8">
         <section>
           <h2 className="text-base font-bold text-zinc-900 mb-5 m-0 tracking-tight">최근 업데이트</h2>
-          <Card hover={false} className="overflow-hidden shadow-sm">
+          <Card className="overflow-hidden shadow-sm">
             {recents.map((g, i) => <RecentItem key={g.id} g={g} isLast={i === recents.length - 1} />)}
           </Card>
         </section>

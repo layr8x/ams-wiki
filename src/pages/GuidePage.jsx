@@ -196,7 +196,7 @@ function FeedbackWidget() {
           <Textarea value={comment} onChange={e=>setComment(e.target.value)} placeholder="어떤 점이 부족했나요? (선택 · 200자 이내)" maxLength={200} rows={3}
             className="py-2.5 px-3 text-[13px] min-h-0 leading-relaxed"
           />
-          <Button variant="primary" size="sm" onClick={()=>setDone(true)} className="mt-2">제출하기</Button>
+          <Button variant="default" size="sm" onClick={()=>setDone(true)} className="mt-2">제출하기</Button>
         </div>
       )}
     </div>
@@ -595,7 +595,7 @@ export default function GuidePage() {
           <MessageCircle size={18} className="text-blue-500 mb-2.5" />
           <p className="text-[13px] font-extrabold text-zinc-900 mb-1.5 mt-0">실시간 지원</p>
           <p className="text-xs text-zinc-400 mb-3.5 mt-0 leading-relaxed">가이드로 해결되지 않는 문제는 플랫폼서비스실 슬랙 채널에 문의해 주세요.</p>
-          <Button variant="primary" size="sm" className="w-full rounded-[9px]">슬랙 문의하기</Button>
+          <Button variant="default" size="sm" className="w-full rounded-[9px]">슬랙 문의하기</Button>
         </div>
       </aside>
     </div>

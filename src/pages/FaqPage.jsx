@@ -61,7 +61,7 @@ export default function FaqPage() {
                 className="w-full flex items-center justify-between px-4 py-6 bg-transparent border-none cursor-pointer text-left"
               >
                 <div className="flex items-center gap-4">
-                  <Badge variant="blue" size="md" className="font-bold">{faq.category}</Badge>
+                  <Badge variant="default" size="default" className="font-bold">{faq.category}</Badge>
                   <span className={`text-base transition-colors duration-200 ${isOpen ? 'font-bold text-blue-600' : 'font-medium text-zinc-900'}`}>{faq.q}</span>
                 </div>
                 {isOpen ? <ChevronUp size={20} className="text-zinc-400" /> : <ChevronDown size={20} className="text-zinc-400" />}
@@ -69,7 +69,7 @@ export default function FaqPage() {
 
               {isOpen && (
                 <div className="px-4 pb-6 pl-20">
-                  <Card hover={false} className="flex gap-3 p-5 bg-zinc-50 border-zinc-200">
+                  <Card className="flex gap-3 p-5 bg-zinc-50 border-zinc-200">
                     <MessageSquare size={18} className="text-zinc-500 mt-0.5 shrink-0" />
                     <p className="text-[15px] text-zinc-600 m-0 leading-relaxed">{faq.a}</p>
                   </Card>

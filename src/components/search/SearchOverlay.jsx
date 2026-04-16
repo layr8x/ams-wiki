@@ -1,9 +1,10 @@
 // src/components/search/SearchOverlay.jsx
 import { useState, useEffect, useRef, useMemo } from 'react';
+import Fuse from 'fuse.js';
 import { Search, FileText, CornerDownLeft, Clock, TrendingUp } from 'lucide-react';
 import { useSearchStore } from '@/store/searchStore.jsx';
 import { useNavigate } from 'react-router-dom';
-import { GUIDES, RECENT_GUIDES, SEARCH_SYNONYMS } from '@/data/mockData.js';
+import { GUIDES, RECENT_GUIDES } from '@/data/mockData.js';
 
 const TYPE_LABELS = { SOP:'절차', DECISION:'판단기준', REFERENCE:'참조', TROUBLE:'트러블슈팅', RESPONSE:'대응', POLICY:'정책' };
 const TYPE_CLR   = { SOP:'#1d4ed8', DECISION:'#be123c', REFERENCE:'#15803d', TROUBLE:'#c2410c', RESPONSE:'#7e22ce', POLICY:'#0369a1' };
@@ -15,9 +16,24 @@ const SEARCH_INDEX = Object.entries(GUIDES).map(([id, g]) => ({
   title: g.title,
   module: g.module,
   type: g.type,
+  typeLabel: TYPE_LABELS[g.type] || g.type,
   snippet: g.tldr.split('\n')[0],
   views: g.views || 0,
 }));
+
+// Fuse.js 인스턴스 — 오타·유사어 허용 퍼지 검색
+const fuse = new Fuse(SEARCH_INDEX, {
+  keys: [
+    { name: 'title',     weight: 0.5 },
+    { name: 'snippet',   weight: 0.25 },
+    { name: 'module',    weight: 0.15 },
+    { name: 'typeLabel', weight: 0.1 },
+  ],
+  threshold: 0.35,      // 0=완전일치, 1=모든것 허용 — 35%까지 허용
+  minMatchCharLength: 1,
+  ignoreLocation: true, // 문자열 위치와 무관하게 매칭
+  includeScore: true,
+});
 
 // Popular: top 5 by views
 const POPULAR = [...SEARCH_INDEX].sort((a, b) => b.views - a.views).slice(0, 5);
@@ -25,14 +41,6 @@ const POPULAR = [...SEARCH_INDEX].sort((a, b) => b.views - a.views).slice(0, 5);
 // Recent: first 5 from RECENT_GUIDES
 const RECENT_IDS = RECENT_GUIDES.slice(0, 5).map(r => r.id);
 const RECENTS = RECENT_IDS.map(id => SEARCH_INDEX.find(g => g.id === id)).filter(Boolean);
-
-const expandQuery = (query) => {
-  const expanded = [query.toLowerCase()];
-  for (const [term, synonyms] of Object.entries(SEARCH_SYNONYMS)) {
-    if (synonyms.some(syn => query.includes(syn))) expanded.push(term.toLowerCase());
-  }
-  return expanded;
-};
 
 function ResultItem({ item, isSelected, onSelect, onHover }) {
   return (
@@ -72,15 +80,9 @@ export default function SearchOverlay() {
 
   const results = useMemo(() => {
     if (!query.trim()) return [];
-    const expanded = expandQuery(query);
-    return SEARCH_INDEX.filter(g =>
-      expanded.some(q =>
-        g.title.toLowerCase().includes(q) ||
-        g.snippet.toLowerCase().includes(q) ||
-        g.module.toLowerCase().includes(q) ||
-        g.type.toLowerCase().includes(q)
-      )
-    );
+    // Fuse.js 퍼지 검색 — 오타 허용, 부분 일치
+    const fuseResults = fuse.search(query);
+    return fuseResults.map(r => r.item);
   }, [query]);
 
   const showEmpty = !query.trim();

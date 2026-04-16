@@ -688,6 +688,186 @@ export const GUIDES = {
     ],
     responses: null, decisionTable: null, referenceData: null, policyDiff: null,
   },
+
+  // ── 신규 추가 가이드 (6개) ───────────────────────────────────────────────
+  'make-up-lesson': {
+    type: 'SOP', module: '수업운영관리', title: '보강 처리 가이드',
+    updated: '2026-04-16', confluenceId: '1921567890',
+    author: '이준호', version: 'v1.2', views: 156, helpful: 13, helpfulRate: 86,
+    targets: ['운영자'],
+    tldr: "결석한 회원에게 보강 회차를 부여하고 관리하는 방법입니다.\n보강 회차는 만료일을 반드시 설정해야 하며, 보강 코드가 동일한 반에서만 인정됩니다.",
+    path: 'AMS 어드민 > 수업운영관리 > 수업관리 > 출결 관리',
+    amsUrl: `${AMS}/operation/attendance`,
+    confluenceUrl: `${CONFLUENCE}/1921567890`,
+    steps: [
+      { title: '결석 회원 확인', desc: '수업상세 출석부에서 결석 처리된 회원을 확인합니다.', image: null },
+      { title: '보강 부여 버튼 클릭', desc: '결석 회원을 선택 후 [보강 부여] 버튼을 클릭합니다.', image: null },
+      { title: '보강 회차 및 만료일 설정', desc: '보강을 받을 회차(수업)와 보강 유효 만료일을 설정합니다.', image: null },
+      { title: '보강 코드 확인', desc: '해당 강좌와 동일한 보강 코드인 반에서 수강했을 때만 인정됩니다.', image: null },
+    ],
+    mainItemsTable: [
+      { field: '보강 회차', desc: '결석 회원이 받을 보강 수업(회차)', required: true },
+      { field: '보강 만료일', desc: '보강 유효 기간의 마지막 날짜 — 미설정 시 영구 보강', required: true },
+      { field: '보강 코드', desc: '현재 강좌와 동일한 보강 코드', required: true },
+    ],
+    cases: [
+      { label: '타반에서 보강 받은 경우', action: '보강 코드가 동일한 타반에서 수강했으면 자동 인정', note: '보강 코드 확인 필수' },
+      { label: 'VOD 보강으로 대체', action: '마이클래스에서 동영상보강으로 수강 가능 — AMS 별도 처리 불필요', note: '' },
+    ],
+    cautions: [
+      '보강 만료일을 반드시 설정 — 미설정 시 영구 보강 상태가 됨',
+      '동일 회차에 중복 보강 부여 불가',
+    ],
+    troubleTable: null, responses: null, decisionTable: null, referenceData: null, policyDiff: null,
+  },
+
+  'refund-process': {
+    type: 'SOP', module: '청구/수납/결제/환불', title: '환불 처리 절차 및 정산',
+    updated: '2026-04-15', confluenceId: '1921678901',
+    author: '박소연', version: 'v1.3', views: 201, helpful: 17, helpfulRate: 88,
+    targets: ['운영자', '실장'],
+    tldr: "환불 승인 후 실제 환불금을 처리하는 절차입니다.\n결제 수단별(카드/현금/가상계좌)로 환불 방식이 다르며, 정산 처리 시점도 상이합니다.",
+    path: 'AMS 어드민 > 청구/수납 관리 > 환불 처리',
+    amsUrl: `${AMS}/billing/refund`,
+    confluenceUrl: `${CONFLUENCE}/1921678901`,
+    steps: [
+      { title: '환불 신청 조회', desc: '환불 요청된 건을 환불 관리 메뉴에서 조회합니다.', image: null },
+      { title: '환불 승인 기준 판단', desc: '환불 정책 판단 가이드에 따라 환불 가능 여부를 판단합니다.', image: null },
+      { title: '환불 수단별 처리', desc: 'PG카드는 자동 환불. VAN/현금/가상계좌는 수동 처리가 필요합니다.', image: null },
+      { title: '정산 처리', desc: '월별 정산 마감 후 최종 정산금을 사업자계좌로 입금합니다.', image: null },
+    ],
+    mainItemsTable: [
+      { field: 'PG카드 환불', desc: 'Smartro를 통한 자동 환불 처리', required: true },
+      { field: 'VAN/현금 환불', desc: '환불요청처리 메뉴에서 승인취소 또는 이체완료 처리', required: true },
+      { field: '가상계좌 환불', desc: '입금 대기 중인 건은 미입금 처리, 입금된 건은 환불 처리', required: false },
+    ],
+    cases: [
+      { label: 'PG카드 결제 환불', action: '신청 후 자동 처리됨 — 별도 수동 처리 불필요', note: '자동 처리 확인 필수' },
+      { label: 'VAN 승인취소 처리', action: '환불요청처리에서 VAN 건을 선택 후 [승인취소] 클릭', note: '이중 결제 방지' },
+      { label: '부분 환불 (일할 계산)', action: '환불 금액을 직접 입력하여 부분 환불 처리 가능', note: '사유 입력 필수' },
+    ],
+    cautions: [
+      '환불 처리 후 복구 불가 — 반드시 회원 확인 후 처리',
+      '정산 마감 후 환불은 다음 월 정산에서 처리됨',
+      '미환불 상태가 3개월 이상 지속되면 콜센터 확인 필요',
+    ],
+    troubleTable: null, responses: null, decisionTable: null, referenceData: null, policyDiff: null,
+  },
+
+  'instructor-manage': {
+    type: 'SOP', module: '강좌/교재 관리', title: '강사 등록 및 관리 가이드',
+    updated: '2026-04-14', confluenceId: '1921789012',
+    author: '이준호', version: 'v1.1', views: 89, helpful: 7, helpfulRate: 82,
+    targets: ['운영자', '실장'],
+    tldr: "AMS에 강사를 신규 등록하고 강의 권한을 설정하는 방법입니다.\n강사 등록이 없으면 강좌 생성 시 오류가 발생하므로 사전 준비가 필수입니다.",
+    path: 'AMS 어드민 > 강좌/교재 관리 > 강사 관리',
+    amsUrl: `${AMS}/course/instructor`,
+    confluenceUrl: `${CONFLUENCE}/1921789012`,
+    steps: [
+      { title: '강사 관리 메뉴 진입', desc: '강좌/교재 관리 > 강사 관리로 이동합니다.', image: null },
+      { title: '[강사 추가] 버튼 클릭', desc: '신규 강사 등록 팝업을 열기 위해 [강사 추가] 버튼을 클릭합니다.', image: null },
+      { title: '강사 기본 정보 입력', desc: '이름, 휴대폰, 이메일, 자격증 정보를 입력합니다.', image: null },
+      { title: '강의 과목 설정', desc: '해당 강사가 담당할 강좌/과목을 선택합니다. 복수 선택 가능합니다.', image: null },
+      { title: '저장 및 승인', desc: '[저장] 후 실장 승인을 받으면 강사 등록이 완료됩니다.', image: null },
+    ],
+    mainItemsTable: [
+      { field: '강사명', desc: 'AMS와 마이클래스에 표시될 강사 이름', required: true },
+      { field: '연락처', desc: '강사 휴대폰 번호 (긴급 연락용)', required: true },
+      { field: '자격증/이력', desc: '강사의 자격증, 경력, 특이사항 (선택)', required: false },
+    ],
+    cases: [
+      { label: '신규 강사 등록 후 강좌 생성', action: '강사 등록 완료 → 강좌 생성 시 해당 강사 선택', note: '미등록 강사는 강좌 생성 불가' },
+      { label: '강사 정보 수정', action: '강사 목록에서 해당 강사를 클릭하여 수정', note: '강좌 진행 중 수정 주의' },
+    ],
+    cautions: [
+      '강사 등록 전 강좌 생성 불가 — 미리 등록 필수',
+      '강사 명의 강좌가 있으면 강사 정보 삭제 불가',
+    ],
+    troubleTable: null, responses: null, decisionTable: null, referenceData: null, policyDiff: null,
+  },
+
+  'report-card-send': {
+    type: 'SOP', module: '메시지발송 관리', title: '성적표 및 평가 발송 가이드',
+    updated: '2026-04-13', confluenceId: '1921890123',
+    author: '박소연', version: 'v1.0', views: 76, helpful: 6, helpfulRate: 79,
+    targets: ['운영자'],
+    tldr: "강좌 종료 후 학생과 학부모에게 성적표, 수강 평가, 피드백을 발송하는 방법입니다.\n마이클래스 앱 푸시 알림과 문자로 자동 발송됩니다.",
+    path: 'AMS 어드민 > 메시지발송 관리 > 성적표 발송',
+    amsUrl: `${AMS}/message/report`,
+    confluenceUrl: `${CONFLUENCE}/1921890123`,
+    steps: [
+      { title: '종료 강좌 조회', desc: '성적표 발송 메뉴에서 종료된 강좌를 조회합니다.', image: null },
+      { title: '성적 입력 확인', desc: '강사가 입력한 성적과 수강 평가 내용을 확인합니다.', image: null },
+      { title: '[성적표 발송] 버튼 클릭', desc: '발송 버튼을 클릭하면 학부모에게 성적표가 발송됩니다.', image: null },
+      { title: '발송 현황 확인', desc: '발송 이력에서 전송 상태(완료/실패)를 확인합니다.', image: null },
+    ],
+    mainItemsTable: [
+      { field: '성적표 항목', desc: '출석률, 과제 제출, 시험 성적, 강사 평가', required: true },
+      { field: '발송 대상', desc: '학부모 푸시 알림 + 문자 발송', required: true },
+    ],
+    cases: [
+      { label: '학부모 연락처 오입력', action: '발송 실패 시 마이클래스 가입 정보 확인 후 재발송', note: '연락처 수정 필수' },
+      { label: '성적 미입력 강좌', action: '강사에게 성적 입력 안내 후 재시도', note: '' },
+    ],
+    cautions: [
+      '성적표 발송 후 수정 불가 — 발송 전 강사와 함께 최종 검토',
+      '푸시 알림 설정이 OFF인 학부모는 문자로만 수신',
+    ],
+    troubleTable: null, responses: null, decisionTable: null, referenceData: null, policyDiff: null,
+  },
+
+  'proration-billing': {
+    type: 'SOP', module: '청구/수납/결제/환불', title: '일할 계산 수강료 청구 가이드',
+    updated: '2026-04-12', confluenceId: '1921901234',
+    author: '김명준', version: 'v1.2', views: 234, helpful: 19, helpfulRate: 89,
+    targets: ['운영자', '실장'],
+    tldr: "월 중도 입반/퇴반 시 수강료를 일자 기준으로 안분하여 청구하는 방법입니다.\n월별 수강료를 기준으로 일수를 계산하여 비례배분하므로 정확성이 중요합니다.",
+    path: 'AMS 어드민 > 청구/수납 관리 > 일할 청구',
+    amsUrl: `${AMS}/billing/proration`,
+    confluenceUrl: `${CONFLUENCE}/1921901234`,
+    steps: [
+      { title: '중도 입반/퇴반 회원 확인', desc: '수업관리에서 입반일 또는 퇴반일이 월 중간인 회원을 확인합니다.', image: null },
+      { title: '월별 정액 수강료 확인', desc: '해당 강좌의 월별 수강료를 확인합니다(회차 기준이 아님).', image: null },
+      { title: '청구 생성 시 자동 일할 계산', desc: '청구생성 팝업에서 입반일/퇴반일이 자동 반영되어 일할 계산됨.', image: null },
+      { title: '첫 달/마지막 달 수강료 확인', desc: '청구 생성 후 첫 달과 마지막 달 금액이 정확히 계산되었는지 확인합니다.', image: null },
+    ],
+    mainItemsTable: [
+      { field: '월별 수강료', desc: '강좌의 기준이 되는 월 단위 정액 청구금액', required: true },
+      { field: '입반일/퇴반일', desc: '월 중간 입반/퇴반 시점 (정확한 날짜 입력 필수)', required: true },
+      { field: '일할 계산 공식', desc: '(월 수강료 / 해당 월 수업일수) × 실 수강일수', required: false },
+    ],
+    cases: [
+      { label: '15일 중도 입반', action: '월 수강료의 50% (예상) 청구 — 실제 수업일수 기준으로 자동 계산', note: '월 초와 월 말 과 분할 가능' },
+      { label: '20일 퇴반', action: '월 수강료의 70% (예상) 청구 — 이미 청구된 수강료는 자동 차감', note: '환불금 발생 가능' },
+      { label: '공휴일 포함 보정', action: '해당 월의 공휴일이 반영되어 자동 계산됨 — 수동 조정 불필요', note: '' },
+    ],
+    cautions: [
+      '입반/퇴반 정확한 날짜 입력 필수 — 자동 계산이므로 입력 오류 시 결과 오류',
+      '월중 입반 시 첫 달이 자동 일할 계산되므로 학부모에게 별도 안내 권장',
+      '공휴일 반영된 실제 수업일수가 기준이므로 일반인의 달력 일수와 상이할 수 있음',
+    ],
+    troubleTable: null, responses: null, decisionTable: null, referenceData: null, policyDiff: null,
+  },
+
+  'myclass-guide': {
+    type: 'REFERENCE', module: '공통/시스템', title: '마이클래스 학부모 앱 운영 가이드',
+    updated: '2026-04-11', confluenceId: '1922012345',
+    author: '박소연', version: 'v1.0', views: 112, helpful: 9, helpfulRate: 85,
+    targets: ['운영자', '실장'],
+    tldr: "학부모가 마이클래스 앱에서 자녀의 수강 현황, 성적, 공지사항을 확인하는 방법입니다.\nAMS와 마이클래스는 실시간 연동되므로 AMS의 모든 변경이 즉시 반영됩니다.",
+    path: '학부모 앱 > 자녀 수강 정보',
+    amsUrl: `${AMS}/student/myclass`,
+    confluenceUrl: `${CONFLUENCE}/1922012345`,
+    referenceData: [
+      { term: '마이클래스 앱', def: '학원 운영 서비스(AMS)와 연동되는 학부모/학생용 모바일 앱' },
+      { term: '수강 현황 조회', def: 'AMS 입반 정보 기반 — 입반 후 앱에 즉시 표시' },
+      { term: '성적 조회', def: '강좌 종료 후 성적표 발송 — 발송 후 앱에서 확인 가능' },
+      { term: '푸시 알림', def: 'AMS에서 발송하는 공지, 성적 발송, 문자 알림 등이 앱 알림으로 전달' },
+      { term: '계정 연동', def: '학부모가 마이클래스에서 자녀 계정을 등록 및 관리' },
+      { term: '미수신 원인', def: '앱 푸시 설정 OFF, 학부모 연락처 오입력, 계정 미연동' },
+    ],
+    steps: null, mainItemsTable: null, cases: null, cautions: null, troubleTable: null, responses: null, decisionTable: null, policyDiff: null,
+  },
 };
 
 // AMS 실제 메뉴 구조 (https://ams.sdij.com 기준)
@@ -707,6 +887,7 @@ export const MODULE_TREE = [
       { id: 'course-create',      label: '강좌 생성 가이드' },
       { id: 'textbook-register',  label: '교재 등록 및 강좌 연결 가이드' },
       { id: 'class-schedule',     label: '강좌 스케줄 관리 가이드' },
+      { id: 'instructor-manage',  label: '강사 등록 및 관리 가이드' },
     ],
   },
   {
@@ -719,16 +900,19 @@ export const MODULE_TREE = [
       { id: 'class-transfer',     label: '전반 처리 가이드' },
       { id: 'unpaid-withdraw',    label: '미납자 퇴반처리' },
       { id: 'qr-trouble',         label: 'QR 출석 인식 실패 트러블슈팅' },
+      { id: 'make-up-lesson',     label: '보강 처리 가이드' },
     ],
   },
   {
     id: 'billing', label: '청구/수납/결제/환불', icon: 'CreditCard',
     amsPath: '/billing',
     guides: [
-      { id: 'billing-guide',   label: '청구 생성 가이드' },
-      { id: 'payment-switch',  label: '전환결제 처리 가이드' },
-      { id: 'refund-policy',   label: '환불 승인 기준 판단 가이드' },
-      { id: 'payment-method',  label: '결제 수단 등록 가이드' },
+      { id: 'billing-guide',        label: '청구 생성 가이드' },
+      { id: 'payment-switch',       label: '전환결제 처리 가이드' },
+      { id: 'refund-policy',        label: '환불 승인 기준 판단 가이드' },
+      { id: 'payment-method',       label: '결제 수단 등록 가이드' },
+      { id: 'refund-process',       label: '환불 처리 절차 및 정산' },
+      { id: 'proration-billing',    label: '일할 계산 수강료 청구 가이드' },
     ],
   },
   {
@@ -747,6 +931,7 @@ export const MODULE_TREE = [
       { id: 'sms-send',              label: '문자 발송 가이드' },
       { id: 'virtual-account-guide', label: '가상계좌 안내 문자 발송 가이드' },
       { id: 'payment-request-sms',   label: '결제 요청 문자 발송 가이드' },
+      { id: 'report-card-send',      label: '성적표 및 평가 발송 가이드' },
     ],
   },
   {
@@ -756,11 +941,18 @@ export const MODULE_TREE = [
       { id: 'ams-glossary',    label: 'AMS 주요 용어 사전' },
       { id: 'response-manual', label: '상황별 CS 대응 매뉴얼' },
       { id: 'policy-2026',     label: '2026 수강료 정책 변경 공지' },
+      { id: 'myclass-guide',   label: '마이클래스 학부모 앱 운영 가이드' },
     ],
   },
 ];
 
 export const RECENT_GUIDES = [
+  { id:'make-up-lesson',        module:'수업운영관리',         title:'보강 처리 가이드',                     updated_at:'2026-04-16', views: 156, helpful: 13, version: 'v1.2', author: '이준호', tags: ['보강', 'SOP'] },
+  { id:'refund-process',        module:'청구/수납/결제/환불',  title:'환불 처리 절차 및 정산',               updated_at:'2026-04-15', views: 201, helpful: 17, version: 'v1.3', author: '박소연', tags: ['환불', 'SOP'] },
+  { id:'instructor-manage',     module:'강좌/교재 관리',       title:'강사 등록 및 관리 가이드',             updated_at:'2026-04-14', views: 89,  helpful: 7,  version: 'v1.1', author: '이준호', tags: ['강사', 'SOP'] },
+  { id:'report-card-send',      module:'메시지발송 관리',      title:'성적표 및 평가 발송 가이드',           updated_at:'2026-04-13', views: 76,  helpful: 6,  version: 'v1.0', author: '박소연', tags: ['성적표'] },
+  { id:'proration-billing',     module:'청구/수납/결제/환불',  title:'일할 계산 수강료 청구 가이드',         updated_at:'2026-04-12', views: 234, helpful: 19, version: 'v1.2', author: '김명준', tags: ['청구', '일할계산'] },
+  { id:'myclass-guide',         module:'공통/시스템',           title:'마이클래스 학부모 앱 운영 가이드',     updated_at:'2026-04-11', views: 112, helpful: 9,  version: 'v1.0', author: '박소연', tags: ['마이클래스'] },
   { id:'attendance-process',    module:'수업운영관리',         title:'출결 처리 가이드',                     updated_at:'2026-04-13', views: 512, helpful: 42, version: 'v2.3', author: '이준호', tags: ['출결', '필수'] },
   { id:'enrollment-process',    module:'수업운영관리',         title:'입반 처리 가이드',                     updated_at:'2026-04-14', views: 389, helpful: 31, version: 'v1.6', author: '박소연', tags: ['입반', '필수'] },
   { id:'course-create',         module:'강좌/교재 관리',       title:'강좌 생성 가이드',                     updated_at:'2026-04-12', views: 267, helpful: 22, version: 'v2.0', author: '박소연', tags: ['강좌', '필수'] },

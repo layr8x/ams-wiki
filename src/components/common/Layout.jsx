@@ -48,7 +48,7 @@ const S = {
     borderRadius: '4px', color: '#8f8f8f', fontFamily: 'monospace',
     lineHeight: 1.4,
   },
-  rightActions: { display: 'flex', alignItems: 'center', gap: '16px', flexShrink: 0 },
+  rightActions: { display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 },
   bell: { position: 'relative', cursor: 'pointer', display: 'flex' },
   bellDot: {
     position: 'absolute', top: '-2px', right: '-2px',

@@ -12,13 +12,15 @@ export default function ThemeToggle() {
         background: 'none',
         border: 'none',
         cursor: 'pointer',
-        padding: '8px',
+        padding: '6px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        borderRadius: '6px',
+        borderRadius: '4px',
         transition: 'background-color 120ms ease',
         color: isDark ? '#fbbf24' : '#666666',
+        width: '32px',
+        height: '32px',
       }}
       onMouseEnter={e => {
         e.currentTarget.style.backgroundColor = isDark ? 'rgba(251, 191, 36, 0.1)' : '#f2f2f2';
@@ -28,7 +30,7 @@ export default function ThemeToggle() {
       }}
       title={isDark ? '라이트 모드' : '다크 모드'}
     >
-      {isDark ? <Sun size={18} /> : <Moon size={18} />}
+      {isDark ? <Sun size={16} /> : <Moon size={16} />}
     </button>
   );
 }

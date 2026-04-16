@@ -15,14 +15,15 @@ export default function LanguageSelector() {
       style={{
         display: 'flex',
         alignItems: 'center',
-        gap: '8px',
-        padding: '8px',
+        gap: '4px',
+        padding: '6px 8px',
         background: 'var(--color-secondary)',
-        borderRadius: 'var(--radius)',
+        borderRadius: '4px',
         border: '1px solid var(--color-border)',
+        minWidth: 'fit-content',
       }}
     >
-      <Globe size={18} style={{ color: 'var(--color-muted-foreground)' }} />
+      <Globe size={14} style={{ color: 'var(--color-muted-foreground)', flexShrink: 0 }} />
       <select
         value={language}
         onChange={(e) => setLanguage(e.target.value)}
@@ -30,10 +31,11 @@ export default function LanguageSelector() {
           background: 'transparent',
           border: 'none',
           cursor: 'pointer',
-          fontSize: '14px',
+          fontSize: '12px',
           color: 'var(--color-foreground)',
-          padding: '0 4px',
+          padding: '0 2px',
           fontFamily: 'inherit',
+          minWidth: 'auto',
         }}
       >
         {getAvailableLanguages().map((lang) => (

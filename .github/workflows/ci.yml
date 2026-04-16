@@ -61,7 +61,7 @@ jobs:
         run: npm ci
 
       - name: Run unit tests
-        run: npm run test -- --run --config vitest.config.js
+        run: npm run test -- --run
 
   security-audit:
     runs-on: ubuntu-latest

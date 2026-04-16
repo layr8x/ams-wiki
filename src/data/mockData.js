@@ -329,7 +329,7 @@ export const GUIDES = {
   },
 
   'class-schedule': {
-    type: 'REFERENCE', module: '수업운영관리', title: '강좌 스케줄 관리 가이드',
+    type: 'REFERENCE', module: '강좌/교재 관리', title: '강좌 스케줄 관리 가이드',
     updated: '2026-03-30', confluenceId: '1920345678', targets: ['운영자', '실장', '관리자'],
     tldr: "AMS에서 강좌의 개강일, 종강일, 수업요일, 시간을 관리하는 방법입니다.",
     path: 'AMS 어드민 > 강좌/교재 관리 > 강좌관리',

@@ -362,6 +362,21 @@ export default function GuidePage() {
       {/* ── 본문 ────────────────────────────────────────────────────────── */}
       <article style={{ flex:1, minWidth:0 }}>
 
+        {/* 브레드크럼 */}
+        <nav style={{ display:'flex', alignItems:'center', gap:'6px', marginBottom:'28px', fontSize:'13px', color:G.g400, fontFamily:G.font }}>
+          <Link to="/" style={{ color:G.g400, textDecoration:'none', fontWeight:500 }}
+            onMouseEnter={e=>e.currentTarget.style.color=G.g900}
+            onMouseLeave={e=>e.currentTarget.style.color=G.g400}
+          >홈</Link>
+          <ChevronRight size={13} color={G.g300} />
+          <Link to="/guides" style={{ color:G.g400, textDecoration:'none', fontWeight:500 }}
+            onMouseEnter={e=>e.currentTarget.style.color=G.g900}
+            onMouseLeave={e=>e.currentTarget.style.color=G.g400}
+          >가이드 목록</Link>
+          <ChevronRight size={13} color={G.g300} />
+          <span style={{ color:G.g600, fontWeight:600 }}>{guide.module}</span>
+        </nav>
+
         {/* 01 메타 헤더 */}
         <div id="sec-overview" style={{ marginBottom:'52px', scrollMarginTop:'80px' }}>
           <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'22px', flexWrap:'wrap', gap:'10px' }}>

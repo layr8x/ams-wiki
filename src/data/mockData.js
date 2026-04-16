@@ -418,15 +418,22 @@ export const MODULE_TREE = [
 ];
 
 export const RECENT_GUIDES = [
-  { id:'member-merge',    module:'고객(원생) 관리',     title:'AMS 회원 병합 가이드',           updated_at:'2026-04-15', views: 342, helpful: 28, version: 'v2.1', author: '김명준' },
-  { id:'billing-guide',   module:'청구/수납/결제/환불', title:'청구 생성 가이드',                updated_at:'2026-04-10', views: 215, helpful: 18, version: 'v1.8', author: '이준호' },
-  { id:'payment-switch',  module:'청구/수납/결제/환불', title:'전환결제 처리 가이드',             updated_at:'2026-04-08', views: 187, helpful: 14, version: 'v2.0', author: '김명준' },
-  { id:'class-transfer',  module:'수업운영관리',         title:'전반 처리 가이드',                updated_at:'2026-04-05', views: 156, helpful: 11, version: 'v1.5', author: '박소연' },
-  { id:'qr-trouble',      module:'수업운영관리',         title:'QR 출석 인식 실패 트러블슈팅',    updated_at:'2026-04-03', views: 423, helpful: 35, version: 'v3.2', author: '이준호' },
-  { id:'duplicate-account', module:'고객(원생) 관리', title:'중복 계정 통합 프로세스',      updated_at:'2026-04-01', views: 98, helpful: 7, version: 'v1.2', author: '박소연' },
-  { id:'refund-policy', module:'청구/수납/결제/환불', title:'환불 승인 기준 판단 가이드',    updated_at:'2026-03-28', views: 567, helpful: 45, version: 'v2.5', author: '이준호' },
-  { id:'ams-glossary', module:'공통/시스템', title:'AMS 주요 용어 사전', updated_at:'2026-03-25', views: 234, helpful: 18, version: 'v1.9', author: '김명준' },
+  { id:'member-merge',    module:'고객(원생) 관리',     title:'AMS 회원 병합 가이드',           updated_at:'2026-04-15', views: 342, helpful: 28, version: 'v2.1', author: '김명준', tags: ['회원관리', '필수'] },
+  { id:'billing-guide',   module:'청구/수납/결제/환불', title:'청구 생성 가이드',                updated_at:'2026-04-10', views: 215, helpful: 18, version: 'v1.8', author: '이준호', tags: ['청구', '필수'] },
+  { id:'payment-switch',  module:'청구/수납/결제/환불', title:'전환결제 처리 가이드',             updated_at:'2026-04-08', views: 187, helpful: 14, version: 'v2.0', author: '김명준', tags: ['결제', '자주묻는질문'] },
+  { id:'class-transfer',  module:'수업운영관리',         title:'전반 처리 가이드',                updated_at:'2026-04-05', views: 156, helpful: 11, version: 'v1.5', author: '박소연', tags: ['입반', '필수'] },
+  { id:'qr-trouble',      module:'수업운영관리',         title:'QR 출석 인식 실패 트러블슈팅',    updated_at:'2026-04-03', views: 423, helpful: 35, version: 'v3.2', author: '이준호', tags: ['출석', '트러블슈팅'] },
+  { id:'duplicate-account', module:'고객(원생) 관리', title:'중복 계정 통합 프로세스',      updated_at:'2026-04-01', views: 98, helpful: 7, version: 'v1.2', author: '박소연', tags: ['회원관리', '실장'] },
+  { id:'refund-policy', module:'청구/수납/결제/환불', title:'환불 승인 기준 판단 가이드',    updated_at:'2026-03-28', views: 567, helpful: 45, version: 'v2.5', author: '이준호', tags: ['환불', '필수', '실장'] },
+  { id:'ams-glossary', module:'공통/시스템', title:'AMS 주요 용어 사전', updated_at:'2026-03-25', views: 234, helpful: 18, version: 'v1.9', author: '김명준', tags: ['용어', '공통'] },
+  { id:'unpaid-withdraw', module:'수업운영관리', title:'미납자 퇴반처리 가이드', updated_at:'2026-03-20', views: 145, helpful: 12, version: 'v1.4', author: '박소연', tags: ['퇴반', '청구'] },
+  { id:'student-suspension', module:'고객(원생) 관리', title:'휴강 처리 절차', updated_at:'2026-03-15', views: 89, helpful: 6, version: 'v1.1', author: '김명준', tags: ['휴강', 'SOP'] },
 ];
+
+// 인기 가이드 (조회수 기준)
+export const POPULAR_GUIDES = RECENT_GUIDES
+  .sort((a, b) => (b.views || 0) - (a.views || 0))
+  .slice(0, 5);
 
 // 검색 동의어 사전 — 사용자 자연어 검색을 AMS 용어로 매핑
 export const SEARCH_SYNONYMS = {

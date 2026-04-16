@@ -5,7 +5,7 @@
   "ignoreCommand": "git log --oneline -1 --pretty=%B | grep -q 'skip vercel' && echo 1 || echo 0",
   "git": {
     "deploymentEnabled": {
-      "main": false,
+      "main": true,
       "claude/*": true
     }
   }

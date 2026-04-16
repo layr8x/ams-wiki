@@ -3,12 +3,14 @@ import { useState, useEffect, useRef } from 'react';
 import { Search, FileText, CornerDownLeft } from 'lucide-react';
 import { useSearchStore } from '@/store/searchStore.jsx';
 import { useNavigate } from 'react-router-dom';
+import { GUIDES } from '@/data/mockData';
 
-const GUIDES_LIST = [
-  { id: 'member-merge', title: 'AMS 회원 병합 가이드', module: '고객 관리', snippet: '중복 계정 통합 절차 및 유의사항' },
-  { id: 'billing-decision', title: '환불 승인 기준 판단 가이드', module: '결제/환불', snippet: '위약금 및 환불 가능 여부 판단 기준' },
-  { id: 'qr-trouble', title: 'QR 출석 인식 실패 대응', module: '수업 운영', snippet: '인식 실패 시 원인 파악 및 수동 처리' },
-];
+const GUIDES_LIST = Object.entries(GUIDES).map(([id, guide]) => ({
+  id,
+  title: guide.title,
+  module: guide.module,
+  snippet: guide.tldr?.split('\n')[0] || '',
+}));
 
 export default function SearchOverlay() {
   const { isOpen, close, open } = useSearchStore();

@@ -1,4 +1,5 @@
 // src/utils/__tests__/utils.test.js — 유틸리티 함수 테스트
+import { describe, it, expect } from 'vitest';
 import { getCacheKey, getOptimizedImageUrl } from '../performance';
 
 describe('Performance Utils', () => {

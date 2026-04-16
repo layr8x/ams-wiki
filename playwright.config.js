@@ -1,3 +1,4 @@
+/* global process */
 // playwright.config.js — E2E 테스트 설정
 import { defineConfig, devices } from '@playwright/test';
 

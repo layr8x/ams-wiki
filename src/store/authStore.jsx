@@ -1,30 +1,10 @@
 // src/store/authStore.jsx — 사용자 인증 및 권한 관리
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
+import { ROLES, PERMISSIONS, ROLE_PERMISSIONS } from './authConstants';
+
+export { ROLES, PERMISSIONS } from './authConstants';
 
 const AuthContext = createContext();
-
-export const ROLES = {
-  ADMIN: 'admin',       // 관리자 (모든 기능 접근)
-  MANAGER: 'manager',   // 실장 (편집, 발행 권한)
-  OPERATOR: 'operator', // 운영자 (조회만 가능)
-  GUEST: 'guest',       // 비로그인
-};
-
-export const PERMISSIONS = {
-  VIEW: 'view',         // 조회
-  EDIT: 'edit',         // 편집
-  PUBLISH: 'publish',   // 발행
-  DELETE: 'delete',     // 삭제
-  MANAGE_USERS: 'manage_users',
-};
-
-// 역할별 권한 매핑
-const ROLE_PERMISSIONS = {
-  [ROLES.ADMIN]: [PERMISSIONS.VIEW, PERMISSIONS.EDIT, PERMISSIONS.PUBLISH, PERMISSIONS.DELETE, PERMISSIONS.MANAGE_USERS],
-  [ROLES.MANAGER]: [PERMISSIONS.VIEW, PERMISSIONS.EDIT, PERMISSIONS.PUBLISH],
-  [ROLES.OPERATOR]: [PERMISSIONS.VIEW],
-  [ROLES.GUEST]: [PERMISSIONS.VIEW],
-};
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
@@ -32,19 +12,20 @@ export function AuthProvider({ children }) {
 
   // 초기 사용자 로드 (localStorage 또는 API)
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      try {
+    try {
+      const storedUser = localStorage.getItem('user');
+      if (storedUser) {
         setUser(JSON.parse(storedUser));
-      } catch {
-        localStorage.removeItem('user');
       }
+    } catch {
+      localStorage.removeItem('user');
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   }, []);
 
   // 로그인
-  const login = (email, password) => {
+  const login = (email) => {
     // 실제로는 API 호출
     // 이 예제에서는 간단한 로그인 시뮬레이션
     const mockUser = {
@@ -85,6 +66,7 @@ export function AuthProvider({ children }) {
   );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useAuth() {
   const context = useContext(AuthContext);
   if (!context) {

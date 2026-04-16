@@ -5,6 +5,7 @@ import GuidePage from './pages/GuidePage';
 import FaqPage from './pages/FaqPage';
 import UpdatesPage from './pages/UpdatesPage';
 import EditorPage from './pages/EditorPage';
+import ErrorPage from './pages/ErrorPage';
 import SearchOverlay from './components/search/SearchOverlay';
 import { SearchProvider } from './store/searchStore';
 
@@ -20,7 +21,8 @@ export default function App() {
             <Route path="/faq" element={<FaqPage />} />
             <Route path="/updates" element={<UpdatesPage />} />
             <Route path="/modules/:moduleId" element={<HomePage />} />
-            <Route path="*" element={<HomePage />} />
+            <Route path="/404" element={<ErrorPage statusCode={404} message="찾을 수 없는 페이지입니다. 홈으로 돌아가주세요." />} />
+            <Route path="*" element={<ErrorPage statusCode={404} message="찾을 수 없는 페이지입니다. 홈으로 돌아가주세요." />} />
           </Route>
         </Routes>
         <SearchOverlay />

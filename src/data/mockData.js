@@ -14,6 +14,7 @@ export const GUIDES = {
   'member-merge': {
     type: 'SOP', module: '회원관리', title: 'AMS 회원 병합 가이드',
     updated: '2026-01-30', confluenceId: '1815216142',
+    author: '김명준', version: 'v2.1', views: 342, helpful: 28, helpfulRate: 92,
     targets: ['운영자', '실장'],
     tldr: "학생이 마이클래스에서 직접 수강정보 연동을 하지 못하는 경우 관리자가 AMS 데이터를 옮겨줄 수 있는 기능입니다.\n병합은 '동일 회원의 계정'임을 확인한 계정끼리만 가능합니다. 이름 등 개인정보가 다른 경우 확인 후 작업 필요합니다.",
     path: 'AMS 어드민 > 고객(원생) 관리 > 회원조회',
@@ -367,9 +368,19 @@ export const MODULE_TREE = [
 ];
 
 export const RECENT_GUIDES = [
-  { id:'member-merge',    module:'고객(원생) 관리',     title:'AMS 회원 병합 가이드',           updated_at:'2026-04-15' },
-  { id:'billing-guide',   module:'청구/수납/결제/환불', title:'청구 생성 가이드',                updated_at:'2026-04-10' },
-  { id:'payment-switch',  module:'청구/수납/결제/환불', title:'전환결제 처리 가이드',             updated_at:'2026-04-08' },
-  { id:'class-transfer',  module:'수업운영관리',         title:'전반 처리 가이드',                updated_at:'2026-04-05' },
-  { id:'qr-trouble',      module:'수업운영관리',         title:'QR 출석 인식 실패 트러블슈팅',    updated_at:'2026-04-03' },
+  { id:'member-merge',    module:'고객(원생) 관리',     title:'AMS 회원 병합 가이드',           updated_at:'2026-04-15', views: 342, helpful: 28, version: 'v2.1', author: '김명준' },
+  { id:'billing-guide',   module:'청구/수납/결제/환불', title:'청구 생성 가이드',                updated_at:'2026-04-10', views: 215, helpful: 18, version: 'v1.8', author: '이준호' },
+  { id:'payment-switch',  module:'청구/수납/결제/환불', title:'전환결제 처리 가이드',             updated_at:'2026-04-08', views: 187, helpful: 14, version: 'v2.0', author: '김명준' },
+  { id:'class-transfer',  module:'수업운영관리',         title:'전반 처리 가이드',                updated_at:'2026-04-05', views: 156, helpful: 11, version: 'v1.5', author: '박소연' },
+  { id:'qr-trouble',      module:'수업운영관리',         title:'QR 출석 인식 실패 트러블슈팅',    updated_at:'2026-04-03', views: 423, helpful: 35, version: 'v3.2', author: '이준호' },
 ];
+
+// 검색 동의어 사전 — 사용자 자연어 검색을 AMS 용어로 매핑
+export const SEARCH_SYNONYMS = {
+  '환불': ['돈 돌려받기', '수강료 반환', '환불 신청', '환불 거절'],
+  '회원 병합': ['계정 통합', '중복 계정', '계정 합치기', '회원 통합'],
+  '청구': ['수강료 청구', '결제', '청구서', '결제 생성'],
+  '출석': ['출석 처리', 'QR', '출결', '출석 인식'],
+  '수업 관리': ['수업 운영', '강좌 관리', '수강', '수업'],
+  '결제': ['카드 결제', '결제 수단', '결제 변경', '전환 결제'],
+};

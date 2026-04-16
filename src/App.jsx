@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Layout from './components/common/Layout';
 import HomePage from './pages/HomePage';
+import GuideListPage from './pages/GuideListPage';
 import GuidePage from './pages/GuidePage';
 import FaqPage from './pages/FaqPage';
 import UpdatesPage from './pages/UpdatesPage';
@@ -17,6 +18,7 @@ export default function App() {
           <Route path="/editor" element={<EditorPage />} />
           <Route element={<Layout />}>
             <Route path="/" element={<HomePage />} />
+            <Route path="/guides" element={<GuideListPage />} />
             <Route path="/guides/:id" element={<GuidePage />} />
             <Route path="/faq" element={<FaqPage />} />
             <Route path="/updates" element={<UpdatesPage />} />

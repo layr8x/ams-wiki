@@ -116,19 +116,22 @@ export default function HomePage() {
 
       {/* ── 통계 카드 ─────────────────────────────────────────────────────── */}
       <section className="mb-10 grid grid-cols-2 gap-3 sm:grid-cols-4">
-        {STATS.map(({ label, value, icon: Icon, color }) => (
-          <Card key={label} className="transition-shadow hover:shadow-md">
+        {STATS.map(stat => {
+          const StatIcon = stat.icon
+          return (
+          <Card key={stat.label} className="transition-shadow hover:shadow-md">
             <CardContent className="flex items-center gap-3 p-4">
               <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-muted">
-                <Icon size={16} className={color} />
+                <StatIcon size={16} className={stat.color} />
               </div>
               <div>
-                <p className="text-lg font-bold text-foreground leading-none">{value}</p>
-                <p className="mt-0.5 text-xs text-muted-foreground">{label}</p>
+                <p className="text-lg font-bold text-foreground leading-none">{stat.value}</p>
+                <p className="mt-0.5 text-xs text-muted-foreground">{stat.label}</p>
               </div>
             </CardContent>
           </Card>
-        ))}
+          )
+        })}
       </section>
 
       {/* ── 모듈 카테고리 그리드 ──────────────────────────────────────────── */}
@@ -211,22 +214,25 @@ export default function HomePage() {
         <section>
           <h2 className="mb-4 text-base font-semibold text-foreground">빠른 링크</h2>
           <div className="flex flex-col gap-2">
-            {QUICK_LINKS.map(({ to, icon: Icon, label, desc }) => (
+            {QUICK_LINKS.map(link => {
+              const LinkIcon = link.icon
+              return (
               <Link
-                key={to}
-                to={to}
+                key={link.to}
+                to={link.to}
                 className="flex items-center gap-3 rounded-lg border border-border bg-card p-4 transition-all hover:shadow-md hover:border-ring/30"
               >
                 <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-secondary">
-                  <Icon size={15} className="text-muted-foreground" />
+                  <LinkIcon size={15} className="text-muted-foreground" />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-foreground">{label}</p>
-                  <p className="text-xs text-muted-foreground">{desc}</p>
+                  <p className="text-sm font-semibold text-foreground">{link.label}</p>
+                  <p className="text-xs text-muted-foreground">{link.desc}</p>
                 </div>
                 <ChevronRight size={14} className="ml-auto shrink-0 text-muted-foreground/40" />
               </Link>
-            ))}
+              )
+            })}
 
             {/* 모듈 현황 미니 카드 */}
             <div className="mt-2 rounded-lg border border-border bg-muted/30 p-4">

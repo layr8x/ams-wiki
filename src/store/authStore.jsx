@@ -39,14 +39,16 @@ export function AuthProvider({ children }) {
       })
       return () => subscription.unsubscribe()
     } else {
-      // Supabase 미설정 — localStorage 폴백
-      try {
-        const stored = localStorage.getItem('ams_wiki_user')
-        if (stored) setUser(JSON.parse(stored))
-      } catch {
-        localStorage.removeItem('ams_wiki_user')
-      }
-      setIsLoading(false)
+      // Supabase 미설정 — localStorage 폴백 (queueMicrotask로 래핑)
+      queueMicrotask(() => {
+        try {
+          const stored = localStorage.getItem('ams_wiki_user')
+          if (stored) setUser(JSON.parse(stored))
+        } catch {
+          localStorage.removeItem('ams_wiki_user')
+        }
+        setIsLoading(false)
+      })
     }
   }, [])
 

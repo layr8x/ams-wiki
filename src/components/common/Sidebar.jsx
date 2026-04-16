@@ -134,24 +134,27 @@ export default function Sidebar() {
 
         {/* 하단 링크 */}
         {[
-          { to: '/faq',      Icon: HelpCircle,    label: 'FAQ' },
-          { to: '/updates',  Icon: Bell,          label: '업데이트 이력' },
-          { to: '/feedback', Icon: MessageCircle, label: '오류 제보' },
-        ].map(({ to, Icon, label }) => (
-          <NavLink
-            key={to}
-            to={to}
-            className={({ isActive }) => cn(
-              'flex items-center gap-2 px-2 py-1.5 rounded-md text-sm font-medium transition-colors',
-              isActive
-                ? 'bg-accent text-accent-foreground'
-                : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
-            )}
-          >
-            <Icon size={14} className="shrink-0" />
-            {label}
-          </NavLink>
-        ))}
+          { to: '/faq',      icon: HelpCircle,    label: 'FAQ' },
+          { to: '/updates',  icon: Bell,          label: '업데이트 이력' },
+          { to: '/feedback', icon: MessageCircle, label: '오류 제보' },
+        ].map(item => {
+          const LinkIcon = item.icon
+          return (
+            <NavLink
+              key={item.to}
+              to={item.to}
+              className={({ isActive }) => cn(
+                'flex items-center gap-2 px-2 py-1.5 rounded-md text-sm font-medium transition-colors',
+                isActive
+                  ? 'bg-accent text-accent-foreground'
+                  : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+              )}
+            >
+              <LinkIcon size={14} className="shrink-0" />
+              {item.label}
+            </NavLink>
+          )
+        })}
 
         {isAuthenticated && (
           <NavLink

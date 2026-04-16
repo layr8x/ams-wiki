@@ -317,6 +317,7 @@ export default function GuidePage() {
     guide.mainItemsTable    && { id:'sec-items',    label:'주요 항목 설명' },
     guide.cases?.length     && { id:'sec-cases',    label:'운영 케이스' },
     guide.cautions?.length  && { id:'sec-cautions', label:'유의사항' },
+    { id:'sec-related', label:'관련 가이드' },
     { id:'sec-feedback', label:'피드백' },
   ].filter(Boolean);
 
@@ -610,6 +611,35 @@ export default function GuidePage() {
             <CautionBlock items={guide.cautions} />
           </section>
         )}
+
+        {/* ── 관련 가이드 ── */}
+        {(() => {
+          // Get related guides from same module, excluding current
+          const related = Object.entries(ALL_GUIDES)
+            .filter(([gid, g]) => gid !== id && g.module === guide.module)
+            .slice(0, 3);
+          if (related.length === 0) return null;
+          return (
+            <section style={{ marginBottom:'60px' }}>
+              <SecHeading id="sec-related">관련 가이드</SecHeading>
+              <div style={{ display:'flex', flexDirection:'column', gap:'8px' }}>
+                {related.map(([gid, g]) => (
+                  <Link key={gid} to={`/guides/${gid}`} style={{ display:'flex', alignItems:'center', gap:'12px', padding:'14px 18px', borderRadius:'12px', border:`1px solid ${G.g100}`, backgroundColor:'#fff', textDecoration:'none', transition:'all 0.15s' }}
+                    onMouseEnter={e => { e.currentTarget.style.backgroundColor = G.bg2; e.currentTarget.style.borderColor = G.g200; }}
+                    onMouseLeave={e => { e.currentTarget.style.backgroundColor = '#fff'; e.currentTarget.style.borderColor = G.g100; }}
+                  >
+                    <BookOpen size={14} color={G.g400} style={{ flexShrink:0 }} />
+                    <div style={{ flex:1 }}>
+                      <p style={{ margin:0, fontSize:'14px', fontWeight:600, color:G.g900 }}>{g.title}</p>
+                      <p style={{ margin:'2px 0 0', fontSize:'12px', color:G.g400 }}>{g.module}</p>
+                    </div>
+                    <ChevronRight size={14} color={G.g300} />
+                  </Link>
+                ))}
+              </div>
+            </section>
+          );
+        })()}
 
         {/* ── 피드백 ── */}
         <div id="sec-feedback" style={{ marginTop:'96px', padding:'48px 40px', borderTop:`1px solid ${G.g100}`, scrollMarginTop:'80px' }}>

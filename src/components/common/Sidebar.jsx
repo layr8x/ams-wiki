@@ -4,8 +4,9 @@ import { useState } from 'react';
 import {
   ClipboardList, BookOpen, Calendar, CreditCard, Users,
   MessageSquare, Settings, HelpCircle, Bell, PlusCircle,
-  ChevronDown, Clock, LayoutGrid, FileText
+  ChevronDown, Clock, LayoutGrid, FileText, Search
 } from 'lucide-react';
+import { useSearchStore } from '@/store/searchStore.jsx';
 import { MODULE_TREE, RECENT_GUIDES } from '@/data/mockData';
 
 const G = {
@@ -23,6 +24,7 @@ const ICON_MAP = {
 };
 
 export default function Sidebar() {
+  const { open } = useSearchStore();
   const [expanded, setExpanded] = useState({ operation: true, customer: true });
   const toggle = id => setExpanded(p => ({ ...p, [id]: !p[id] }));
 
@@ -31,7 +33,7 @@ export default function Sidebar() {
 
   return (
     <aside style={{
-      width: '240px', flexShrink: 0,
+      width: '260px', flexShrink: 0,
       height: 'calc(100dvh - 56px)',
       backgroundColor: G.bg,
       borderRight: `1px solid ${G.border}`,
@@ -41,10 +43,27 @@ export default function Sidebar() {
       overflow: 'hidden',
     }}>
 
-      {/* ── 상단 고정: 최근 조회 ── */}
+      {/* ── 상단 고정: 검색 + 최근 조회 ── */}
       <div style={{ padding: '12px 10px 0', flexShrink: 0 }}>
+        {/* 검색 진입점 */}
+        <button onClick={open} style={{
+          display:'flex', alignItems:'center', gap:'8px', width:'100%',
+          height:'36px', padding:'0 10px', marginBottom:'10px',
+          borderRadius:'8px', border:`1px solid ${G.g200}`,
+          backgroundColor: G.bg, cursor:'pointer',
+          fontSize:'13px', color: G.g400, fontFamily: G.font,
+          transition:'border-color 120ms ease',
+        }}
+          onMouseEnter={e => e.currentTarget.style.borderColor = G.g300}
+          onMouseLeave={e => e.currentTarget.style.borderColor = G.g200}
+        >
+          <Search size={13} color={G.g400} style={{ flexShrink:0 }} />
+          <span style={{ flex:1, textAlign:'left' }}>가이드 검색</span>
+          <kbd style={{ fontSize:'11px', fontWeight:600, padding:'1px 5px', backgroundColor: G.g100, border:`1px solid ${G.g200}`, borderRadius:'4px', color: G.g400, fontFamily:'monospace' }}>/</kbd>
+        </button>
+
         <p style={{ fontSize: '10px', fontWeight: 700, color: G.g400, textTransform: 'uppercase', letterSpacing: '0.08em', padding: '0 6px', marginBottom: '4px' }}>최근 조회</p>
-        {RECENT_GUIDES.slice(0,3).map(r => (
+        {RECENT_GUIDES.slice(0,5).map(r => (
           <NavLink key={r.id} to={`/guides/${r.id}`}
             style={({ isActive }) => ({
               display: 'flex', alignItems: 'center', gap: '7px', padding: '6px 8px',

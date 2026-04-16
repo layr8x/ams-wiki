@@ -2,8 +2,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { Search, FileText, CornerDownLeft } from 'lucide-react';
 import { useSearchStore } from '@/store/searchStore.jsx';
-import { useNavigate } from 'react-router-dom';
-import { GUIDES } from '@/data/mockData';
+import { useNavigate, Link } from 'react-router-dom';
+import { GUIDES, RECENT_GUIDES } from '@/data/mockData';
 
 const GUIDES_LIST = Object.entries(GUIDES).map(([id, guide]) => ({
   id,
@@ -29,12 +29,15 @@ export default function SearchOverlay() {
     setSelectedIndex(0);
   }, [query]);
 
+  // 현재 표시 중인 목록 (빈 쿼리면 최근 조회, 아니면 검색 결과)
+  const activeList = query.trim() === '' ? RECENT_GUIDES.slice(0, 5) : results;
+
   // 🚀 키보드 네비게이션 제어
   const handleKeyDown = (e) => {
     // 1. 방향키 아래 (↓)
     if (e.key === 'ArrowDown') {
       e.preventDefault();
-      setSelectedIndex(prev => (prev < results.length - 1 ? prev + 1 : prev));
+      setSelectedIndex(prev => (prev < activeList.length - 1 ? prev + 1 : prev));
     }
     // 2. 방향키 위 (↑)
     else if (e.key === 'ArrowUp') {
@@ -42,9 +45,9 @@ export default function SearchOverlay() {
       setSelectedIndex(prev => (prev > 0 ? prev - 1 : prev));
     }
     // 3. 엔터 (Enter) - 선택한 항목으로 이동
-    else if (e.key === 'Enter' && results.length > 0) {
+    else if (e.key === 'Enter' && activeList.length > 0) {
       e.preventDefault();
-      navigate(`/guides/${results[selectedIndex].id}`);
+      navigate(`/guides/${activeList[selectedIndex].id}`);
       close();
     }
     // 4. 창 닫기 (ESC)
@@ -99,17 +102,45 @@ export default function SearchOverlay() {
 
         {/* 결과창 */}
         <div style={{ maxHeight: '400px', overflowY: 'auto', padding: '10px' }}>
-          {results.length > 0 ? results.map((item, idx) => {
+          {query.trim() === '' ? (
+            <>
+              <div style={{ padding: '8px 15px', fontSize: '12px', fontWeight: 600, color: '#9ca3af', textTransform: 'uppercase' }}>최근 조회</div>
+              {RECENT_GUIDES.slice(0, 5).map((item, idx) => {
+                const isSelected = selectedIndex === idx;
+                return (
+                  <div
+                    key={item.id}
+                    onClick={() => { navigate(`/guides/${item.id}`); close(); }}
+                    onMouseEnter={() => setSelectedIndex(idx)}
+                    style={{
+                      padding: '12px 15px',
+                      borderRadius: '10px',
+                      cursor: 'pointer',
+                      transition: '0.1s',
+                      backgroundColor: isSelected ? '#eff6ff' : 'transparent',
+                      borderLeft: isSelected ? '3px solid #3b82f6' : '3px solid transparent'
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <FileText size={16} color={isSelected ? "#2563eb" : "#9ca3af"} />
+                      <span style={{ fontWeight: 600, fontSize: '14px', color: isSelected ? '#1d4ed8' : '#111827' }}>{item.title}</span>
+                      <span style={{ fontSize: '11px', fontWeight: 600, padding: '2px 8px', backgroundColor: '#f3f4f6', color: '#6b7280', borderRadius: '99px', whiteSpace: 'nowrap' }}>{item.module}</span>
+                    </div>
+                  </div>
+                );
+              })}
+            </>
+          ) : results.length > 0 ? results.map((item, idx) => {
             const isSelected = selectedIndex === idx; // 현재 방향키가 위치한 곳인지 확인
             return (
-              <div 
+              <div
                 key={item.id}
                 onClick={() => { navigate(`/guides/${item.id}`); close(); }}
                 onMouseEnter={() => setSelectedIndex(idx)} // 💡 마우스가 올라가도 선택된 것처럼 동기화
-                style={{ 
-                  padding: '12px 15px', 
-                  borderRadius: '10px', 
-                  cursor: 'pointer', 
+                style={{
+                  padding: '12px 15px',
+                  borderRadius: '10px',
+                  cursor: 'pointer',
                   transition: '0.1s',
                   backgroundColor: isSelected ? '#eff6ff' : 'transparent', // 💡 선택되면 파란색 배경
                   borderLeft: isSelected ? '3px solid #3b82f6' : '3px solid transparent' // 💡 선택되면 왼쪽 강조 바
@@ -118,13 +149,16 @@ export default function SearchOverlay() {
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                   <FileText size={16} color={isSelected ? "#2563eb" : "#9ca3af"} />
                   <span style={{ fontWeight: 600, fontSize: '14px', color: isSelected ? '#1d4ed8' : '#111827' }}>{item.title}</span>
-                  <span style={{ fontSize: '11px', color: '#6b7280', marginLeft: 'auto' }}>{item.module}</span>
+                  <span style={{ fontSize: '11px', fontWeight: 600, padding: '2px 8px', backgroundColor: '#f3f4f6', color: '#6b7280', borderRadius: '99px', whiteSpace: 'nowrap' }}>{item.module}</span>
                 </div>
                 <p style={{ fontSize: '13px', color: '#6b7280', margin: '4px 0 0 26px' }}>{item.snippet}</p>
               </div>
             )
           }) : (
-            <div style={{ padding: '40px', textAlign: 'center', color: '#9ca3af', fontSize: '14px' }}>검색 결과가 없습니다.</div>
+            <div style={{ padding: '40px', textAlign: 'center', color: '#9ca3af', fontSize: '14px' }}>
+              <p>검색 결과가 없습니다.</p>
+              <Link to="/feedback" onClick={close} style={{ color: '#3b82f6', textDecoration: 'underline', fontSize: '13px', marginTop: '8px', display: 'inline-block' }}>개선/불편사항 접수</Link>
+            </div>
           )}
         </div>
 

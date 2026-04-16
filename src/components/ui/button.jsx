@@ -14,7 +14,7 @@ export const buttonVariants = cva(
         ghost:       'hover:bg-accent hover:text-accent-foreground',
         link:        'text-primary underline-offset-4 hover:underline',
         // AMS 전용
-        primary:     'bg-zinc-900 text-white hover:bg-zinc-700',
+        primary:     'bg-primary text-primary-foreground hover:bg-primary/90',
         blue:        'bg-blue-600 text-white hover:bg-blue-700',
       },
       size: {

@@ -23,6 +23,7 @@ export default function SearchOverlay() {
 
   // 검색어가 바뀔 때마다 선택 인덱스를 다시 첫 번째(0)로 초기화
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setSelectedIndex(0);
   }, [query]);
 
@@ -65,6 +66,7 @@ export default function SearchOverlay() {
   // 창 열릴 때 입력창 포커스
   useEffect(() => {
     if (isOpen) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setQuery('');
       setTimeout(() => inputRef.current?.focus(), 50);
     }

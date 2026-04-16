@@ -6,7 +6,6 @@ import {
   MessageSquare, Settings, HelpCircle, Bell, PlusCircle,
   ChevronDown, Clock, LayoutGrid, FileText
 } from 'lucide-react';
-import { useSearchStore } from '@/store/searchStore.jsx';
 import { MODULE_TREE, RECENT_GUIDES } from '@/data/mockData';
 
 const G = {

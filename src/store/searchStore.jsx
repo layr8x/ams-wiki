@@ -16,6 +16,7 @@ export function SearchProvider({ children }) {
   );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useSearchStore() {
   const context = useContext(SearchContext);
   if (!context) throw new Error("SearchProvider 내에서 사용해야 합니다.");

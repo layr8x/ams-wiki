@@ -1,0 +1,75 @@
+{
+  "common": {
+    "appName": "AMS Wiki",
+    "appDescription": "AMS 운영 가이드 위키",
+    "search": "검색",
+    "loading": "로딩 중",
+    "error": "오류",
+    "success": "성공",
+    "cancel": "취소",
+    "save": "저장",
+    "delete": "삭제",
+    "edit": "편집",
+    "back": "뒤로",
+    "home": "홈",
+    "guides": "가이드",
+    "settings": "설정",
+    "logout": "로그아웃",
+    "login": "로그인"
+  },
+  "navigation": {
+    "modules": "모듈",
+    "recentGuides": "최근 가이드",
+    "favorites": "즐겨찾기",
+    "onThisPage": "이 페이지",
+    "modulesTree": "모듈 트리"
+  },
+  "guide": {
+    "title": "제목",
+    "updated": "업데이트됨",
+    "author": "작성자",
+    "views": "조회수",
+    "helpful": "유용함",
+    "version": "버전",
+    "tldr": "요약",
+    "steps": "단계",
+    "cases": "사례",
+    "cautions": "주의사항",
+    "troubleTable": "트러블슈팅",
+    "responses": "응답",
+    "mainItems": "주요 항목",
+    "decision": "의사결정",
+    "reference": "참고",
+    "policyDiff": "정책 변경"
+  },
+  "search": {
+    "placeholder": "가이드 검색...",
+    "noResults": "검색 결과가 없습니다",
+    "synonyms": "동의어",
+    "filters": "필터",
+    "sort": "정렬",
+    "sortBy": {
+      "recent": "최신순",
+      "popular": "인기순",
+      "title": "제목순"
+    }
+  },
+  "theme": {
+    "light": "라이트 모드",
+    "dark": "다크 모드",
+    "system": "시스템 설정"
+  },
+  "errors": {
+    "notFound": "찾을 수 없습니다",
+    "notFoundDesc": "요청한 페이지를 찾을 수 없습니다",
+    "unauthorized": "권한이 없습니다",
+    "serverError": "서버 오류",
+    "loadError": "로드 오류"
+  },
+  "feedback": {
+    "helpful": "도움됨",
+    "notHelpful": "도움 안 됨",
+    "thanks": "피드백을 반영했습니다",
+    "feedbackTitle": "이 가이드가 도움이 되었나요?"
+  }
+}

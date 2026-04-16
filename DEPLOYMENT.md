@@ -62,11 +62,13 @@ This project is configured for automated deployment to Vercel with full shadcn/u
      - Output directory: `dist`
 
 2. **Set Environment Variables in Vercel**
-   - In Vercel project settings, go to "Environment Variables"
-   - Add the following:
-     - `VITE_CONFLUENCE_EMAIL`: Your Atlassian email
-     - `VITE_CONFLUENCE_TOKEN`: Your API token
-   - These should be available in all environments (Production, Preview, Development)
+   - Go to your project on Vercel: https://vercel.com/layr8xs-projects/ams-wiki
+   - Click "Settings" → "Environment Variables"
+   - Add the following environment variables:
+     - **Name**: `VITE_CONFLUENCE_EMAIL` | **Value**: Your Atlassian email (e.g., your-email@hiconsy.com)
+     - **Name**: `VITE_CONFLUENCE_TOKEN` | **Value**: Your API token from https://id.atlassian.com/manage-profile/security/api-tokens
+   - Make sure both are set to available in: **Production**, **Preview**, and **Development**
+   - Click "Save" and redeploy to apply the changes
 
 3. **Configure Deployment Branches**
    - Production deployment: main (disabled in vercel.json)

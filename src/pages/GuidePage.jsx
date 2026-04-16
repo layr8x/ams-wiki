@@ -119,7 +119,7 @@ const STATUS_TW = {
 const SEV_TW = {
   critical:{ cls:'bg-red-100 text-red-700', label:'긴급' },
   high:    { cls:'bg-amber-100 text-amber-700', label:'높음' },
-  medium:  { cls:'bg-zinc-100 text-zinc-600', label:'보통' },
+  medium:  { cls:'bg-muted text-muted-foreground', label:'보통' },
 };
 
 // ─── 유의사항 ────────────────────────────────────────────────────────────────
@@ -392,7 +392,7 @@ export default function GuidePage() {
                         <td className="py-5 px-5.5">
                           <span className={`py-1.5 px-3.5 rounded-lg text-[13px] font-bold ${sc}`}>{row.action}</span>
                         </td>
-                        <td className="py-5 px-5.5 text-zinc-400 text-sm leading-relaxed">{row.note}</td>
+                        <td className="py-5 px-5.5 text-muted-foreground text-sm leading-relaxed">{row.note}</td>
                       </tr>
                     );
                   })}
@@ -412,16 +412,16 @@ export default function GuidePage() {
                 className="py-3 pr-4 pl-[42px] rounded-xl"
               />
             </div>
-            <div className="border border-zinc-200 rounded-xl overflow-hidden ring-1 ring-black/8">
+            <div className="border border-border rounded-xl overflow-hidden ring-1 ring-black/8">
               {guide.referenceData
                 .filter(d => d.term.toLowerCase().includes(searchTerm.toLowerCase()) || d.def.toLowerCase().includes(searchTerm.toLowerCase()))
                 .map((d,i,arr)=>(
-                  <div key={i} className={`py-8 px-9 ${i<arr.length-1 ? 'border-b border-zinc-100' : ''}`}>
+                  <div key={i} className={`py-8 px-9 ${i<arr.length-1 ? 'border-b border-border' : ''}`}>
                     <div className="flex items-center gap-2.5 mb-2.5">
                       <div className="w-[7px] h-[7px] rounded-full bg-blue-500 shrink-0" />
-                      <strong className="text-zinc-900 text-[17px] font-extrabold">{d.term}</strong>
+                      <strong className="text-foreground text-[17px] font-extrabold">{d.term}</strong>
                     </div>
-                    <p className="m-0 text-zinc-500 leading-7 text-sm pl-4">{d.def}</p>
+                    <p className="m-0 text-muted-foreground leading-7 text-sm pl-4">{d.def}</p>
                   </div>
                 ))}
             </div>
@@ -432,12 +432,12 @@ export default function GuidePage() {
         {guide.type==='TROUBLE' && guide.troubleTable && (
           <section className="mb-18">
             <SecHeading id="sec-trouble">문제 → 원인 → 해결</SecHeading>
-            <div className="rounded-xl border border-zinc-200 overflow-hidden ring-1 ring-black/8">
+            <div className="rounded-xl border border-border overflow-hidden ring-1 ring-black/8">
               <table className="w-full border-collapse text-left">
-                <thead className="bg-zinc-50">
+                <thead className="bg-muted">
                   <tr>
                     {['심각도','문제 현상','원인','해결 방법'].map(h=>(
-                      <th key={h} className="py-4 px-5 text-[11px] font-extrabold text-zinc-400 uppercase tracking-wide border-b border-zinc-100">{h}</th>
+                      <th key={h} className="py-4 px-5 text-[11px] font-extrabold text-muted-foreground uppercase tracking-wide border-b border-border">{h}</th>
                     ))}
                   </tr>
                 </thead>
@@ -445,11 +445,11 @@ export default function GuidePage() {
                   {guide.troubleTable.map((row,i)=>{
                     const sc = SEV_TW[row.severity] || SEV_TW.medium;
                     return (
-                      <tr key={i} className={`transition-colors duration-150 hover:bg-zinc-50 ${i<guide.troubleTable.length-1 ? 'border-b border-zinc-100' : ''}`}>
+                      <tr key={i} className={`transition-colors duration-150 hover:bg-muted ${i<guide.troubleTable.length-1 ? 'border-b border-border' : ''}`}>
                         <td className="py-4 px-5"><span className={`py-0.5 px-2.5 rounded-full text-[11px] font-extrabold ${sc.cls}`}>{sc.label}</span></td>
-                        <td className="py-4 px-5 font-bold text-zinc-900 text-sm">{row.issue}</td>
-                        <td className="py-4 px-5 text-zinc-400 text-[13px]">{row.cause}</td>
-                        <td className="py-4 px-5 text-zinc-600 text-[13px] leading-relaxed">{row.solution}</td>
+                        <td className="py-4 px-5 font-bold text-foreground text-sm">{row.issue}</td>
+                        <td className="py-4 px-5 text-muted-foreground text-[13px]">{row.cause}</td>
+                        <td className="py-4 px-5 text-muted-foreground text-[13px] leading-relaxed">{row.solution}</td>
                       </tr>
                     );
                   })}
@@ -466,15 +466,15 @@ export default function GuidePage() {
             {guide.responses.map((r,i)=>{
               const sc = SEV_TW[r.severity] || SEV_TW.medium;
               return (
-                <div key={i} className="border border-zinc-100 rounded-xl mb-3.5 overflow-hidden ring-1 ring-black/8">
-                  <div className="py-3.5 px-5 bg-zinc-50 border-b border-zinc-100 flex items-center gap-2.5 flex-wrap">
+                <div key={i} className="border border-border rounded-xl mb-3.5 overflow-hidden ring-1 ring-black/8">
+                  <div className="py-3.5 px-5 bg-muted border-b border-border flex items-center gap-2.5 flex-wrap">
                     <span className={`text-[11px] font-extrabold py-0.5 px-2.5 rounded-full ${sc.cls}`}>{sc.label}</span>
-                    <span className="text-[15px] font-extrabold text-zinc-900 flex-1">{r.case}</span>
-                    <span className="text-[11px] font-semibold py-0.5 px-2.5 bg-zinc-50 text-blue-700 rounded-full border border-blue-200">{r.tag}</span>
+                    <span className="text-[15px] font-extrabold text-foreground flex-1">{r.case}</span>
+                    <span className="text-[11px] font-semibold py-0.5 px-2.5 bg-muted text-blue-700 rounded-full border border-blue-200">{r.tag}</span>
                   </div>
                   <div className="py-4.5 px-5 flex gap-3">
                     <MessageCircle size={15} className="text-zinc-300 shrink-0 mt-0.5" />
-                    <p className="m-0 text-sm leading-7 text-zinc-600">{r.script}</p>
+                    <p className="m-0 text-sm leading-7 text-muted-foreground">{r.script}</p>
                   </div>
                 </div>
               );
@@ -487,7 +487,7 @@ export default function GuidePage() {
           <section className="mb-18">
             <SecHeading id="sec-policy">정책 변경 내용</SecHeading>
             {guide.policyDiff.effectiveDate && (
-              <div className="inline-flex items-center gap-1.5 py-1.5 px-3.5 bg-zinc-50 border border-blue-200 rounded-full text-[13px] font-bold text-blue-700 mb-6">
+              <div className="inline-flex items-center gap-1.5 py-1.5 px-3.5 bg-muted border border-blue-200 rounded-full text-[13px] font-bold text-blue-700 mb-6">
                 <Calendar size={12}/> 적용일: {guide.policyDiff.effectiveDate}
                 {guide.policyDiff.scope && <span className="text-blue-500">· {guide.policyDiff.scope}</span>}
               </div>
@@ -513,22 +513,22 @@ export default function GuidePage() {
         {guide.mainItemsTable && (
           <section className="mb-15">
             <SecHeading id="sec-items">주요 항목 설명</SecHeading>
-            <div className="border border-zinc-200 rounded-xl overflow-hidden ring-1 ring-black/8">
+            <div className="border border-border rounded-xl overflow-hidden ring-1 ring-black/8">
               <table className="w-full border-collapse text-left">
-                <thead className="bg-zinc-50">
+                <thead className="bg-muted">
                   <tr>
                     {['항목명','설명','필수'].map(h=>(
-                      <th key={h} className="py-3 px-4.5 text-[11px] font-extrabold text-zinc-400 uppercase tracking-wide border-b border-zinc-100">{h}</th>
+                      <th key={h} className="py-3 px-4.5 text-[11px] font-extrabold text-muted-foreground uppercase tracking-wide border-b border-border">{h}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
                   {guide.mainItemsTable.map((row,i)=>(
-                    <tr key={i} className={`hover:bg-zinc-50 transition-colors duration-150 ${i<guide.mainItemsTable.length-1 ? 'border-b border-zinc-100' : ''}`}>
-                      <td className="py-3 px-4.5 font-bold text-zinc-900 text-[13px] font-mono">{row.field}</td>
-                      <td className="py-3 px-4.5 text-zinc-500 text-[13px] leading-relaxed">{row.desc}</td>
+                    <tr key={i} className={`hover:bg-muted transition-colors duration-150 ${i<guide.mainItemsTable.length-1 ? 'border-b border-border' : ''}`}>
+                      <td className="py-3 px-4.5 font-bold text-foreground text-[13px] font-mono">{row.field}</td>
+                      <td className="py-3 px-4.5 text-muted-foreground text-[13px] leading-relaxed">{row.desc}</td>
                       <td className="py-3 px-4.5">
-                        <span className={`text-[11px] font-bold py-0.5 px-2 rounded-full ${row.required ? 'bg-red-100 text-red-700' : 'bg-zinc-100 text-zinc-400'}`}>{row.required ? '필수' : '선택'}</span>
+                        <span className={`text-[11px] font-bold py-0.5 px-2 rounded-full ${row.required ? 'bg-red-100 text-red-700' : 'bg-muted text-muted-foreground'}`}>{row.required ? '필수' : '선택'}</span>
                       </td>
                     </tr>
                   ))}
@@ -566,11 +566,11 @@ export default function GuidePage() {
               <SecHeading id="sec-related">관련 가이드</SecHeading>
               <div className="flex flex-col gap-2">
                 {related.map(([gid, g]) => (
-                  <Link key={gid} to={`/guides/${gid}`} className="flex items-center gap-3 py-3.5 px-4.5 rounded-xl border border-zinc-100 bg-white no-underline transition-all duration-150 hover:bg-zinc-50 hover:border-zinc-200">
-                    <BookOpen size={14} className="text-zinc-400 shrink-0" />
+                  <Link key={gid} to={`/guides/${gid}`} className="flex items-center gap-3 py-3.5 px-4.5 rounded-xl border border-border bg-white no-underline transition-all duration-150 hover:bg-muted hover:border-zinc-300">
+                    <BookOpen size={14} className="text-muted-foreground shrink-0" />
                     <div className="flex-1">
-                      <p className="m-0 text-sm font-semibold text-zinc-900">{g.title}</p>
-                      <p className="mt-0.5 mb-0 text-xs text-zinc-400">{g.module}</p>
+                      <p className="m-0 text-sm font-semibold text-foreground">{g.title}</p>
+                      <p className="mt-0.5 mb-0 text-xs text-muted-foreground">{g.module}</p>
                     </div>
                     <ChevronRight size={14} className="text-zinc-300" />
                   </Link>
@@ -581,7 +581,7 @@ export default function GuidePage() {
         })()}
 
         {/* ── 피드백 ── */}
-        <div id="sec-feedback" className="mt-24 py-12 px-10 border-t border-zinc-100 scroll-mt-20">
+        <div id="sec-feedback" className="mt-24 py-12 px-10 border-t border-border scroll-mt-20">
           <FeedbackWidget />
         </div>
       </article>
@@ -591,10 +591,10 @@ export default function GuidePage() {
         <OnThisPage sections={sections} />
 
         {/* 슬랙 지원 카드 */}
-        <div className="p-5.5 bg-zinc-50 rounded-xl border border-zinc-100 shadow-sm">
+        <div className="p-5.5 bg-muted rounded-xl border border-border shadow-sm">
           <MessageCircle size={18} className="text-blue-500 mb-2.5" />
-          <p className="text-[13px] font-extrabold text-zinc-900 mb-1.5 mt-0">실시간 지원</p>
-          <p className="text-xs text-zinc-400 mb-3.5 mt-0 leading-relaxed">가이드로 해결되지 않는 문제는 플랫폼서비스실 슬랙 채널에 문의해 주세요.</p>
+          <p className="text-[13px] font-extrabold text-foreground mb-1.5 mt-0">실시간 지원</p>
+          <p className="text-xs text-muted-foreground mb-3.5 mt-0 leading-relaxed">가이드로 해결되지 않는 문제는 플랫폼서비스실 슬랙 채널에 문의해 주세요.</p>
           <Button variant="default" size="sm" className="w-full rounded-[9px]">슬랙 문의하기</Button>
         </div>
       </aside>

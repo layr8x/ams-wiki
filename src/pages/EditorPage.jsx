@@ -139,7 +139,7 @@ function PortalDropdown({ anchorRef, isOpen, children }) {
 
   return createPortal(
     <div
-      className="fixed z-[9999] bg-white border border-zinc-200 rounded-xl shadow-lg overflow-hidden animate-[ddFadeIn_0.12s_ease]"
+      className="fixed z-[9999] bg-white border border-border rounded-xl shadow-lg overflow-hidden animate-[ddFadeIn_0.12s_ease]"
       style={{
         top:    openUpward ? undefined : top,
         bottom: openUpward ? window.innerHeight - top : undefined,
@@ -238,7 +238,7 @@ function RelatedGuideCombobox({ selected, onSelect, onRemove }) {
 
       {/* Input anchor */}
       <div ref={anchorRef} className="relative">
-        <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-zinc-400" />
+        <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground" />
         <input
           ref={inputRef}
           type="text"
@@ -246,11 +246,11 @@ function RelatedGuideCombobox({ selected, onSelect, onRemove }) {
           onChange={e => { setQuery(e.target.value); setIsOpen(true); }}
           onKeyDown={handleKeyDown}
           placeholder="가이드 제목, 모듈, 유형으로 검색…"
-          className="w-full px-3 py-2 pl-[34px] border border-zinc-200 rounded-lg text-sm text-zinc-900 bg-white outline-none transition-colors focus:border-blue-500 focus:ring-[3px] focus:ring-blue-500/15"
+          className="w-full px-3 py-2 pl-[34px] border border-input rounded-lg text-sm text-foreground bg-white outline-none transition-colors focus:border-ring focus:ring-[3px] focus:ring-ring/50"
           onFocus={() => setIsOpen(true)}
           autoComplete="off"
         />
-        <ChevronDown size={14} className={`absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-zinc-400 transition-transform duration-150 ${isOpen ? 'rotate-180' : ''}`} />
+        <ChevronDown size={14} className={`absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground transition-transform duration-150 ${isOpen ? 'rotate-180' : ''}`} />
       </div>
 
       {/* Portal Dropdown — never clipped by parents */}
@@ -258,8 +258,8 @@ function RelatedGuideCombobox({ selected, onSelect, onRemove }) {
         <div data-combobox-portal className="overflow-y-auto max-h-[320px]" ref={listRef}>
           {filtered.length > 0 ? (
             <>
-              <div className="px-3 pt-2 pb-1.5 border-b border-zinc-100">
-                <span className="text-[11px] font-bold text-zinc-400 uppercase tracking-wide">
+              <div className="px-3 pt-2 pb-1.5 border-b border-border">
+                <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-wide">
                   {filtered.length}개 가이드
                 </span>
               </div>
@@ -272,14 +272,14 @@ function RelatedGuideCombobox({ selected, onSelect, onRemove }) {
                     data-idx={idx}
                     onMouseDown={e => { e.preventDefault(); commit(g); }}
                     onMouseEnter={() => setFocusedIdx(idx)}
-                    className={`px-3.5 py-2.5 cursor-pointer border-l-[3px] ${isFocused ? 'bg-zinc-50 border-l-blue-500' : 'bg-transparent border-l-transparent hover:bg-zinc-50'}`}
+                    className={`px-3.5 py-2.5 cursor-pointer border-l-[3px] ${isFocused ? 'bg-muted border-l-blue-500' : 'bg-transparent border-l-transparent hover:bg-muted'}`}
                   >
                     <div className="flex items-center gap-2">
-                      <FileText size={13} className={isFocused ? 'text-blue-500' : 'text-zinc-400'} />
-                      <span className={`flex-1 text-sm font-semibold ${isFocused ? 'text-zinc-900' : 'text-zinc-800'}`}>{g.title}</span>
+                      <FileText size={13} className={isFocused ? 'text-blue-500' : 'text-muted-foreground'} />
+                      <span className={`flex-1 text-sm font-semibold ${isFocused ? 'text-foreground' : 'text-foreground'}`}>{g.title}</span>
                       <span className={`text-[11px] font-bold px-[7px] py-0.5 rounded-full border ${tw.chip}`}>{g.type}</span>
                     </div>
-                    <p className="mt-0.5 ml-[21px] text-xs text-zinc-400">{g.module}</p>
+                    <p className="mt-0.5 ml-[21px] text-xs text-muted-foreground">{g.module}</p>
                   </div>
                 );
               })}
@@ -287,7 +287,7 @@ function RelatedGuideCombobox({ selected, onSelect, onRemove }) {
           ) : (
             <div className="py-8 px-4 text-center">
               <Search size={18} className="text-zinc-300 mb-2 mx-auto" />
-              <p className="m-0 text-[13px] text-zinc-400">'{query}'에 해당하는 가이드 없음</p>
+              <p className="m-0 text-[13px] text-muted-foreground">'{query}'에 해당하는 가이드 없음</p>
             </div>
           )}
         </div>
@@ -316,10 +316,10 @@ function ImageUploadSlot({ image, onUpload, onRemove }) {
   };
 
   if (image) return (
-    <div className="rounded-xl overflow-hidden border border-zinc-200">
+    <div className="rounded-xl overflow-hidden border border-border">
       <img src={image.url} alt="" className="w-full block max-h-[260px] object-cover" />
-      <div className="flex items-center justify-between px-3.5 py-2 bg-zinc-50 border-t border-zinc-100">
-        <span className="text-xs text-zinc-400">{image.name} · {image.size ? `${(image.size/1024).toFixed(1)} KB` : ''}</span>
+      <div className="flex items-center justify-between px-3.5 py-2 bg-muted border-t border-border">
+        <span className="text-xs text-muted-foreground">{image.name} · {image.size ? `${(image.size/1024).toFixed(1)} KB` : ''}</span>
         <div className="flex gap-1.5">
           <Button variant="secondary" size="xs" onClick={() => fileRef.current?.click()}>교체</Button>
           <Button variant="destructive" size="xs" onClick={onRemove}>삭제</Button>
@@ -336,13 +336,13 @@ function ImageUploadSlot({ image, onUpload, onRemove }) {
         onDragLeave={() => setIsDragging(false)}
         onDrop={handleDrop}
         onClick={() => fileRef.current?.click()}
-        className={`border-[1.5px] border-dashed rounded-xl px-5 py-7 cursor-pointer text-center transition-all duration-150 ${isDragging ? 'border-blue-500 bg-blue-50' : 'border-zinc-200 bg-zinc-50'}`}
+        className={`border-[1.5px] border-dashed rounded-xl px-5 py-7 cursor-pointer text-center transition-all duration-150 ${isDragging ? 'border-blue-500 bg-blue-50' : 'border-border bg-muted'}`}
       >
-        <div className={`w-10 h-10 rounded-xl border flex items-center justify-center mx-auto mb-3 shadow-xs ${isDragging ? 'bg-blue-100 border-blue-200' : 'bg-white border-zinc-200'}`}>
-          <Upload size={18} className={isDragging ? 'text-blue-600' : 'text-zinc-400'} />
+        <div className={`w-10 h-10 rounded-xl border flex items-center justify-center mx-auto mb-3 shadow-xs ${isDragging ? 'bg-blue-100 border-blue-200' : 'bg-white border-border'}`}>
+          <Upload size={18} className={isDragging ? 'text-blue-600' : 'text-muted-foreground'} />
         </div>
-        <p className={`m-0 mb-1 text-[13px] font-bold ${isDragging ? 'text-blue-700' : 'text-zinc-700'}`}>이미지 드래그 또는 클릭하여 업로드</p>
-        <p className="m-0 text-xs text-zinc-400">PNG · JPG · GIF · 최대 10MB</p>
+        <p className={`m-0 mb-1 text-[13px] font-bold ${isDragging ? 'text-blue-700' : 'text-foreground'}`}>이미지 드래그 또는 클릭하여 업로드</p>
+        <p className="m-0 text-xs text-muted-foreground">PNG · JPG · GIF · 최대 10MB</p>
       </div>
       <input ref={fileRef} type="file" accept="image/*" onChange={handleFile} className="hidden" />
     </>
@@ -363,18 +363,18 @@ function VersionDrawer({ isOpen, onClose }) {
       {/* Panel */}
       <div className={`fixed top-0 right-0 bottom-0 w-[460px] bg-white z-[401] shadow-xl flex flex-col transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}>
         {/* Header */}
-        <div className="px-6 py-5 border-b border-zinc-100 flex items-center justify-between">
+        <div className="px-6 py-5 border-b border-border flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-zinc-100 flex items-center justify-center">
-              <Clock size={15} className="text-zinc-600" />
+            <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center">
+              <Clock size={15} className="text-muted-foreground" />
             </div>
             <div>
-              <h3 className="m-0 text-[15px] font-bold text-zinc-900">버전 이력</h3>
-              <p className="m-0 text-xs text-zinc-400">{VERSION_HISTORY.length}개 버전 관리 중</p>
+              <h3 className="m-0 text-[15px] font-bold text-foreground">버전 이력</h3>
+              <p className="m-0 text-xs text-muted-foreground">{VERSION_HISTORY.length}개 버전 관리 중</p>
             </div>
           </div>
           <Button variant="outline" size="icon" onClick={onClose}>
-            <X size={14} className="text-zinc-500" />
+            <X size={14} className="text-muted-foreground" />
           </Button>
         </div>
 
@@ -383,29 +383,29 @@ function VersionDrawer({ isOpen, onClose }) {
           <div className="w-2 h-2 rounded-full bg-green-500 shrink-0" />
           <div className="flex-1">
             <div className="flex items-baseline gap-2">
-              <span className="text-[15px] font-extrabold text-zinc-900 font-mono">{VERSION_HISTORY[0].version}</span>
+              <span className="text-[15px] font-extrabold text-foreground font-mono">{VERSION_HISTORY[0].version}</span>
               <span className="text-xs font-semibold px-2 py-px bg-green-100 text-green-700 rounded-full">현재 배포</span>
             </div>
-            <p className="mt-0.5 mb-0 text-xs text-zinc-400">{VERSION_HISTORY[0].date} · {VERSION_HISTORY[0].author}</p>
+            <p className="mt-0.5 mb-0 text-xs text-muted-foreground">{VERSION_HISTORY[0].date} · {VERSION_HISTORY[0].author}</p>
           </div>
         </div>
 
         {/* Version list */}
         <div className="flex-1 overflow-y-auto px-5 pt-1 pb-6">
-          <p className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider mt-4 mb-2.5">전체 이력</p>
+          <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider mt-4 mb-2.5">전체 이력</p>
           {VERSION_HISTORY.map((v, i) => {
             const isCurrent = i === 0;
             const isExp = expanded === v.version;
             return (
-              <div key={v.version} className={`border rounded-xl mb-2 overflow-hidden transition-all duration-150 ${isExp ? 'border-blue-200 bg-blue-50' : 'border-zinc-100 bg-white hover:bg-zinc-50'}`}>
+              <div key={v.version} className={`border rounded-xl mb-2 overflow-hidden transition-all duration-150 ${isExp ? 'border-blue-200 bg-blue-50' : 'border-border bg-white hover:bg-muted'}`}>
                 <div onClick={() => setExpanded(isExp ? null : v.version)} className="px-4 py-3 cursor-pointer flex items-center gap-3">
-                  <span className="text-sm font-extrabold text-zinc-900 font-mono min-w-[40px]">{v.version}</span>
+                  <span className="text-sm font-extrabold text-foreground font-mono min-w-[40px]">{v.version}</span>
                   <div className="flex-1">
-                    <p className="m-0 text-[13px] text-zinc-700 font-medium">{v.summary}</p>
-                    <p className="mt-0.5 mb-0 text-[11px] text-zinc-400">{v.date} · {v.author}</p>
+                    <p className="m-0 text-[13px] text-foreground font-medium">{v.summary}</p>
+                    <p className="mt-0.5 mb-0 text-[11px] text-muted-foreground">{v.date} · {v.author}</p>
                   </div>
                   {isCurrent && <span className="text-[11px] font-bold px-2 py-0.5 bg-green-100 text-green-700 rounded-full shrink-0">현재</span>}
-                  <ChevronDown size={13} className={`text-zinc-400 shrink-0 transition-transform duration-200 ${isExp ? 'rotate-180' : ''}`} />
+                  <ChevronDown size={13} className={`text-muted-foreground shrink-0 transition-transform duration-200 ${isExp ? 'rotate-180' : ''}`} />
                 </div>
                 {isExp && (
                   <div className="px-4 pb-3.5 pt-3 border-t border-blue-200 flex gap-2">
@@ -434,21 +434,21 @@ function Section({ icon: Icon, title, badge, badgeColor = 'blue', children, defa
   const [open, setOpen] = useState(defaultOpen);
   const bcTw = badgeColor === 'blue' ? 'bg-blue-50 text-blue-700 border-blue-200'
              : badgeColor === 'red'  ? 'bg-red-50 text-red-700 border-red-100'
-             : 'bg-zinc-100 text-zinc-600 border-zinc-200';
+             : 'bg-muted text-muted-foreground border-border';
   return (
-    <div className="bg-white border border-zinc-200 rounded-2xl mb-4 shadow-sm overflow-visible">
+    <div className="bg-white border border-border rounded-2xl mb-4 shadow-sm overflow-visible">
       <button
         onClick={() => setOpen(o => !o)}
-        className={`w-full flex items-center justify-between px-6 py-[18px] bg-transparent border-none cursor-pointer text-left hover:bg-zinc-50 ${open ? 'border-b border-zinc-100 rounded-t-2xl' : 'rounded-2xl'}`}
+        className={`w-full flex items-center justify-between px-6 py-[18px] bg-transparent border-none cursor-pointer text-left hover:bg-muted ${open ? 'border-b border-border rounded-t-2xl' : 'rounded-2xl'}`}
       >
         <div className="flex items-center gap-2.5">
           <div className="w-[30px] h-[30px] rounded-lg bg-blue-50 border border-blue-100 flex items-center justify-center shrink-0">
             <Icon size={14} className="text-blue-600" />
           </div>
-          <span className="text-sm font-bold text-zinc-900">{title}</span>
+          <span className="text-sm font-bold text-foreground">{title}</span>
           {badge && <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full border ${bcTw}`}>{badge}</span>}
         </div>
-        <ChevronDown size={14} className={`text-zinc-400 shrink-0 transition-transform duration-200 ${open ? '' : '-rotate-90'}`} />
+        <ChevronDown size={14} className={`text-muted-foreground shrink-0 transition-transform duration-200 ${open ? '' : '-rotate-90'}`} />
       </button>
       {open && <div className="p-6 overflow-visible">{children}</div>}
     </div>
@@ -460,10 +460,10 @@ function Field({ label, required, hint, children }) {
   return (
     <div>
       <div className="mb-1.5">
-        <span className="text-[13px] font-semibold text-zinc-700">
+        <span className="text-[13px] font-semibold text-foreground">
           {label}{required && <span className="text-red-500 ml-0.5">*</span>}
         </span>
-        {hint && <span className="text-xs text-zinc-400 ml-2">{hint}</span>}
+        {hint && <span className="text-xs text-muted-foreground ml-2">{hint}</span>}
       </div>
       {children}
     </div>
@@ -473,17 +473,17 @@ function Field({ label, required, hint, children }) {
 // ─── Step Card ──────────────────────────────────────────────────────────────
 function StepCard({ step, index, onUpdate, onRemove }) {
   return (
-    <div className="border border-zinc-200 rounded-2xl bg-white mb-3 shadow-xs">
-      <div className="flex items-center gap-3 px-4 py-3 bg-zinc-50 border-b border-zinc-100 rounded-t-2xl">
+    <div className="border border-border rounded-2xl bg-white mb-3 shadow-xs">
+      <div className="flex items-center gap-3 px-4 py-3 bg-muted border-b border-border rounded-t-2xl">
         <GripVertical size={14} className="text-zinc-300 cursor-grab shrink-0" />
         <div className="w-6 h-6 rounded-full bg-blue-500 text-white text-xs font-extrabold flex items-center justify-center shrink-0">{index + 1}</div>
         <input
           type="text" value={step.title}
           onChange={e => onUpdate({ ...step, title: e.target.value })}
           placeholder={`Step ${index + 1} 제목`}
-          className="flex-1 border-none outline-none text-sm font-bold text-zinc-900 bg-transparent font-[inherit]"
+          className="flex-1 border-none outline-none text-sm font-bold text-foreground bg-transparent font-[inherit]"
         />
-        <Button variant="ghost" size="icon" onClick={onRemove} className="w-6 h-6 text-zinc-400 hover:text-red-500">
+        <Button variant="ghost" size="icon" onClick={onRemove} className="w-6 h-6 text-muted-foreground hover:text-red-500">
           <Trash2 size={13} />
         </Button>
       </div>
@@ -495,7 +495,7 @@ function StepCard({ step, index, onUpdate, onRemove }) {
           rows={3}
           className="px-3 py-2 min-h-0 resize-y leading-relaxed mb-3"
         />
-        <p className="text-xs font-semibold text-zinc-500 mt-0 mb-2">스크린샷</p>
+        <p className="text-xs font-semibold text-muted-foreground mt-0 mb-2">스크린샷</p>
         <ImageUploadSlot image={step.image} onUpload={img => onUpdate({ ...step, image: img })} onRemove={() => onUpdate({ ...step, image: null })} />
       </div>
     </div>
@@ -505,20 +505,20 @@ function StepCard({ step, index, onUpdate, onRemove }) {
 // ─── Case Card ──────────────────────────────────────────────────────────────
 function CaseCard({ item, index, onUpdate, onRemove }) {
   return (
-    <div className="border border-zinc-200 rounded-2xl bg-white mb-2.5 shadow-xs">
-      <div className="flex items-center gap-2.5 px-3.5 py-2.5 bg-zinc-50 border-b border-zinc-100 rounded-t-2xl">
+    <div className="border border-border rounded-2xl bg-white mb-2.5 shadow-xs">
+      <div className="flex items-center gap-2.5 px-3.5 py-2.5 bg-muted border-b border-border rounded-t-2xl">
         <GripVertical size={13} className="text-zinc-300 cursor-grab shrink-0" />
-        <span className="text-[11px] font-bold text-zinc-400 tracking-wide shrink-0">CASE {index + 1}</span>
-        <input type="text" value={item.label} onChange={e => onUpdate({ ...item, label: e.target.value })} placeholder="상황 라벨 (예: 중도 입반 시, 중복결제 발생 시)" className="flex-1 border-none outline-none text-[13px] font-bold text-zinc-900 bg-transparent font-[inherit]" />
-        <Button variant="ghost" size="icon" onClick={onRemove} className="w-6 h-6 text-zinc-400 hover:text-red-500"><Trash2 size={13} /></Button>
+        <span className="text-[11px] font-bold text-muted-foreground tracking-wide shrink-0">CASE {index + 1}</span>
+        <input type="text" value={item.label} onChange={e => onUpdate({ ...item, label: e.target.value })} placeholder="상황 라벨 (예: 중도 입반 시, 중복결제 발생 시)" className="flex-1 border-none outline-none text-[13px] font-bold text-foreground bg-transparent font-[inherit]" />
+        <Button variant="ghost" size="icon" onClick={onRemove} className="w-6 h-6 text-muted-foreground hover:text-red-500"><Trash2 size={13} /></Button>
       </div>
       <div className="px-4 py-3.5 grid grid-cols-2 gap-3">
         <div>
-          <p className="text-xs font-semibold text-zinc-500 m-0 mb-1.5">처리 방법</p>
+          <p className="text-xs font-semibold text-muted-foreground m-0 mb-1.5">처리 방법</p>
           <Textarea value={item.action} onChange={e => onUpdate({ ...item, action: e.target.value })} placeholder="처리 절차" rows={3} className="px-3 py-2.5 min-h-0 leading-relaxed" />
         </div>
         <div>
-          <p className="text-xs font-semibold text-zinc-500 m-0 mb-1.5">참고사항 <span className="text-zinc-300 font-normal">선택</span></p>
+          <p className="text-xs font-semibold text-muted-foreground m-0 mb-1.5">참고사항 <span className="text-zinc-300 font-normal">선택</span></p>
           <Textarea value={item.note} onChange={e => onUpdate({ ...item, note: e.target.value })} placeholder="예외 케이스, 주의사항" rows={3} className="px-3 py-2.5 min-h-0 leading-relaxed" />
         </div>
       </div>
@@ -534,7 +534,7 @@ function Btn({ children, onClick, variant = 'default', icon: Icon, active }) {
       variant={variantMap[variant] || 'secondary'}
       size="sm"
       onClick={onClick}
-      className={active ? 'bg-zinc-100 text-zinc-900' : ''}
+      className={active ? 'bg-muted text-foreground' : ''}
     >
       {Icon && <Icon size={13} />}{children}
     </Button>
@@ -555,26 +555,26 @@ function ReviewModal({ isOpen, onClose, onConfirm }) {
               <Send size={16} className="text-yellow-700" />
             </div>
             <div>
-              <DialogTitle className="text-[15px] font-extrabold text-zinc-900">검수 요청</DialogTitle>
-              <DialogDescription className="text-xs text-zinc-400 mt-0">리뷰어를 지정하고 요청 메모를 남겨주세요</DialogDescription>
+              <DialogTitle className="text-[15px] font-extrabold text-foreground">검수 요청</DialogTitle>
+              <DialogDescription className="text-xs text-muted-foreground mt-0">리뷰어를 지정하고 요청 메모를 남겨주세요</DialogDescription>
             </div>
           </DialogHeader>
           <div className="mb-4">
-            <label className="text-xs font-bold text-zinc-600 block mb-1.5">리뷰어 선택 *</label>
+            <label className="text-xs font-bold text-muted-foreground block mb-1.5">리뷰어 선택 *</label>
             <div className="relative">
-              <select value={reviewer} onChange={e=>setReviewer(e.target.value)} className="w-full py-2.5 pl-3 pr-8 border border-zinc-200 rounded-lg text-sm text-zinc-900 bg-white appearance-none outline-none font-[inherit] cursor-pointer focus:border-blue-500 focus:ring-[3px] focus:ring-blue-500/15">
+              <select value={reviewer} onChange={e=>setReviewer(e.target.value)} className="w-full py-2.5 pl-3 pr-8 border border-input rounded-lg text-sm text-foreground bg-white appearance-none outline-none font-[inherit] cursor-pointer focus:border-ring focus:ring-[3px] focus:ring-ring/50">
                 <option value=''>리뷰어를 선택하세요</option>
                 {REVIEWERS.map(r=><option key={r}>{r}</option>)}
               </select>
-              <ChevronDown size={13} className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-zinc-400" />
+              <ChevronDown size={13} className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground" />
             </div>
           </div>
           <div className="mb-6">
-            <label className="text-xs font-bold text-zinc-600 block mb-1.5">요청 메모 (선택)</label>
+            <label className="text-xs font-bold text-muted-foreground block mb-1.5">요청 메모 (선택)</label>
             <Textarea value={note} onChange={e=>setNote(e.target.value)} placeholder='리뷰어에게 전달할 내용을 입력하세요' rows={3} className="px-3 py-2.5 text-[13px] min-h-0 font-[inherit] leading-relaxed" />
           </div>
         </div>
-        <DialogFooter className="px-7 pt-4 pb-6 border-t border-zinc-100 flex-row justify-end gap-2">
+        <DialogFooter className="px-7 pt-4 pb-6 border-t border-border flex-row justify-end gap-2">
           <Button variant="secondary" size="default" onClick={onClose}>취소</Button>
           <Button variant="default" size="default" onClick={() => { if(reviewer) { onConfirm(reviewer, note); } }} disabled={!reviewer}>검수 요청 보내기</Button>
         </DialogFooter>
@@ -593,16 +593,16 @@ function PublishModal({ isOpen, title, version, onClose, onConfirm }) {
           <div className="w-11 h-11 rounded-xl bg-green-100 flex items-center justify-center mb-4">
             <Check size={22} className="text-green-600" />
           </div>
-          <DialogTitle className="text-[17px] font-extrabold text-zinc-900 mb-2">가이드를 발행할까요?</DialogTitle>
-          <DialogDescription className="text-sm text-zinc-500 leading-relaxed mb-5">
-            <strong className="text-zinc-800">"{title || '제목 없음'}"</strong> ({version})이 배포완료 상태로 전환되며, 모든 운영자에게 즉시 노출됩니다.
+          <DialogTitle className="text-[17px] font-extrabold text-foreground mb-2">가이드를 발행할까요?</DialogTitle>
+          <DialogDescription className="text-sm text-muted-foreground leading-relaxed mb-5">
+            <strong className="text-foreground">"{title || '제목 없음'}"</strong> ({version})이 배포완료 상태로 전환되며, 모든 운영자에게 즉시 노출됩니다.
           </DialogDescription>
         </DialogHeader>
-        <label className="flex items-center gap-2.5 px-4 py-3 bg-zinc-50 rounded-[10px] border border-zinc-200 cursor-pointer mb-5">
+        <label className="flex items-center gap-2.5 px-4 py-3 bg-muted rounded-[10px] border border-border cursor-pointer mb-5">
           <div onClick={()=>setConfirmed(p=>!p)} className={`w-[18px] h-[18px] rounded-[5px] border-[1.5px] flex items-center justify-center shrink-0 transition-all duration-150 ${confirmed ? 'border-green-600 bg-green-600' : 'border-zinc-300 bg-white'}`}>
             {confirmed && <Check size={11} color='#fff' strokeWidth={3} />}
           </div>
-          <span className="text-[13px] text-zinc-700 font-medium">내용을 최종 검토했으며 발행에 동의합니다.</span>
+          <span className="text-[13px] text-foreground font-medium">내용을 최종 검토했으며 발행에 동의합니다.</span>
         </label>
         <DialogFooter className="flex-row justify-end gap-2">
           <Button variant="secondary" size="default" onClick={onClose}>취소</Button>
@@ -701,26 +701,26 @@ export default function EditorPage() {
 
   // ── Render ──────────────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-zinc-50 font-[-apple-system,BlinkMacSystemFont,'Inter','Segoe_UI',sans-serif]">
+    <div className="min-h-screen bg-muted font-[-apple-system,BlinkMacSystemFont,'Inter','Segoe_UI',sans-serif]">
 
       {/* ── Top Bar ─────────────────────────────────────────────────────── */}
-      <header className="sticky top-0 z-[100] h-14 bg-white/90 border-b border-zinc-100 backdrop-blur-[16px] flex items-center justify-between px-7">
+      <header className="sticky top-0 z-[100] h-14 bg-white/90 border-b border-border backdrop-blur-[16px] flex items-center justify-between px-7">
         {/* Left */}
         <div className="flex items-center gap-3">
           <Btn icon={ArrowLeft} onClick={() => navigate(-1)}>가이드 목록</Btn>
           <div className="w-px h-5 bg-zinc-200" />
-          <span className="text-sm font-semibold text-zinc-900 max-w-[320px] overflow-hidden text-ellipsis whitespace-nowrap">
+          <span className="text-sm font-semibold text-foreground max-w-[320px] overflow-hidden text-ellipsis whitespace-nowrap">
             {form.title || '새 가이드 작성'}
           </span>
           {form.status && (
             <span className={`text-[11px] font-bold py-0.5 px-2.5 rounded-full ${
-              form.status==='배포완료' ? 'bg-green-100 text-green-700' : form.status==='검수중' ? 'bg-amber-100 text-amber-600' : 'bg-zinc-100 text-zinc-600'
+              form.status==='배포완료' ? 'bg-green-100 text-green-700' : form.status==='검수중' ? 'bg-amber-100 text-amber-600' : 'bg-muted text-muted-foreground'
             }`}>{form.status}</span>
           )}
         </div>
         {/* Right */}
         <div className="flex items-center gap-1.5">
-          <span className="text-xs text-zinc-400 mr-1.5">
+          <span className="text-xs text-muted-foreground mr-1.5">
             {isSaving ? '저장 중…' : lastSaved ? `${lastSaved} 자동 저장` : ''}
           </span>
           <Btn icon={Save} onClick={save}>임시 저장</Btn>
@@ -771,11 +771,11 @@ export default function EditorPage() {
             <div className="grid grid-cols-2 gap-4 mb-4">
               <Field label="모듈" required>
                 <div className="relative">
-                  <select value={form.module} onChange={e=>set('module',e.target.value)} className="w-full px-3 py-2.5 pr-8 border border-zinc-200 rounded-lg text-sm text-zinc-900 bg-white outline-none transition-[border-color,box-shadow] focus:border-blue-500 focus:ring-[3px] focus:ring-blue-500/15 appearance-none cursor-pointer">
+                  <select value={form.module} onChange={e=>set('module',e.target.value)} className="w-full px-3 py-2.5 pr-8 border border-input rounded-lg text-sm text-foreground bg-white outline-none transition-[border-color,box-shadow] focus:border-ring focus:ring-[3px] focus:ring-ring/50 appearance-none cursor-pointer">
                     <option value="">선택</option>
                     {MODULES.map(m=><option key={m}>{m}</option>)}
                   </select>
-                  <ChevronDown size={13} className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-zinc-400" />
+                  <ChevronDown size={13} className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground" />
                 </div>
               </Field>
               <Field label="가이드 유형" required>
@@ -803,14 +803,14 @@ export default function EditorPage() {
             <div className="mb-4">
               <Field label="메뉴 경로" required hint="실제 AMS 화면 경로, > 구분">
                 <div className="relative">
-                  <Layers size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-zinc-400" />
+                  <Layers size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground" />
                   <Input type="text" value={form.menuPath} onChange={e=>set('menuPath',e.target.value)} placeholder="AMS 어드민 > 고객 관리 > 회원 상세 정보" className="px-3 py-2.5 pl-[30px] text-[13px] font-mono" />
                 </div>
                 {form.menuPath && (
-                  <div className="mt-1.5 py-[7px] px-3 bg-zinc-50 border border-zinc-100 rounded-lg flex items-center gap-1.5 flex-wrap">
+                  <div className="mt-1.5 py-[7px] px-3 bg-muted border border-border rounded-lg flex items-center gap-1.5 flex-wrap">
                     {form.menuPath.split('>').map((p,i,arr)=>(
                       <span key={i} className="flex items-center gap-[5px]">
-                        <span className={`text-xs ${i===arr.length-1 ? 'font-bold text-zinc-900' : 'font-normal text-zinc-400'}`}>{p.trim()}</span>
+                        <span className={`text-xs ${i===arr.length-1 ? 'font-bold text-foreground' : 'font-normal text-muted-foreground'}`}>{p.trim()}</span>
                         {i!==arr.length-1 && <ChevronRight size={10} className="text-zinc-300" />}
                       </span>
                     ))}
@@ -825,25 +825,25 @@ export default function EditorPage() {
                   {['운영자','실장','관리자'].map(t => {
                     const on = form.targets.includes(t);
                     return (
-                      <label key={t} onClick={() => toggleTarget(t)} className={`flex items-center gap-[7px] py-[7px] px-3.5 border rounded-lg cursor-pointer transition-all duration-100 select-none ${on ? 'border-blue-500 bg-blue-50' : 'border-zinc-200 bg-white'}`}>
+                      <label key={t} onClick={() => toggleTarget(t)} className={`flex items-center gap-[7px] py-[7px] px-3.5 border rounded-lg cursor-pointer transition-all duration-100 select-none ${on ? 'border-blue-500 bg-blue-50' : 'border-input bg-white'}`}>
                         <div className={`w-4 h-4 rounded-[4px] border-[1.5px] flex items-center justify-center shrink-0 ${on ? 'border-blue-500 bg-blue-500' : 'border-zinc-300 bg-white'}`}>
                           {on && <Check size={10} color="#fff" strokeWidth={3} />}
                         </div>
-                        <span className={`text-[13px] font-semibold ${on ? 'text-blue-700' : 'text-zinc-700'}`}>{t}</span>
+                        <span className={`text-[13px] font-semibold ${on ? 'text-blue-700' : 'text-foreground'}`}>{t}</span>
                       </label>
                     );
                   })}
                 </div>
               </Field>
               <Field label="태그" hint="Enter 또는 , 로 추가">
-                <div className="border border-zinc-200 rounded-lg py-[7px] px-2.5 flex flex-wrap gap-[5px] items-center bg-white min-h-[38px]">
+                <div className="border border-input rounded-lg py-[7px] px-2.5 flex flex-wrap gap-[5px] items-center bg-white min-h-[38px]">
                   {form.tags.map((tag,i)=>(
-                    <span key={i} className="inline-flex items-center gap-1 py-0.5 px-2 bg-zinc-100 rounded-full text-xs text-zinc-700 font-semibold">
+                    <span key={i} className="inline-flex items-center gap-1 py-0.5 px-2 bg-muted rounded-full text-xs text-foreground font-semibold">
                       <Tag size={9} />{tag}
-                      <button onMouseDown={e=>{e.preventDefault(); set('tags', form.tags.filter((_,idx)=>idx!==i));}} className="border-none bg-transparent cursor-pointer p-0 text-zinc-400 flex"><X size={10} /></button>
+                      <button onMouseDown={e=>{e.preventDefault(); set('tags', form.tags.filter((_,idx)=>idx!==i));}} className="border-none bg-transparent cursor-pointer p-0 text-muted-foreground flex"><X size={10} /></button>
                     </span>
                   ))}
-                  <input type="text" value={tagInput} onChange={e=>setTagInput(e.target.value)} onKeyDown={handleTag} placeholder={form.tags.length===0?'예: 환불, 결제':''} className="border-none outline-none text-[13px] text-zinc-900 min-w-[80px] flex-1 bg-transparent font-[inherit]" />
+                  <input type="text" value={tagInput} onChange={e=>setTagInput(e.target.value)} onKeyDown={handleTag} placeholder={form.tags.length===0?'예: 환불, 결제':''} className="border-none outline-none text-[13px] text-foreground min-w-[80px] flex-1 bg-transparent font-[inherit]" />
                 </div>
               </Field>
             </div>
@@ -856,7 +856,7 @@ export default function EditorPage() {
             <div className="mb-7">
               <Field label="핵심 요약 (TL;DR)" required hint="2~3줄, 30초 내 읽기">
                 <Textarea value={form.summary} onChange={e=>set('summary',e.target.value)} placeholder="이 가이드의 핵심 내용을 요약하세요. CS 응대 중 30초 내에 읽을 수 있어야 합니다." rows={3} maxLength={300} className="px-3 py-2.5 min-h-0 resize-y leading-[1.7]" />
-                <div className="text-right text-[11px] text-zinc-400 mt-1">{form.summary.length}/300</div>
+                <div className="text-right text-[11px] text-muted-foreground mt-1">{form.summary.length}/300</div>
               </Field>
             </div>
 
@@ -875,7 +875,7 @@ export default function EditorPage() {
                 <Field label="운영 케이스" required><span /></Field>
                 <Btn icon={Plus} onClick={addCase}>케이스 추가</Btn>
               </div>
-              <p className="m-0 mb-3 text-xs text-zinc-400">상황 라벨은 구체적 키워드로: '중도 입반 시', '중복결제 발생 시'</p>
+              <p className="m-0 mb-3 text-xs text-muted-foreground">상황 라벨은 구체적 키워드로: '중도 입반 시', '중복결제 발생 시'</p>
               {form.cases.map((c,i) => <CaseCard key={i} item={c} index={i} onUpdate={v=>updCase(i,v)} onRemove={()=>delCase(i)} />)}
             </div>
 
@@ -890,13 +890,15 @@ export default function EditorPage() {
                   <AlertTriangle size={13} className="text-amber-600" />
                   <AlertTitle className="text-xs font-bold text-amber-900 mb-0">실수 방지를 위한 주의사항만 작성하세요</AlertTitle>
                 </div>
-                {form.cautions.map((c,i)=>(
-                  <div key={i} className={`flex items-center gap-2.5 py-2.5 px-3.5 ${i<form.cautions.length-1 ? 'border-b border-zinc-100' : ''}`}>
-                    <div className="w-[5px] h-[5px] rounded-full bg-amber-600 shrink-0" />
-                    <input type="text" value={c} onChange={e=>updCaut(i,e.target.value)} placeholder="유의사항을 입력하세요" className="flex-1 border-none outline-none text-[13px] text-zinc-900 font-[inherit]" />
-                    <Button variant="ghost" size="icon" onClick={()=>delCaut(i)} className="w-6 h-6 text-zinc-300 hover:text-red-500"><Trash2 size={12} /></Button>
-                  </div>
-                ))}
+                <AlertDescription className="p-0">
+                  {form.cautions.map((c,i)=>(
+                    <div key={i} className={`flex items-center gap-2.5 py-2.5 px-3.5 ${i<form.cautions.length-1 ? 'border-b border-border' : ''}`}>
+                      <div className="w-[5px] h-[5px] rounded-full bg-amber-600 shrink-0" />
+                      <input type="text" value={c} onChange={e=>updCaut(i,e.target.value)} placeholder="유의사항을 입력하세요" className="flex-1 border-none outline-none text-[13px] text-foreground font-[inherit]" />
+                      <Button variant="ghost" size="icon" onClick={()=>delCaut(i)} className="w-6 h-6 text-zinc-300 hover:text-red-500"><Trash2 size={12} /></Button>
+                    </div>
+                  ))}
+                </AlertDescription>
               </Alert>
             </div>
 
@@ -917,8 +919,8 @@ export default function EditorPage() {
             <div className="grid grid-cols-3 gap-4 mb-4">
               <Field label="작성자">
                 <div className="relative">
-                  <User size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-zinc-400" />
-                  <Input type="text" value={form.author} readOnly className="px-3 py-2.5 pl-[30px] bg-zinc-50 text-zinc-400 cursor-not-allowed" />
+                  <User size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground" />
+                  <Input type="text" value={form.author} readOnly className="px-3 py-2.5 pl-[30px] bg-muted text-muted-foreground cursor-not-allowed" />
                 </div>
               </Field>
               <Field label="버전" required>
@@ -926,10 +928,10 @@ export default function EditorPage() {
               </Field>
               <Field label="상태" required>
                 <div className="relative">
-                  <select value={form.status} onChange={e=>set('status',e.target.value)} className="w-full px-3 py-2.5 pr-8 border border-zinc-200 rounded-lg text-sm text-zinc-900 bg-white outline-none transition-[border-color,box-shadow] focus:border-blue-500 focus:ring-[3px] focus:ring-blue-500/15 appearance-none cursor-pointer">
+                  <select value={form.status} onChange={e=>set('status',e.target.value)} className="w-full px-3 py-2.5 pr-8 border border-input rounded-lg text-sm text-foreground bg-white outline-none transition-[border-color,box-shadow] focus:border-ring focus:ring-[3px] focus:ring-ring/50 appearance-none cursor-pointer">
                     {STATUS_OPTIONS.map(s=><option key={s}>{s}</option>)}
                   </select>
-                  <ChevronDown size={13} className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-zinc-400" />
+                  <ChevronDown size={13} className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground" />
                 </div>
               </Field>
             </div>
@@ -947,10 +949,10 @@ export default function EditorPage() {
         {/* ── Preview Panel ──────────────────────────────────────────────── */}
         {showPreview && (
           <div className="w-[480px] shrink-0 sticky top-[72px] max-h-[calc(100vh-88px)] overflow-y-auto">
-            <div className="bg-white border border-zinc-200 rounded-2xl overflow-hidden shadow-md">
-              <div className="py-3 px-5 border-b border-zinc-100 flex items-center gap-2">
+            <div className="bg-white border border-border rounded-2xl overflow-hidden shadow-md">
+              <div className="py-3 px-5 border-b border-border flex items-center gap-2">
                 <Eye size={13} className="text-blue-500" />
-                <span className="text-xs font-bold text-zinc-500">실시간 미리보기</span>
+                <span className="text-xs font-bold text-muted-foreground">실시간 미리보기</span>
                 <span className="text-[11px] text-zinc-300 ml-auto">GuidePage 기준</span>
               </div>
               <div className="py-7 px-6">
@@ -959,22 +961,22 @@ export default function EditorPage() {
                   {form.module    && <span className="text-[11px] font-bold py-[3px] px-2.5 bg-blue-50 text-blue-700 rounded-full border border-blue-200">{form.module}</span>}
                   {form.guideType && (() => { const tw = TYPE_BADGE_TW[form.guideType] || TYPE_BADGE_TW.SOP; return <span className={`text-[11px] font-bold py-[3px] px-2.5 rounded-full border ${tw.chip}`}>{form.guideType}</span>; })()}
                 </div>
-                <h1 className="text-[26px] font-extrabold text-zinc-900 m-0 mb-2 tracking-tight leading-[1.2]">{form.title||'가이드 제목'}</h1>
-                <p className="text-xs text-zinc-400 m-0 mb-5">{form.author} · {form.version}</p>
+                <h1 className="text-[26px] font-extrabold text-foreground m-0 mb-2 tracking-tight leading-[1.2]">{form.title||'가이드 제목'}</h1>
+                <p className="text-xs text-muted-foreground m-0 mb-5">{form.author} · {form.version}</p>
                 {form.summary && (
-                  <div className="py-4 px-5 bg-white rounded-xl border border-zinc-200 mb-5 relative overflow-hidden shadow-xs">
+                  <div className="py-4 px-5 bg-white rounded-xl border border-border mb-5 relative overflow-hidden shadow-xs">
                     <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-blue-500" />
                     <div className="flex gap-3 pl-1">
                       <ShieldCheck size={18} className="text-blue-500 shrink-0 mt-px" />
-                      <p className="m-0 text-[13px] leading-[1.7] text-zinc-700 font-medium">{form.summary}</p>
+                      <p className="m-0 text-[13px] leading-[1.7] text-foreground font-medium">{form.summary}</p>
                     </div>
                   </div>
                 )}
                 {form.menuPath && (
-                  <div className="py-2 px-3 bg-zinc-50 rounded-lg border border-zinc-100 mb-5 flex items-center gap-[5px] flex-wrap">
+                  <div className="py-2 px-3 bg-muted rounded-lg border border-border mb-5 flex items-center gap-[5px] flex-wrap">
                     {form.menuPath.split('>').map((p,i,arr)=>(
                       <span key={i} className="flex items-center gap-[5px]">
-                        <span className={`text-xs font-mono ${i===arr.length-1 ? 'font-bold text-zinc-900' : 'font-normal text-zinc-400'}`}>{p.trim()}</span>
+                        <span className={`text-xs font-mono ${i===arr.length-1 ? 'font-bold text-foreground' : 'font-normal text-muted-foreground'}`}>{p.trim()}</span>
                         {i!==arr.length-1 && <ChevronRight size={9} className="text-zinc-300" />}
                       </span>
                     ))}
@@ -983,14 +985,14 @@ export default function EditorPage() {
                 {/* Steps preview */}
                 {form.steps.filter(s=>s.title).length > 0 && (
                   <div className="relative pl-3.5 mb-5">
-                    <div className="absolute top-2 bottom-2 left-[23px] w-[1.5px] bg-zinc-100" />
+                    <div className="absolute top-2 bottom-2 left-[23px] w-[1.5px] bg-border" />
                     {form.steps.filter(s=>s.title).map((s,i)=>(
                       <div key={i} className="flex gap-4 mb-5 relative">
                         <div className="w-[18px] h-[18px] rounded-full bg-white border-[1.5px] border-blue-500 text-blue-500 text-[11px] font-black flex items-center justify-center shrink-0 mt-0.5 z-[1] shadow-[0_0_0_3px_#fff]">{i+1}</div>
                         <div className="flex-1">
-                          <h4 className="m-0 mb-1 text-[13px] font-bold text-zinc-900">{s.title}</h4>
-                          {s.desc && <p className="m-0 text-xs text-zinc-500 leading-relaxed">{s.desc}</p>}
-                          {s.image && <img src={s.image.url} alt="" className="mt-2 w-full rounded-lg border border-zinc-200" />}
+                          <h4 className="m-0 mb-1 text-[13px] font-bold text-foreground">{s.title}</h4>
+                          {s.desc && <p className="m-0 text-xs text-muted-foreground leading-relaxed">{s.desc}</p>}
+                          {s.image && <img src={s.image.url} alt="" className="mt-2 w-full rounded-lg border border-border" />}
                         </div>
                       </div>
                     ))}
@@ -999,13 +1001,13 @@ export default function EditorPage() {
                 {/* Related guides preview */}
                 {form.relatedGuides.length > 0 && (
                   <div>
-                    <p className="text-[11px] font-bold text-zinc-400 uppercase tracking-[0.07em] m-0 mb-2">관련 가이드</p>
+                    <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-[0.07em] m-0 mb-2">관련 가이드</p>
                     {form.relatedGuides.map(g => {
                       const tw = TYPE_BADGE_TW[g.type] || TYPE_BADGE_TW.SOP;
                       return (
-                        <div key={g.id} className="flex items-center gap-2 py-2 px-3 border border-zinc-100 rounded-lg mb-1.5 bg-zinc-50">
-                          <FileText size={12} className="text-zinc-400" />
-                          <span className="flex-1 text-xs font-semibold text-zinc-800">{g.title}</span>
+                        <div key={g.id} className="flex items-center gap-2 py-2 px-3 border border-border rounded-lg mb-1.5 bg-muted">
+                          <FileText size={12} className="text-muted-foreground" />
+                          <span className="flex-1 text-xs font-semibold text-foreground">{g.title}</span>
                           <span className={`text-[10px] font-bold px-1.5 py-px rounded-full border ${tw.chip}`}>{g.type}</span>
                         </div>
                       );

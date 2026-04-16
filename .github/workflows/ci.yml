@@ -61,7 +61,7 @@ jobs:
         run: npm ci --no-audit --prefer-offline
 
       - name: Run unit tests
-        run: npm run test -- --run
+        run: npx vitest run
 
   security-audit:
     runs-on: ubuntu-latest

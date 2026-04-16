@@ -53,7 +53,7 @@ export default function Pagination({ pagination }) {
       <div
         style={{
           fontSize: '14px',
-          color: 'var(--color-text-secondary)',
+          color: 'var(--color-muted-foreground)',
           textAlign: 'center',
         }}
       >
@@ -75,8 +75,8 @@ export default function Pagination({ pagination }) {
           onClick={() => goToPage(currentPage - 1)}
           disabled={!hasPrevPage}
           style={{
-            background: 'var(--color-surface)',
-            border: '1px solid var(--color-divider)',
+            background: 'var(--color-card)',
+            border: '1px solid var(--color-border)',
             padding: '8px 12px',
             borderRadius: '6px',
             cursor: hasPrevPage ? 'pointer' : 'not-allowed',
@@ -85,7 +85,7 @@ export default function Pagination({ pagination }) {
             alignItems: 'center',
             gap: '4px',
             fontSize: '14px',
-            color: 'var(--color-text)',
+            color: 'var(--color-foreground)',
           }}
           title="이전 페이지"
         >
@@ -107,15 +107,15 @@ export default function Pagination({ pagination }) {
                 background:
                   page === currentPage
                     ? 'var(--color-primary)'
-                    : 'var(--color-surface)',
+                    : 'var(--color-card)',
                 border:
                   page === currentPage
                     ? 'none'
-                    : '1px solid var(--color-divider)',
+                    : '1px solid var(--color-border)',
                 color:
                   page === currentPage
-                    ? 'var(--color-on-primary)'
-                    : 'var(--color-text)',
+                    ? 'var(--color-primary-foreground)'
+                    : 'var(--color-foreground)',
                 padding: '8px 12px',
                 borderRadius: '6px',
                 cursor: 'pointer',
@@ -133,8 +133,8 @@ export default function Pagination({ pagination }) {
           onClick={() => goToPage(currentPage + 1)}
           disabled={!hasNextPage}
           style={{
-            background: 'var(--color-surface)',
-            border: '1px solid var(--color-divider)',
+            background: 'var(--color-card)',
+            border: '1px solid var(--color-border)',
             padding: '8px 12px',
             borderRadius: '6px',
             cursor: hasNextPage ? 'pointer' : 'not-allowed',
@@ -143,7 +143,7 @@ export default function Pagination({ pagination }) {
             alignItems: 'center',
             gap: '4px',
             fontSize: '14px',
-            color: 'var(--color-text)',
+            color: 'var(--color-foreground)',
           }}
           title="다음 페이지"
         >

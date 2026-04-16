@@ -98,23 +98,8 @@ const TYPE_BADGE_TW = {
 };
 
 // ─── Input base style (Catalyst-exact) ─────────────────────────────────────
-const inputBase = {
-  width: '100%', padding: '9px 12px',
-  border: `1px solid ${C.gray200}`,
-  borderRadius: R.md,
-  fontSize: '14px', lineHeight: '1.5', color: C.gray900,
-  backgroundColor: '#ffffff', outline: 'none',
-  transition: 'border-color 0.15s, box-shadow 0.15s',
-  fontFamily: 'inherit', boxSizing: 'border-box',
-};
-const onFocus = e => {
-  e.target.style.borderColor = C.blue500;
-  e.target.style.boxShadow   = `0 0 0 3px rgba(59,130,246,0.15)`;
-};
-const onBlur  = e => {
-  e.target.style.borderColor = C.gray200;
-  e.target.style.boxShadow   = 'none';
-};
+// Tailwind equivalent: "w-full px-3 py-2.5 border border-zinc-200 rounded-lg text-sm text-zinc-900 bg-white outline-none transition-[border-color,box-shadow] focus:border-blue-500 focus:ring-[3px] focus:ring-blue-500/15"
+// Kept as reference; inline-style usages have been migrated to Tailwind classes.
 
 // ─── Portal Dropdown ─────────────────────────────────────────────────────────
 // Renders children into document.body so overflow:hidden parents can't clip it
@@ -440,27 +425,25 @@ function VersionDrawer({ isOpen, onClose }) {
 // eslint-disable-next-line no-unused-vars
 function Section({ icon: Icon, title, badge, badgeColor = 'blue', children, defaultOpen = true }) {
   const [open, setOpen] = useState(defaultOpen);
-  const bc = badgeColor === 'blue' ? { bg: C.blue50, color: C.blue700, border: C.blue200 }
-           : badgeColor === 'red'  ? { bg: C.red50,  color: C.red700,  border: C.red100  }
-           : { bg: C.gray100, color: C.gray600, border: C.gray200 };
+  const bcTw = badgeColor === 'blue' ? 'bg-blue-50 text-blue-700 border-blue-200'
+             : badgeColor === 'red'  ? 'bg-red-50 text-red-700 border-red-100'
+             : 'bg-zinc-100 text-zinc-600 border-zinc-200';
   return (
-    <div style={{ backgroundColor:'#fff', border:`1px solid ${C.gray200}`, borderRadius: R.xl, marginBottom:'16px', boxShadow: SHADOW.sm, overflow:'visible' }}>
+    <div className="bg-white border border-zinc-200 rounded-2xl mb-4 shadow-sm overflow-visible">
       <button
         onClick={() => setOpen(o => !o)}
-        style={{ width:'100%', display:'flex', alignItems:'center', justifyContent:'space-between', padding:'18px 24px', background:'none', border:'none', cursor:'pointer', borderBottom: open ? `1px solid ${C.gray100}` : 'none', borderRadius: open ? `${R.xl} ${R.xl} 0 0` : R.xl, textAlign:'left' }}
-        onMouseEnter={e => e.currentTarget.style.backgroundColor = C.gray50}
-        onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
+        className={`w-full flex items-center justify-between px-6 py-[18px] bg-transparent border-none cursor-pointer text-left hover:bg-zinc-50 ${open ? 'border-b border-zinc-100 rounded-t-2xl' : 'rounded-2xl'}`}
       >
-        <div style={{ display:'flex', alignItems:'center', gap:'10px' }}>
-          <div style={{ width:'30px', height:'30px', borderRadius: R.md, backgroundColor: C.blue50, border:`1px solid ${C.blue100}`, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
-            <Icon size={14} color={C.blue600} />
+        <div className="flex items-center gap-2.5">
+          <div className="w-[30px] h-[30px] rounded-lg bg-blue-50 border border-blue-100 flex items-center justify-center shrink-0">
+            <Icon size={14} className="text-blue-600" />
           </div>
-          <span style={{ fontSize:'14px', fontWeight:700, color: C.gray900 }}>{title}</span>
-          {badge && <span style={{ fontSize:'11px', fontWeight:700, padding:'2px 8px', borderRadius: R.full, backgroundColor: bc.bg, color: bc.color, border:`1px solid ${bc.border}` }}>{badge}</span>}
+          <span className="text-sm font-bold text-zinc-900">{title}</span>
+          {badge && <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full border ${bcTw}`}>{badge}</span>}
         </div>
-        <ChevronDown size={14} color={C.gray400} style={{ transform: open ? 'none' : 'rotate(-90deg)', transition:'transform 0.2s', flexShrink:0 }} />
+        <ChevronDown size={14} className={`text-zinc-400 shrink-0 transition-transform duration-200 ${open ? '' : '-rotate-90'}`} />
       </button>
-      {open && <div style={{ padding:'24px', overflow:'visible' }}>{children}</div>}
+      {open && <div className="p-6 overflow-visible">{children}</div>}
     </div>
   );
 }
@@ -469,11 +452,11 @@ function Section({ icon: Icon, title, badge, badgeColor = 'blue', children, defa
 function Field({ label, required, hint, children }) {
   return (
     <div>
-      <div style={{ marginBottom:'6px' }}>
-        <span style={{ fontSize:'13px', fontWeight:600, color: C.gray700 }}>
-          {label}{required && <span style={{ color: C.red500, marginLeft:'2px' }}>*</span>}
+      <div className="mb-1.5">
+        <span className="text-[13px] font-semibold text-zinc-700">
+          {label}{required && <span className="text-red-500 ml-0.5">*</span>}
         </span>
-        {hint && <span style={{ fontSize:'12px', color: C.gray400, marginLeft:'8px' }}>{hint}</span>}
+        {hint && <span className="text-xs text-zinc-400 ml-2">{hint}</span>}
       </div>
       {children}
     </div>
@@ -483,30 +466,29 @@ function Field({ label, required, hint, children }) {
 // ─── Step Card ──────────────────────────────────────────────────────────────
 function StepCard({ step, index, onUpdate, onRemove }) {
   return (
-    <div style={{ border:`1px solid ${C.gray200}`, borderRadius: R.xl, backgroundColor:'#fff', marginBottom:'12px', boxShadow: SHADOW.xs }}>
-      <div style={{ display:'flex', alignItems:'center', gap:'12px', padding:'12px 16px', backgroundColor: C.gray50, borderBottom:`1px solid ${C.gray100}`, borderRadius:`${R.xl} ${R.xl} 0 0` }}>
-        <GripVertical size={14} color={C.gray300} style={{ cursor:'grab', flexShrink:0 }} />
-        <div style={{ width:'24px', height:'24px', borderRadius:'50%', backgroundColor: C.blue500, color:'#fff', fontSize:'12px', fontWeight:800, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>{index + 1}</div>
+    <div className="border border-zinc-200 rounded-2xl bg-white mb-3 shadow-xs">
+      <div className="flex items-center gap-3 px-4 py-3 bg-zinc-50 border-b border-zinc-100 rounded-t-2xl">
+        <GripVertical size={14} className="text-zinc-300 cursor-grab shrink-0" />
+        <div className="w-6 h-6 rounded-full bg-blue-500 text-white text-xs font-extrabold flex items-center justify-center shrink-0">{index + 1}</div>
         <input
           type="text" value={step.title}
           onChange={e => onUpdate({ ...step, title: e.target.value })}
           placeholder={`Step ${index + 1} 제목`}
-          style={{ flex:1, border:'none', outline:'none', fontSize:'14px', fontWeight:700, color: C.gray900, backgroundColor:'transparent', fontFamily:'inherit' }}
+          className="flex-1 border-none outline-none text-sm font-bold text-zinc-900 bg-transparent font-[inherit]"
         />
-        <button onClick={onRemove} style={{ border:'none', background:'none', cursor:'pointer', padding:'4px', color: C.gray400, display:'flex', alignItems:'center' }} onMouseEnter={e=>e.currentTarget.style.color=C.red500} onMouseLeave={e=>e.currentTarget.style.color=C.gray400}>
+        <button onClick={onRemove} className="border-none bg-transparent cursor-pointer p-1 text-zinc-400 flex items-center hover:text-red-500">
           <Trash2 size={13} />
         </button>
       </div>
-      <div style={{ padding:'16px' }}>
+      <div className="p-4">
         <textarea
           value={step.desc}
           onChange={e => onUpdate({ ...step, desc: e.target.value })}
           placeholder="이 단계에서 수행할 내용을 구체적으로 작성하세요 (실제 버튼/메뉴 기준)"
           rows={3}
-          style={{ ...inputBase, resize:'vertical', lineHeight:1.6, marginBottom:'12px' }}
-          onFocus={onFocus} onBlur={onBlur}
+          className="w-full px-3 py-2 border border-zinc-200 rounded-lg text-sm text-zinc-900 bg-white outline-none transition-colors focus:border-blue-500 focus:ring-[3px] focus:ring-blue-500/15 resize-y leading-relaxed mb-3 box-border"
         />
-        <p style={{ fontSize:'12px', fontWeight:600, color: C.gray500, margin:'0 0 8px' }}>스크린샷</p>
+        <p className="text-xs font-semibold text-zinc-500 mt-0 mb-2">스크린샷</p>
         <ImageUploadSlot image={step.image} onUpload={img => onUpdate({ ...step, image: img })} onRemove={() => onUpdate({ ...step, image: null })} />
       </div>
     </div>
@@ -516,21 +498,21 @@ function StepCard({ step, index, onUpdate, onRemove }) {
 // ─── Case Card ──────────────────────────────────────────────────────────────
 function CaseCard({ item, index, onUpdate, onRemove }) {
   return (
-    <div style={{ border:`1px solid ${C.gray200}`, borderRadius: R.xl, backgroundColor:'#fff', marginBottom:'10px', boxShadow: SHADOW.xs }}>
-      <div style={{ display:'flex', alignItems:'center', gap:'10px', padding:'10px 14px', backgroundColor: C.gray50, borderBottom:`1px solid ${C.gray100}`, borderRadius:`${R.xl} ${R.xl} 0 0` }}>
-        <GripVertical size={13} color={C.gray300} style={{ cursor:'grab', flexShrink:0 }} />
-        <span style={{ fontSize:'11px', fontWeight:700, color: C.gray400, letterSpacing:'0.06em', flexShrink:0 }}>CASE {index + 1}</span>
-        <input type="text" value={item.label} onChange={e => onUpdate({ ...item, label: e.target.value })} placeholder="상황 라벨 (예: 중도 입반 시, 중복결제 발생 시)" style={{ flex:1, border:'none', outline:'none', fontSize:'13px', fontWeight:700, color: C.gray900, backgroundColor:'transparent', fontFamily:'inherit' }} />
-        <button onClick={onRemove} style={{ border:'none', background:'none', cursor:'pointer', color: C.gray400, display:'flex', alignItems:'center' }} onMouseEnter={e=>e.currentTarget.style.color=C.red500} onMouseLeave={e=>e.currentTarget.style.color=C.gray400}><Trash2 size={13} /></button>
+    <div className="border border-zinc-200 rounded-2xl bg-white mb-2.5 shadow-xs">
+      <div className="flex items-center gap-2.5 px-3.5 py-2.5 bg-zinc-50 border-b border-zinc-100 rounded-t-2xl">
+        <GripVertical size={13} className="text-zinc-300 cursor-grab shrink-0" />
+        <span className="text-[11px] font-bold text-zinc-400 tracking-wide shrink-0">CASE {index + 1}</span>
+        <input type="text" value={item.label} onChange={e => onUpdate({ ...item, label: e.target.value })} placeholder="상황 라벨 (예: 중도 입반 시, 중복결제 발생 시)" className="flex-1 border-none outline-none text-[13px] font-bold text-zinc-900 bg-transparent font-[inherit]" />
+        <button onClick={onRemove} className="border-none bg-transparent cursor-pointer text-zinc-400 flex items-center hover:text-red-500"><Trash2 size={13} /></button>
       </div>
-      <div style={{ padding:'14px 16px', display:'grid', gridTemplateColumns:'1fr 1fr', gap:'12px' }}>
+      <div className="px-4 py-3.5 grid grid-cols-2 gap-3">
         <div>
-          <p style={{ fontSize:'12px', fontWeight:600, color: C.gray500, margin:'0 0 6px' }}>처리 방법</p>
-          <textarea value={item.action} onChange={e => onUpdate({ ...item, action: e.target.value })} placeholder="처리 절차" rows={3} style={{ ...inputBase, resize:'none', lineHeight:1.6 }} onFocus={onFocus} onBlur={onBlur} />
+          <p className="text-xs font-semibold text-zinc-500 m-0 mb-1.5">처리 방법</p>
+          <textarea value={item.action} onChange={e => onUpdate({ ...item, action: e.target.value })} placeholder="처리 절차" rows={3} className="w-full px-3 py-2.5 border border-zinc-200 rounded-lg text-sm text-zinc-900 bg-white outline-none transition-[border-color,box-shadow] focus:border-blue-500 focus:ring-[3px] focus:ring-blue-500/15 resize-none leading-relaxed" />
         </div>
         <div>
-          <p style={{ fontSize:'12px', fontWeight:600, color: C.gray500, margin:'0 0 6px' }}>참고사항 <span style={{ color: C.gray300, fontWeight:400 }}>선택</span></p>
-          <textarea value={item.note} onChange={e => onUpdate({ ...item, note: e.target.value })} placeholder="예외 케이스, 주의사항" rows={3} style={{ ...inputBase, resize:'none', lineHeight:1.6 }} onFocus={onFocus} onBlur={onBlur} />
+          <p className="text-xs font-semibold text-zinc-500 m-0 mb-1.5">참고사항 <span className="text-zinc-300 font-normal">선택</span></p>
+          <textarea value={item.note} onChange={e => onUpdate({ ...item, note: e.target.value })} placeholder="예외 케이스, 주의사항" rows={3} className="w-full px-3 py-2.5 border border-zinc-200 rounded-lg text-sm text-zinc-900 bg-white outline-none transition-[border-color,box-shadow] focus:border-blue-500 focus:ring-[3px] focus:ring-blue-500/15 resize-none leading-relaxed" />
         </div>
       </div>
     </div>
@@ -539,17 +521,14 @@ function CaseCard({ item, index, onUpdate, onRemove }) {
 
 // ─── Icon Button ────────────────────────────────────────────────────────────
 function Btn({ children, onClick, variant = 'default', icon: Icon, active }) {
-  const styles = {
-    default: { padding:'7px 14px', border:`1px solid ${C.gray200}`, borderRadius: R.md, backgroundColor: active ? C.gray100 : '#fff', color: active ? C.gray900 : C.gray700, fontWeight:600, fontSize:'13px' },
-    primary: { padding:'7px 16px', border:'none', borderRadius: R.md, backgroundColor: C.gray900, color:'#fff', fontWeight:700, fontSize:'13px' },
-    ghost:   { padding:'7px 14px', border:'none', borderRadius: R.md, backgroundColor:'transparent', color: C.gray600, fontWeight:600, fontSize:'13px' },
+  const base = 'inline-flex items-center gap-1.5 cursor-pointer transition-all duration-100 text-[13px] rounded-lg hover:opacity-80';
+  const variants = {
+    default: `px-3.5 py-[7px] border border-zinc-200 font-semibold ${active ? 'bg-zinc-100 text-zinc-900' : 'bg-white text-zinc-700'}`,
+    primary: 'px-4 py-[7px] border-none bg-zinc-900 text-white font-bold',
+    ghost:   'px-3.5 py-[7px] border-none bg-transparent text-zinc-600 font-semibold',
   };
-  const s = styles[variant] || styles.default;
   return (
-    <button onClick={onClick} style={{ display:'inline-flex', alignItems:'center', gap:'6px', cursor:'pointer', transition:'all 0.1s', ...s }}
-      onMouseEnter={e => { e.currentTarget.style.opacity = '0.8'; }}
-      onMouseLeave={e => { e.currentTarget.style.opacity = '1'; }}
-    >
+    <button onClick={onClick} className={`${base} ${variants[variant] || variants.default}`}>
       {Icon && <Icon size={13} />}{children}
     </button>
   );
@@ -561,40 +540,40 @@ function ReviewModal({ onClose, onConfirm }) {
   const [note, setNote] = useState('');
   const REVIEWERS = ['이지원 (콘텐츠팀)', '박수진 (운영팀)', '김도현 (플랫폼서비스실)'];
   return createPortal(
-    <div style={{ position:'fixed', inset:0, backgroundColor:'rgba(0,0,0,0.4)', backdropFilter:'blur(4px)', zIndex:9000, display:'flex', alignItems:'center', justifyContent:'center' }} onClick={e => e.target===e.currentTarget && onClose()}>
-      <div style={{ width:'480px', backgroundColor:'#fff', borderRadius:'20px', boxShadow:'0 24px 64px rgba(0,0,0,0.18)', overflow:'hidden', animation:'modalIn 0.18s ease' }}>
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-[4px] z-[9000] flex items-center justify-center" onClick={e => e.target===e.currentTarget && onClose()}>
+      <div className="w-[480px] bg-white rounded-[20px] shadow-[0_24px_64px_rgba(0,0,0,0.18)] overflow-hidden animate-[modalIn_0.18s_ease]">
         <style>{`@keyframes modalIn{from{opacity:0;transform:scale(0.96) translateY(8px)}to{opacity:1;transform:none}}`}</style>
-        <div style={{ padding:'24px 28px 0' }}>
-          <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'20px' }}>
-            <div style={{ display:'flex', alignItems:'center', gap:'10px' }}>
-              <div style={{ width:'36px', height:'36px', borderRadius:'10px', backgroundColor:'#fef9c3', display:'flex', alignItems:'center', justifyContent:'center' }}>
-                <Send size={16} color='#a16207' />
+        <div className="px-7 pt-6 pb-0">
+          <div className="flex items-center justify-between mb-5">
+            <div className="flex items-center gap-2.5">
+              <div className="w-9 h-9 rounded-[10px] bg-yellow-100 flex items-center justify-center">
+                <Send size={16} className="text-yellow-700" />
               </div>
               <div>
-                <h3 style={{ margin:0, fontSize:'15px', fontWeight:800, color: C.gray900 }}>검수 요청</h3>
-                <p style={{ margin:0, fontSize:'12px', color: C.gray400 }}>리뷰어를 지정하고 요청 메모를 남겨주세요</p>
+                <h3 className="m-0 text-[15px] font-extrabold text-zinc-900">검수 요청</h3>
+                <p className="m-0 text-xs text-zinc-400">리뷰어를 지정하고 요청 메모를 남겨주세요</p>
               </div>
             </div>
-            <button onClick={onClose} style={{ border:'none', background:'none', cursor:'pointer', padding:'4px', color: C.gray400 }}><X size={18} /></button>
+            <button onClick={onClose} className="border-none bg-transparent cursor-pointer p-1 text-zinc-400"><X size={18} /></button>
           </div>
-          <div style={{ marginBottom:'16px' }}>
-            <label style={{ fontSize:'12px', fontWeight:700, color: C.gray600, display:'block', marginBottom:'6px' }}>리뷰어 선택 *</label>
-            <div style={{ position:'relative' }}>
-              <select value={reviewer} onChange={e=>setReviewer(e.target.value)} style={{ width:'100%', padding:'9px 32px 9px 12px', border:`1px solid ${C.gray200}`, borderRadius:'8px', fontSize:'14px', color: C.gray900, backgroundColor:'#fff', appearance:'none', outline:'none', fontFamily:'inherit', cursor:'pointer' }}>
+          <div className="mb-4">
+            <label className="text-xs font-bold text-zinc-600 block mb-1.5">리뷰어 선택 *</label>
+            <div className="relative">
+              <select value={reviewer} onChange={e=>setReviewer(e.target.value)} className="w-full py-2.5 pl-3 pr-8 border border-zinc-200 rounded-lg text-sm text-zinc-900 bg-white appearance-none outline-none font-[inherit] cursor-pointer focus:border-blue-500 focus:ring-[3px] focus:ring-blue-500/15">
                 <option value=''>리뷰어를 선택하세요</option>
                 {REVIEWERS.map(r=><option key={r}>{r}</option>)}
               </select>
-              <ChevronDown size={13} color={C.gray400} style={{ position:'absolute', right:'10px', top:'50%', transform:'translateY(-50%)', pointerEvents:'none' }} />
+              <ChevronDown size={13} className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-zinc-400" />
             </div>
           </div>
-          <div style={{ marginBottom:'24px' }}>
-            <label style={{ fontSize:'12px', fontWeight:700, color: C.gray600, display:'block', marginBottom:'6px' }}>요청 메모 (선택)</label>
-            <textarea value={note} onChange={e=>setNote(e.target.value)} placeholder='리뷰어에게 전달할 내용을 입력하세요' rows={3} style={{ width:'100%', padding:'10px 12px', border:`1px solid ${C.gray200}`, borderRadius:'8px', fontSize:'13px', resize:'none', outline:'none', fontFamily:'inherit', lineHeight:1.6, boxSizing:'border-box' }} />
+          <div className="mb-6">
+            <label className="text-xs font-bold text-zinc-600 block mb-1.5">요청 메모 (선택)</label>
+            <textarea value={note} onChange={e=>setNote(e.target.value)} placeholder='리뷰어에게 전달할 내용을 입력하세요' rows={3} className="w-full px-3 py-2.5 border border-zinc-200 rounded-lg text-[13px] resize-none outline-none font-[inherit] leading-relaxed box-border focus:border-blue-500 focus:ring-[3px] focus:ring-blue-500/15" />
           </div>
         </div>
-        <div style={{ padding:'16px 28px 24px', display:'flex', gap:'8px', justifyContent:'flex-end', borderTop:`1px solid ${C.gray100}` }}>
-          <button onClick={onClose} style={{ padding:'9px 18px', border:`1px solid ${C.gray200}`, borderRadius:'8px', backgroundColor:'#fff', fontSize:'13px', fontWeight:600, cursor:'pointer', color: C.gray700 }}>취소</button>
-          <button onClick={() => { if(reviewer) { onConfirm(reviewer, note); } }} disabled={!reviewer} style={{ padding:'9px 20px', border:'none', borderRadius:'8px', backgroundColor: reviewer ? C.gray900 : C.gray300, color:'#fff', fontSize:'13px', fontWeight:700, cursor: reviewer ? 'pointer':'not-allowed', transition:'background 0.15s' }}>검수 요청 보내기</button>
+        <div className="px-7 pt-4 pb-6 flex gap-2 justify-end border-t border-zinc-100">
+          <button onClick={onClose} className="py-2.5 px-[18px] border border-zinc-200 rounded-lg bg-white text-[13px] font-semibold cursor-pointer text-zinc-700 hover:bg-zinc-50">취소</button>
+          <button onClick={() => { if(reviewer) { onConfirm(reviewer, note); } }} disabled={!reviewer} className={`py-2.5 px-5 border-none rounded-lg text-white text-[13px] font-bold transition-colors duration-150 ${reviewer ? 'bg-zinc-900 cursor-pointer hover:bg-zinc-800' : 'bg-zinc-300 cursor-not-allowed'}`}>검수 요청 보내기</button>
         </div>
       </div>
     </div>,
@@ -606,25 +585,25 @@ function ReviewModal({ onClose, onConfirm }) {
 function PublishModal({ title, version, onClose, onConfirm }) {
   const [confirmed, setConfirmed] = useState(false);
   return createPortal(
-    <div style={{ position:'fixed', inset:0, backgroundColor:'rgba(0,0,0,0.4)', backdropFilter:'blur(4px)', zIndex:9000, display:'flex', alignItems:'center', justifyContent:'center' }} onClick={e => e.target===e.currentTarget && onClose()}>
-      <div style={{ width:'460px', backgroundColor:'#fff', borderRadius:'20px', boxShadow:'0 24px 64px rgba(0,0,0,0.18)', overflow:'hidden', animation:'modalIn 0.18s ease' }}>
-        <div style={{ padding:'28px' }}>
-          <div style={{ width:'44px', height:'44px', borderRadius:'12px', backgroundColor:'#dcfce7', display:'flex', alignItems:'center', justifyContent:'center', marginBottom:'16px' }}>
-            <Check size={22} color='#16a34a' />
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-[4px] z-[9000] flex items-center justify-center" onClick={e => e.target===e.currentTarget && onClose()}>
+      <div className="w-[460px] bg-white rounded-[20px] shadow-[0_24px_64px_rgba(0,0,0,0.18)] overflow-hidden animate-[modalIn_0.18s_ease]">
+        <div className="p-7">
+          <div className="w-11 h-11 rounded-xl bg-green-100 flex items-center justify-center mb-4">
+            <Check size={22} className="text-green-600" />
           </div>
-          <h3 style={{ margin:'0 0 8px', fontSize:'17px', fontWeight:800, color: C.gray900 }}>가이드를 발행할까요?</h3>
-          <p style={{ margin:'0 0 20px', fontSize:'14px', color: C.gray500, lineHeight:1.6 }}>
-            <strong style={{ color: C.gray800 }}>"{title || '제목 없음'}"</strong> ({version})이 배포완료 상태로 전환되며, 모든 운영자에게 즉시 노출됩니다.
+          <h3 className="m-0 mb-2 text-[17px] font-extrabold text-zinc-900">가이드를 발행할까요?</h3>
+          <p className="m-0 mb-5 text-sm text-zinc-500 leading-relaxed">
+            <strong className="text-zinc-800">"{title || '제목 없음'}"</strong> ({version})이 배포완료 상태로 전환되며, 모든 운영자에게 즉시 노출됩니다.
           </p>
-          <label style={{ display:'flex', alignItems:'center', gap:'10px', padding:'12px 16px', backgroundColor: C.gray50, borderRadius:'10px', border:`1px solid ${C.gray200}`, cursor:'pointer', marginBottom:'20px' }}>
-            <div onClick={()=>setConfirmed(p=>!p)} style={{ width:'18px', height:'18px', borderRadius:'5px', border:`1.5px solid ${confirmed ? '#16a34a' : C.gray300}`, backgroundColor: confirmed ? '#16a34a' : '#fff', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0, transition:'all 0.15s' }}>
+          <label className="flex items-center gap-2.5 px-4 py-3 bg-zinc-50 rounded-[10px] border border-zinc-200 cursor-pointer mb-5">
+            <div onClick={()=>setConfirmed(p=>!p)} className={`w-[18px] h-[18px] rounded-[5px] border-[1.5px] flex items-center justify-center shrink-0 transition-all duration-150 ${confirmed ? 'border-green-600 bg-green-600' : 'border-zinc-300 bg-white'}`}>
               {confirmed && <Check size={11} color='#fff' strokeWidth={3} />}
             </div>
-            <span style={{ fontSize:'13px', color: C.gray700, fontWeight:500 }}>내용을 최종 검토했으며 발행에 동의합니다.</span>
+            <span className="text-[13px] text-zinc-700 font-medium">내용을 최종 검토했으며 발행에 동의합니다.</span>
           </label>
-          <div style={{ display:'flex', gap:'8px', justifyContent:'flex-end' }}>
-            <button onClick={onClose} style={{ padding:'9px 18px', border:`1px solid ${C.gray200}`, borderRadius:'8px', backgroundColor:'#fff', fontSize:'13px', fontWeight:600, cursor:'pointer', color: C.gray700 }}>취소</button>
-            <button onClick={() => confirmed && onConfirm()} disabled={!confirmed} style={{ padding:'9px 22px', border:'none', borderRadius:'8px', backgroundColor: confirmed ? '#111827' : C.gray300, color:'#fff', fontSize:'13px', fontWeight:700, cursor: confirmed ? 'pointer':'not-allowed', transition:'background 0.15s' }}>발행하기</button>
+          <div className="flex gap-2 justify-end">
+            <button onClick={onClose} className="py-2.5 px-[18px] border border-zinc-200 rounded-lg bg-white text-[13px] font-semibold cursor-pointer text-zinc-700 hover:bg-zinc-50">취소</button>
+            <button onClick={() => confirmed && onConfirm()} disabled={!confirmed} className={`py-2.5 px-[22px] border-none rounded-lg text-white text-[13px] font-bold transition-colors duration-150 ${confirmed ? 'bg-gray-900 cursor-pointer hover:bg-gray-800' : 'bg-zinc-300 cursor-not-allowed'}`}>발행하기</button>
           </div>
         </div>
       </div>
@@ -637,9 +616,9 @@ function PublishModal({ title, version, onClose, onConfirm }) {
 function Toast({ message, onClose }) {
   useEffect(() => { const t = setTimeout(onClose, 3500); return () => clearTimeout(t); }, [onClose]);
   return createPortal(
-    <div style={{ position:'fixed', bottom:'32px', left:'50%', transform:'translateX(-50%)', zIndex:9999, backgroundColor:'#111827', color:'#fff', padding:'12px 22px', borderRadius:'12px', fontSize:'14px', fontWeight:600, display:'flex', alignItems:'center', gap:'10px', boxShadow:'0 8px 32px rgba(0,0,0,0.2)', animation:'toastIn 0.2s ease', whiteSpace:'nowrap' }}>
+    <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[9999] bg-gray-900 text-white px-[22px] py-3 rounded-xl text-sm font-semibold flex items-center gap-2.5 shadow-[0_8px_32px_rgba(0,0,0,0.2)] animate-[toastIn_0.2s_ease] whitespace-nowrap">
       <style>{`@keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}`}</style>
-      <Check size={16} color='#4ade80' /> {message}
+      <Check size={16} className="text-green-400" /> {message}
     </div>,
     document.body
   );
@@ -721,34 +700,32 @@ export default function EditorPage() {
 
   // ── Render ──────────────────────────────────────────────────────────────
   return (
-    <div style={{ minHeight:'100vh', backgroundColor: C.gray50, fontFamily:'-apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", sans-serif' }}>
+    <div className="min-h-screen bg-zinc-50 font-[-apple-system,BlinkMacSystemFont,'Inter','Segoe_UI',sans-serif]">
 
       {/* ── Top Bar ─────────────────────────────────────────────────────── */}
-      <header style={{ position:'sticky', top:0, zIndex:100, height:'56px', backgroundColor:'rgba(255,255,255,0.9)', borderBottom:`1px solid ${C.gray100}`, backdropFilter:'blur(16px)', display:'flex', alignItems:'center', justifyContent:'space-between', padding:'0 28px' }}>
+      <header className="sticky top-0 z-[100] h-14 bg-white/90 border-b border-zinc-100 backdrop-blur-[16px] flex items-center justify-between px-7">
         {/* Left */}
-        <div style={{ display:'flex', alignItems:'center', gap:'12px' }}>
+        <div className="flex items-center gap-3">
           <Btn icon={ArrowLeft} onClick={() => navigate(-1)}>가이드 목록</Btn>
-          <div style={{ width:'1px', height:'20px', backgroundColor: C.gray200 }} />
-          <span style={{ fontSize:'14px', fontWeight:600, color: C.gray900, maxWidth:'320px', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>
+          <div className="w-px h-5 bg-zinc-200" />
+          <span className="text-sm font-semibold text-zinc-900 max-w-[320px] overflow-hidden text-ellipsis whitespace-nowrap">
             {form.title || '새 가이드 작성'}
           </span>
           {form.status && (
-            <span style={{
-              fontSize:'11px', fontWeight:700, padding:'2px 9px', borderRadius: R.full,
-              backgroundColor: form.status==='배포완료' ? C.green100 : form.status==='검수중' ? C.amber100 : C.gray100,
-              color: form.status==='배포완료' ? C.green700 : form.status==='검수중' ? C.amber600 : C.gray600,
-            }}>{form.status}</span>
+            <span className={`text-[11px] font-bold py-0.5 px-2.5 rounded-full ${
+              form.status==='배포완료' ? 'bg-green-100 text-green-700' : form.status==='검수중' ? 'bg-amber-100 text-amber-600' : 'bg-zinc-100 text-zinc-600'
+            }`}>{form.status}</span>
           )}
         </div>
         {/* Right */}
-        <div style={{ display:'flex', alignItems:'center', gap:'6px' }}>
-          <span style={{ fontSize:'12px', color: C.gray400, marginRight:'6px' }}>
+        <div className="flex items-center gap-1.5">
+          <span className="text-xs text-zinc-400 mr-1.5">
             {isSaving ? '저장 중…' : lastSaved ? `${lastSaved} 자동 저장` : ''}
           </span>
           <Btn icon={Save} onClick={save}>임시 저장</Btn>
           <Btn icon={Clock} onClick={() => setVersionDrawer(true)}>버전 이력</Btn>
           <Btn icon={showPreview ? EyeOff : Eye} onClick={() => setShowPreview(p=>!p)} active={showPreview}>{showPreview ? '편집 전용' : '미리보기'}</Btn>
-          <div style={{ width:'1px', height:'20px', backgroundColor: C.gray200 }} />
+          <div className="w-px h-5 bg-zinc-200" />
           <Btn icon={Send} onClick={() => setShowReview(true)}>검수 요청</Btn>
           <Btn variant="primary" onClick={() => setShowPublish(true)}>발행하기</Btn>
         </div>
@@ -785,57 +762,57 @@ export default function EditorPage() {
       {toast && <Toast message={toast} onClose={() => setToast(null)} />}
 
       {/* ── Body ────────────────────────────────────────────────────────── */}
-      <div style={{ display:'flex', maxWidth:'1440px', margin:'0 auto', gap:'20px', padding:'28px 28px 100px' }}>
+      <div className="flex max-w-[1440px] mx-auto gap-5 px-7 pt-7 pb-[100px]">
 
         {/* ── Editor Panel ──────────────────────────────────────────────── */}
-        <div style={{ flex:1, minWidth:0 }}>
+        <div className="flex-1 min-w-0">
 
           {/* ① 기본 정보 */}
           <Section icon={Hash} title="기본 정보" badge="필수">
-            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'16px', marginBottom:'16px' }}>
+            <div className="grid grid-cols-2 gap-4 mb-4">
               <Field label="모듈" required>
-                <div style={{ position:'relative' }}>
-                  <select value={form.module} onChange={e=>set('module',e.target.value)} style={{ ...inputBase, appearance:'none', paddingRight:'32px', cursor:'pointer' }} onFocus={onFocus} onBlur={onBlur}>
+                <div className="relative">
+                  <select value={form.module} onChange={e=>set('module',e.target.value)} className="w-full px-3 py-2.5 pr-8 border border-zinc-200 rounded-lg text-sm text-zinc-900 bg-white outline-none transition-[border-color,box-shadow] focus:border-blue-500 focus:ring-[3px] focus:ring-blue-500/15 appearance-none cursor-pointer">
                     <option value="">선택</option>
                     {MODULES.map(m=><option key={m}>{m}</option>)}
                   </select>
-                  <ChevronDown size={13} color={C.gray400} style={{ position:'absolute', right:'10px', top:'50%', transform:'translateY(-50%)', pointerEvents:'none' }} />
+                  <ChevronDown size={13} className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-zinc-400" />
                 </div>
               </Field>
               <Field label="가이드 유형" required>
-                <div style={{ display:'flex', gap:'6px', flexWrap:'wrap' }}>
+                <div className="flex gap-1.5 flex-wrap">
                   {GUIDE_TYPES.map(t => {
                     const active = form.guideType === t;
-                    const tc = TYPE_BADGE[t];
+                    const tw = TYPE_BADGE_TW[t] || TYPE_BADGE_TW.SOP;
                     return (
-                      <button key={t} onClick={() => set('guideType', t)} style={{ padding:'5px 12px', borderRadius: R.full, fontSize:'12px', fontWeight:700, cursor:'pointer', border:`1px solid ${active ? tc.border : C.gray200}`, backgroundColor: active ? tc.bg : '#fff', color: active ? tc.color : C.gray600, transition:'all 0.1s' }}>{t}</button>
+                      <button key={t} onClick={() => set('guideType', t)} className={`py-[5px] px-3 rounded-full text-xs font-bold cursor-pointer border transition-all duration-100 ${active ? tw.chip : 'border-zinc-200 bg-white text-zinc-600'}`}>{t}</button>
                     );
                   })}
                 </div>
               </Field>
             </div>
 
-            <div style={{ display:'grid', gridTemplateColumns:'1fr 2fr', gap:'16px', marginBottom:'16px' }}>
+            <div className="grid grid-cols-[1fr_2fr] gap-4 mb-4">
               <Field label="가이드 그룹" required>
-                <input type="text" value={form.guideGroup} onChange={e=>set('guideGroup',e.target.value)} placeholder="예: 환불 가이드" style={inputBase} onFocus={onFocus} onBlur={onBlur} />
+                <input type="text" value={form.guideGroup} onChange={e=>set('guideGroup',e.target.value)} placeholder="예: 환불 가이드" className="w-full px-3 py-2.5 border border-zinc-200 rounded-lg text-sm text-zinc-900 bg-white outline-none transition-[border-color,box-shadow] focus:border-blue-500 focus:ring-[3px] focus:ring-blue-500/15" />
               </Field>
               <Field label="가이드명" required>
-                <input type="text" value={form.title} onChange={e=>set('title',e.target.value)} placeholder="예: 환불 승인 기준 판단 가이드" style={{ ...inputBase, fontSize:'15px', fontWeight:600 }} onFocus={onFocus} onBlur={onBlur} />
+                <input type="text" value={form.title} onChange={e=>set('title',e.target.value)} placeholder="예: 환불 승인 기준 판단 가이드" className="w-full px-3 py-2.5 border border-zinc-200 rounded-lg text-[15px] font-semibold text-zinc-900 bg-white outline-none transition-[border-color,box-shadow] focus:border-blue-500 focus:ring-[3px] focus:ring-blue-500/15" />
               </Field>
             </div>
 
-            <div style={{ marginBottom:'16px' }}>
+            <div className="mb-4">
               <Field label="메뉴 경로" required hint="실제 AMS 화면 경로, > 구분">
-                <div style={{ position:'relative' }}>
-                  <Layers size={13} color={C.gray400} style={{ position:'absolute', left:'10px', top:'50%', transform:'translateY(-50%)', pointerEvents:'none' }} />
-                  <input type="text" value={form.menuPath} onChange={e=>set('menuPath',e.target.value)} placeholder="AMS 어드민 > 고객 관리 > 회원 상세 정보" style={{ ...inputBase, paddingLeft:'30px', fontFamily:'monospace', fontSize:'13px' }} onFocus={onFocus} onBlur={onBlur} />
+                <div className="relative">
+                  <Layers size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-zinc-400" />
+                  <input type="text" value={form.menuPath} onChange={e=>set('menuPath',e.target.value)} placeholder="AMS 어드민 > 고객 관리 > 회원 상세 정보" className="w-full px-3 py-2.5 pl-[30px] border border-zinc-200 rounded-lg text-[13px] font-mono text-zinc-900 bg-white outline-none transition-[border-color,box-shadow] focus:border-blue-500 focus:ring-[3px] focus:ring-blue-500/15" />
                 </div>
                 {form.menuPath && (
-                  <div style={{ marginTop:'6px', padding:'7px 12px', backgroundColor: C.gray50, border:`1px solid ${C.gray100}`, borderRadius: R.md, display:'flex', alignItems:'center', gap:'6px', flexWrap:'wrap' }}>
+                  <div className="mt-1.5 py-[7px] px-3 bg-zinc-50 border border-zinc-100 rounded-lg flex items-center gap-1.5 flex-wrap">
                     {form.menuPath.split('>').map((p,i,arr)=>(
-                      <span key={i} style={{ display:'flex', alignItems:'center', gap:'5px' }}>
-                        <span style={{ fontSize:'12px', fontWeight: i===arr.length-1 ? 700 : 400, color: i===arr.length-1 ? C.gray900 : C.gray400 }}>{p.trim()}</span>
-                        {i!==arr.length-1 && <ChevronRight size={10} color={C.gray300} />}
+                      <span key={i} className="flex items-center gap-[5px]">
+                        <span className={`text-xs ${i===arr.length-1 ? 'font-bold text-zinc-900' : 'font-normal text-zinc-400'}`}>{p.trim()}</span>
+                        {i!==arr.length-1 && <ChevronRight size={10} className="text-zinc-300" />}
                       </span>
                     ))}
                   </div>
@@ -843,31 +820,31 @@ export default function EditorPage() {
               </Field>
             </div>
 
-            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'16px' }}>
+            <div className="grid grid-cols-2 gap-4">
               <Field label="사용 대상" required>
-                <div style={{ display:'flex', gap:'8px' }}>
+                <div className="flex gap-2">
                   {['운영자','실장','관리자'].map(t => {
                     const on = form.targets.includes(t);
                     return (
-                      <label key={t} onClick={() => toggleTarget(t)} style={{ display:'flex', alignItems:'center', gap:'7px', padding:'7px 14px', border:`1px solid ${on ? C.blue500 : C.gray200}`, borderRadius: R.md, backgroundColor: on ? C.blue50 : '#fff', cursor:'pointer', transition:'all 0.1s', userSelect:'none' }}>
-                        <div style={{ width:'16px', height:'16px', borderRadius:'4px', border:`1.5px solid ${on ? C.blue500 : C.gray300}`, backgroundColor: on ? C.blue500 : '#fff', display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0 }}>
+                      <label key={t} onClick={() => toggleTarget(t)} className={`flex items-center gap-[7px] py-[7px] px-3.5 border rounded-lg cursor-pointer transition-all duration-100 select-none ${on ? 'border-blue-500 bg-blue-50' : 'border-zinc-200 bg-white'}`}>
+                        <div className={`w-4 h-4 rounded-[4px] border-[1.5px] flex items-center justify-center shrink-0 ${on ? 'border-blue-500 bg-blue-500' : 'border-zinc-300 bg-white'}`}>
                           {on && <Check size={10} color="#fff" strokeWidth={3} />}
                         </div>
-                        <span style={{ fontSize:'13px', fontWeight:600, color: on ? C.blue700 : C.gray700 }}>{t}</span>
+                        <span className={`text-[13px] font-semibold ${on ? 'text-blue-700' : 'text-zinc-700'}`}>{t}</span>
                       </label>
                     );
                   })}
                 </div>
               </Field>
               <Field label="태그" hint="Enter 또는 , 로 추가">
-                <div style={{ border:`1px solid ${C.gray200}`, borderRadius: R.md, padding:'7px 10px', display:'flex', flexWrap:'wrap', gap:'5px', alignItems:'center', backgroundColor:'#fff', minHeight:'38px' }}>
+                <div className="border border-zinc-200 rounded-lg py-[7px] px-2.5 flex flex-wrap gap-[5px] items-center bg-white min-h-[38px]">
                   {form.tags.map((tag,i)=>(
-                    <span key={i} style={{ display:'inline-flex', alignItems:'center', gap:'4px', padding:'2px 8px', backgroundColor: C.gray100, borderRadius: R.full, fontSize:'12px', color: C.gray700, fontWeight:600 }}>
+                    <span key={i} className="inline-flex items-center gap-1 py-0.5 px-2 bg-zinc-100 rounded-full text-xs text-zinc-700 font-semibold">
                       <Tag size={9} />{tag}
-                      <button onMouseDown={e=>{e.preventDefault(); set('tags', form.tags.filter((_,idx)=>idx!==i));}} style={{ border:'none', background:'none', cursor:'pointer', padding:0, color: C.gray400, display:'flex' }}><X size={10} /></button>
+                      <button onMouseDown={e=>{e.preventDefault(); set('tags', form.tags.filter((_,idx)=>idx!==i));}} className="border-none bg-transparent cursor-pointer p-0 text-zinc-400 flex"><X size={10} /></button>
                     </span>
                   ))}
-                  <input type="text" value={tagInput} onChange={e=>setTagInput(e.target.value)} onKeyDown={handleTag} placeholder={form.tags.length===0?'예: 환불, 결제':''} style={{ border:'none', outline:'none', fontSize:'13px', color: C.gray900, minWidth:'80px', flex:1, backgroundColor:'transparent', fontFamily:'inherit' }} />
+                  <input type="text" value={tagInput} onChange={e=>setTagInput(e.target.value)} onKeyDown={handleTag} placeholder={form.tags.length===0?'예: 환불, 결제':''} className="border-none outline-none text-[13px] text-zinc-900 min-w-[80px] flex-1 bg-transparent font-[inherit]" />
                 </div>
               </Field>
             </div>
@@ -877,16 +854,16 @@ export default function EditorPage() {
           <Section icon={FileText} title="본문 작성" badge="필수">
 
             {/* TL;DR */}
-            <div style={{ marginBottom:'28px' }}>
+            <div className="mb-7">
               <Field label="핵심 요약 (TL;DR)" required hint="2~3줄, 30초 내 읽기">
-                <textarea value={form.summary} onChange={e=>set('summary',e.target.value)} placeholder="이 가이드의 핵심 내용을 요약하세요. CS 응대 중 30초 내에 읽을 수 있어야 합니다." rows={3} maxLength={300} style={{ ...inputBase, resize:'vertical', lineHeight:1.7 }} onFocus={onFocus} onBlur={onBlur} />
-                <div style={{ textAlign:'right', fontSize:'11px', color: C.gray400, marginTop:'4px' }}>{form.summary.length}/300</div>
+                <textarea value={form.summary} onChange={e=>set('summary',e.target.value)} placeholder="이 가이드의 핵심 내용을 요약하세요. CS 응대 중 30초 내에 읽을 수 있어야 합니다." rows={3} maxLength={300} className="w-full px-3 py-2.5 border border-zinc-200 rounded-lg text-sm text-zinc-900 bg-white outline-none transition-[border-color,box-shadow] focus:border-blue-500 focus:ring-[3px] focus:ring-blue-500/15 resize-y leading-[1.7]" />
+                <div className="text-right text-[11px] text-zinc-400 mt-1">{form.summary.length}/300</div>
               </Field>
             </div>
 
             {/* Steps */}
-            <div style={{ marginBottom:'28px' }}>
-              <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'12px' }}>
+            <div className="mb-7">
+              <div className="flex items-center justify-between mb-3">
                 <Field label="사용 방법 (Steps)" required><span /></Field>
                 <Btn icon={Plus} onClick={addStep}>스텝 추가</Btn>
               </div>
@@ -894,38 +871,38 @@ export default function EditorPage() {
             </div>
 
             {/* Cases */}
-            <div style={{ marginBottom:'28px' }}>
-              <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'6px' }}>
+            <div className="mb-7">
+              <div className="flex items-center justify-between mb-1.5">
                 <Field label="운영 케이스" required><span /></Field>
                 <Btn icon={Plus} onClick={addCase}>케이스 추가</Btn>
               </div>
-              <p style={{ margin:'0 0 12px', fontSize:'12px', color: C.gray400 }}>상황 라벨은 구체적 키워드로: '중도 입반 시', '중복결제 발생 시'</p>
+              <p className="m-0 mb-3 text-xs text-zinc-400">상황 라벨은 구체적 키워드로: '중도 입반 시', '중복결제 발생 시'</p>
               {form.cases.map((c,i) => <CaseCard key={i} item={c} index={i} onUpdate={v=>updCase(i,v)} onRemove={()=>delCase(i)} />)}
             </div>
 
             {/* Cautions */}
-            <div style={{ marginBottom:'28px' }}>
-              <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'12px' }}>
+            <div className="mb-7">
+              <div className="flex items-center justify-between mb-3">
                 <Field label="유의사항" required><span /></Field>
                 <Btn icon={Plus} onClick={addCaut}>항목 추가</Btn>
               </div>
-              <div style={{ border:`1px solid ${C.amber100}`, borderRadius: R.lg, overflow:'hidden' }}>
-                <div style={{ padding:'10px 14px', backgroundColor: C.amber50, borderBottom:`1px solid ${C.amber100}`, display:'flex', alignItems:'center', gap:'8px' }}>
-                  <AlertTriangle size={13} color={C.amber600} />
-                  <span style={{ fontSize:'12px', fontWeight:700, color: C.amber900 }}>실수 방지를 위한 주의사항만 작성하세요</span>
+              <div className="border border-amber-100 rounded-xl overflow-hidden">
+                <div className="py-2.5 px-3.5 bg-amber-50 border-b border-amber-100 flex items-center gap-2">
+                  <AlertTriangle size={13} className="text-amber-600" />
+                  <span className="text-xs font-bold text-amber-900">실수 방지를 위한 주의사항만 작성하세요</span>
                 </div>
                 {form.cautions.map((c,i)=>(
-                  <div key={i} style={{ display:'flex', alignItems:'center', gap:'10px', padding:'10px 14px', borderBottom: i<form.cautions.length-1 ? `1px solid ${C.gray100}` : 'none' }}>
-                    <div style={{ width:'5px', height:'5px', borderRadius:'50%', backgroundColor: C.amber600, flexShrink:0 }} />
-                    <input type="text" value={c} onChange={e=>updCaut(i,e.target.value)} placeholder="유의사항을 입력하세요" style={{ flex:1, border:'none', outline:'none', fontSize:'13px', color: C.gray900, fontFamily:'inherit' }} />
-                    <button onClick={()=>delCaut(i)} style={{ border:'none', background:'none', cursor:'pointer', color: C.gray300, display:'flex' }} onMouseEnter={e=>e.currentTarget.style.color=C.red500} onMouseLeave={e=>e.currentTarget.style.color=C.gray300}><Trash2 size={12} /></button>
+                  <div key={i} className={`flex items-center gap-2.5 py-2.5 px-3.5 ${i<form.cautions.length-1 ? 'border-b border-zinc-100' : ''}`}>
+                    <div className="w-[5px] h-[5px] rounded-full bg-amber-600 shrink-0" />
+                    <input type="text" value={c} onChange={e=>updCaut(i,e.target.value)} placeholder="유의사항을 입력하세요" className="flex-1 border-none outline-none text-[13px] text-zinc-900 font-[inherit]" />
+                    <button onClick={()=>delCaut(i)} className="border-none bg-transparent cursor-pointer text-zinc-300 flex hover:text-red-500"><Trash2 size={12} /></button>
                   </div>
                 ))}
               </div>
             </div>
 
             {/* Related Guides — overflow:visible 보장 */}
-            <div style={{ overflow:'visible' }}>
+            <div className="overflow-visible">
               <Field label="관련 가이드" hint="선택 · 최대 5개">
                 <RelatedGuideCombobox
                   selected={form.relatedGuides}
@@ -938,30 +915,30 @@ export default function EditorPage() {
 
           {/* ③ 발행 정보 */}
           <Section icon={Send} title="발행 정보" defaultOpen={false}>
-            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap:'16px', marginBottom:'16px' }}>
+            <div className="grid grid-cols-3 gap-4 mb-4">
               <Field label="작성자">
-                <div style={{ position:'relative' }}>
-                  <User size={13} color={C.gray400} style={{ position:'absolute', left:'10px', top:'50%', transform:'translateY(-50%)', pointerEvents:'none' }} />
-                  <input type="text" value={form.author} readOnly style={{ ...inputBase, paddingLeft:'30px', backgroundColor: C.gray50, color: C.gray400, cursor:'not-allowed' }} />
+                <div className="relative">
+                  <User size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-zinc-400" />
+                  <input type="text" value={form.author} readOnly className="w-full px-3 py-2.5 pl-[30px] border border-zinc-200 rounded-lg text-sm bg-zinc-50 text-zinc-400 cursor-not-allowed outline-none" />
                 </div>
               </Field>
               <Field label="버전" required>
-                <input type="text" value={form.version} onChange={e=>set('version',e.target.value)} style={inputBase} onFocus={onFocus} onBlur={onBlur} />
+                <input type="text" value={form.version} onChange={e=>set('version',e.target.value)} className="w-full px-3 py-2.5 border border-zinc-200 rounded-lg text-sm text-zinc-900 bg-white outline-none transition-[border-color,box-shadow] focus:border-blue-500 focus:ring-[3px] focus:ring-blue-500/15" />
               </Field>
               <Field label="상태" required>
-                <div style={{ position:'relative' }}>
-                  <select value={form.status} onChange={e=>set('status',e.target.value)} style={{ ...inputBase, appearance:'none', paddingRight:'32px', cursor:'pointer' }} onFocus={onFocus} onBlur={onBlur}>
+                <div className="relative">
+                  <select value={form.status} onChange={e=>set('status',e.target.value)} className="w-full px-3 py-2.5 pr-8 border border-zinc-200 rounded-lg text-sm text-zinc-900 bg-white outline-none transition-[border-color,box-shadow] focus:border-blue-500 focus:ring-[3px] focus:ring-blue-500/15 appearance-none cursor-pointer">
                     {STATUS_OPTIONS.map(s=><option key={s}>{s}</option>)}
                   </select>
-                  <ChevronDown size={13} color={C.gray400} style={{ position:'absolute', right:'10px', top:'50%', transform:'translateY(-50%)', pointerEvents:'none' }} />
+                  <ChevronDown size={13} className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-zinc-400" />
                 </div>
               </Field>
             </div>
             <Field label="업데이트 구분" hint="선택">
-              <div style={{ display:'flex', gap:'6px' }}>
+              <div className="flex gap-1.5">
                 {['신규','수정','정책 변경'].map(t => {
                   const active = form.updateType===t;
-                  return <button key={t} onClick={()=>set('updateType', active?'':t)} style={{ padding:'6px 14px', borderRadius: R.full, fontSize:'12px', fontWeight:700, cursor:'pointer', border:`1px solid ${active ? C.blue500 : C.gray200}`, backgroundColor: active ? C.blue50 : '#fff', color: active ? C.blue700 : C.gray600, transition:'all 0.1s' }}>{t}</button>;
+                  return <button key={t} onClick={()=>set('updateType', active?'':t)} className={`py-1.5 px-3.5 rounded-full text-xs font-bold cursor-pointer border transition-all duration-100 ${active ? 'border-blue-500 bg-blue-50 text-blue-700' : 'border-zinc-200 bg-white text-zinc-600'}`}>{t}</button>;
                 })}
               </div>
             </Field>
@@ -970,51 +947,51 @@ export default function EditorPage() {
 
         {/* ── Preview Panel ──────────────────────────────────────────────── */}
         {showPreview && (
-          <div style={{ width:'480px', flexShrink:0, position:'sticky', top:'72px', maxHeight:'calc(100vh - 88px)', overflowY:'auto' }}>
-            <div style={{ backgroundColor:'#fff', border:`1px solid ${C.gray200}`, borderRadius: R.xl, overflow:'hidden', boxShadow: SHADOW.md }}>
-              <div style={{ padding:'12px 20px', borderBottom:`1px solid ${C.gray100}`, display:'flex', alignItems:'center', gap:'8px' }}>
-                <Eye size={13} color={C.blue500} />
-                <span style={{ fontSize:'12px', fontWeight:700, color: C.gray500 }}>실시간 미리보기</span>
-                <span style={{ fontSize:'11px', color: C.gray300, marginLeft:'auto' }}>GuidePage 기준</span>
+          <div className="w-[480px] shrink-0 sticky top-[72px] max-h-[calc(100vh-88px)] overflow-y-auto">
+            <div className="bg-white border border-zinc-200 rounded-2xl overflow-hidden shadow-md">
+              <div className="py-3 px-5 border-b border-zinc-100 flex items-center gap-2">
+                <Eye size={13} className="text-blue-500" />
+                <span className="text-xs font-bold text-zinc-500">실시간 미리보기</span>
+                <span className="text-[11px] text-zinc-300 ml-auto">GuidePage 기준</span>
               </div>
-              <div style={{ padding:'28px 24px' }}>
+              <div className="py-7 px-6">
                 {/* Meta */}
-                <div style={{ display:'flex', gap:'6px', marginBottom:'16px' }}>
-                  {form.module    && <span style={{ fontSize:'11px', fontWeight:700, padding:'3px 9px', backgroundColor: C.blue50, color: C.blue700, borderRadius: R.full, border:`1px solid ${C.blue200}` }}>{form.module}</span>}
-                  {form.guideType && <span style={{ fontSize:'11px', fontWeight:700, padding:'3px 9px', ...(() => { const tc=TYPE_BADGE[form.guideType]; return { backgroundColor:tc.bg, color:tc.color, border:`1px solid ${tc.border}` }; })(), borderRadius: R.full }}>{form.guideType}</span>}
+                <div className="flex gap-1.5 mb-4">
+                  {form.module    && <span className="text-[11px] font-bold py-[3px] px-2.5 bg-blue-50 text-blue-700 rounded-full border border-blue-200">{form.module}</span>}
+                  {form.guideType && (() => { const tw = TYPE_BADGE_TW[form.guideType] || TYPE_BADGE_TW.SOP; return <span className={`text-[11px] font-bold py-[3px] px-2.5 rounded-full border ${tw.chip}`}>{form.guideType}</span>; })()}
                 </div>
-                <h1 style={{ fontSize:'26px', fontWeight:800, color: C.gray900, margin:'0 0 8px', letterSpacing:'-0.03em', lineHeight:1.2 }}>{form.title||'가이드 제목'}</h1>
-                <p style={{ fontSize:'12px', color: C.gray400, margin:'0 0 20px' }}>{form.author} · {form.version}</p>
+                <h1 className="text-[26px] font-extrabold text-zinc-900 m-0 mb-2 tracking-tight leading-[1.2]">{form.title||'가이드 제목'}</h1>
+                <p className="text-xs text-zinc-400 m-0 mb-5">{form.author} · {form.version}</p>
                 {form.summary && (
-                  <div style={{ padding:'16px 20px', backgroundColor:'#fff', borderRadius: R.lg, border:`1px solid ${C.gray200}`, marginBottom:'20px', position:'relative', overflow:'hidden', boxShadow: SHADOW.xs }}>
-                    <div style={{ position:'absolute', left:0, top:0, bottom:0, width:'3px', backgroundColor: C.blue500 }} />
-                    <div style={{ display:'flex', gap:'12px', paddingLeft:'4px' }}>
-                      <ShieldCheck size={18} color={C.blue500} style={{ flexShrink:0, marginTop:'1px' }} />
-                      <p style={{ margin:0, fontSize:'13px', lineHeight:1.7, color: C.gray700, fontWeight:500 }}>{form.summary}</p>
+                  <div className="py-4 px-5 bg-white rounded-xl border border-zinc-200 mb-5 relative overflow-hidden shadow-xs">
+                    <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-blue-500" />
+                    <div className="flex gap-3 pl-1">
+                      <ShieldCheck size={18} className="text-blue-500 shrink-0 mt-px" />
+                      <p className="m-0 text-[13px] leading-[1.7] text-zinc-700 font-medium">{form.summary}</p>
                     </div>
                   </div>
                 )}
                 {form.menuPath && (
-                  <div style={{ padding:'8px 12px', backgroundColor: C.gray50, borderRadius: R.md, border:`1px solid ${C.gray100}`, marginBottom:'20px', display:'flex', alignItems:'center', gap:'5px', flexWrap:'wrap' }}>
+                  <div className="py-2 px-3 bg-zinc-50 rounded-lg border border-zinc-100 mb-5 flex items-center gap-[5px] flex-wrap">
                     {form.menuPath.split('>').map((p,i,arr)=>(
-                      <span key={i} style={{ display:'flex', alignItems:'center', gap:'5px' }}>
-                        <span style={{ fontSize:'12px', fontFamily:'monospace', fontWeight: i===arr.length-1?700:400, color: i===arr.length-1?C.gray900:C.gray400 }}>{p.trim()}</span>
-                        {i!==arr.length-1 && <ChevronRight size={9} color={C.gray300} />}
+                      <span key={i} className="flex items-center gap-[5px]">
+                        <span className={`text-xs font-mono ${i===arr.length-1 ? 'font-bold text-zinc-900' : 'font-normal text-zinc-400'}`}>{p.trim()}</span>
+                        {i!==arr.length-1 && <ChevronRight size={9} className="text-zinc-300" />}
                       </span>
                     ))}
                   </div>
                 )}
                 {/* Steps preview */}
                 {form.steps.filter(s=>s.title).length > 0 && (
-                  <div style={{ position:'relative', paddingLeft:'14px', marginBottom:'20px' }}>
-                    <div style={{ position:'absolute', top:'8px', bottom:'8px', left:'23px', width:'1.5px', backgroundColor: C.gray100 }} />
+                  <div className="relative pl-3.5 mb-5">
+                    <div className="absolute top-2 bottom-2 left-[23px] w-[1.5px] bg-zinc-100" />
                     {form.steps.filter(s=>s.title).map((s,i)=>(
-                      <div key={i} style={{ display:'flex', gap:'16px', marginBottom:'20px', position:'relative' }}>
-                        <div style={{ width:'18px', height:'18px', borderRadius:'50%', backgroundColor:'#fff', border:`1.5px solid ${C.blue500}`, color: C.blue500, fontSize:'11px', fontWeight:900, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0, marginTop:'2px', zIndex:1, boxShadow:`0 0 0 3px #fff` }}>{i+1}</div>
-                        <div style={{ flex:1 }}>
-                          <h4 style={{ margin:'0 0 4px', fontSize:'13px', fontWeight:700, color: C.gray900 }}>{s.title}</h4>
-                          {s.desc && <p style={{ margin:0, fontSize:'12px', color: C.gray500, lineHeight:1.6 }}>{s.desc}</p>}
-                          {s.image && <img src={s.image.url} alt="" style={{ marginTop:'8px', width:'100%', borderRadius: R.md, border:`1px solid ${C.gray200}` }} />}
+                      <div key={i} className="flex gap-4 mb-5 relative">
+                        <div className="w-[18px] h-[18px] rounded-full bg-white border-[1.5px] border-blue-500 text-blue-500 text-[11px] font-black flex items-center justify-center shrink-0 mt-0.5 z-[1] shadow-[0_0_0_3px_#fff]">{i+1}</div>
+                        <div className="flex-1">
+                          <h4 className="m-0 mb-1 text-[13px] font-bold text-zinc-900">{s.title}</h4>
+                          {s.desc && <p className="m-0 text-xs text-zinc-500 leading-relaxed">{s.desc}</p>}
+                          {s.image && <img src={s.image.url} alt="" className="mt-2 w-full rounded-lg border border-zinc-200" />}
                         </div>
                       </div>
                     ))}
@@ -1023,14 +1000,14 @@ export default function EditorPage() {
                 {/* Related guides preview */}
                 {form.relatedGuides.length > 0 && (
                   <div>
-                    <p style={{ fontSize:'11px', fontWeight:700, color: C.gray400, textTransform:'uppercase', letterSpacing:'0.07em', margin:'0 0 8px' }}>관련 가이드</p>
+                    <p className="text-[11px] font-bold text-zinc-400 uppercase tracking-[0.07em] m-0 mb-2">관련 가이드</p>
                     {form.relatedGuides.map(g => {
-                      const tc = TYPE_BADGE[g.type];
+                      const tw = TYPE_BADGE_TW[g.type] || TYPE_BADGE_TW.SOP;
                       return (
-                        <div key={g.id} style={{ display:'flex', alignItems:'center', gap:'8px', padding:'8px 12px', border:`1px solid ${C.gray100}`, borderRadius: R.md, marginBottom:'6px', backgroundColor: C.gray50 }}>
-                          <FileText size={12} color={C.gray400} />
-                          <span style={{ flex:1, fontSize:'12px', fontWeight:600, color: C.gray800 }}>{g.title}</span>
-                          <span style={{ fontSize:'10px', fontWeight:700, padding:'1px 6px', borderRadius: R.full, backgroundColor: tc.bg, color: tc.color, border:`1px solid ${tc.border}` }}>{g.type}</span>
+                        <div key={g.id} className="flex items-center gap-2 py-2 px-3 border border-zinc-100 rounded-lg mb-1.5 bg-zinc-50">
+                          <FileText size={12} className="text-zinc-400" />
+                          <span className="flex-1 text-xs font-semibold text-zinc-800">{g.title}</span>
+                          <span className={`text-[10px] font-bold px-1.5 py-px rounded-full border ${tw.chip}`}>{g.type}</span>
                         </div>
                       );
                     })}

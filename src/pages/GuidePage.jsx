@@ -96,75 +96,26 @@ const _GUIDES_FALLBACK = {
 };
 const ALL_GUIDES = { ..._GUIDES_FALLBACK, ...GUIDES };
 
-// ─── Geist Design Tokens (vercel.com 실측값) ──────────────────────────────
-const G = {
-  font: "'Pretendard', -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', sans-serif",
-  // Gray
-  bg:    '#ffffff',
-  bg2:   '#fafafa',
-  g100:  '#f2f2f2',
-  g200:  '#ebebeb',
-  g300:  '#e2e2e2',
-  g400:  '#8f8f8f',
-  g600:  '#666666',
-  g700:  '#4d4d4d',
-  g800:  '#333333',
-  g900:  '#1a1a1a',
-  g1000: '#000000',
-  // Alpha borders
-  border:  'rgba(0,0,0,0.08)',
-  border2: 'rgba(0,0,0,0.12)',
-  // Blue
-  b100: '#d3e5ff',
-  b200: '#c0d8ff',
-  b400: '#0070f3',
-  b600: '#0052b2',
-  // Green
-  gr100: '#cef5d8',
-  gr200: '#b5f1c4',
-  gr400: '#1a9e5c',
-  gr700: '#107a3a',
-  // Red
-  r100: '#ffdce0',
-  r200: '#ffced3',
-  r400: '#e5484d',
-  r700: '#c30b17',
-  // Amber
-  a100: '#fff8bb',
-  a200: '#fff3a0',
-  a400: '#f5a623',
-  a700: '#b36200',
-  // Radius (Geist: 8px for components, 12px for cards)
-  rx:  '4px',
-  rs:  '6px',
-  rm:  '8px',   // buttons, badges, inputs
-  rl:  '12px',  // cards, tables
-  rf:  '9999px',
-  // Shadows (Geist: border-only, no dramatic drop-shadows)
-  sx:  '0 0 0 1px rgba(0,0,0,0.06)',           // subtle border
-  sm:  '0 0 0 1px rgba(0,0,0,0.08)',           // standard border
-  sl:  '0 0 0 1px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.06)',
+// ─── Tailwind class mappings ──────────────────────────────────────────────
+const TYPE_TW = {
+  SOP:      { label:'절차형',    cls:'bg-blue-100 text-blue-700 border-blue-200' },
+  DECISION: { label:'판단분기',  cls:'bg-amber-100 text-amber-800 border-amber-200' },
+  REFERENCE:{ label:'참조형',    cls:'bg-green-100 text-green-700 border-green-200' },
+  TROUBLE:  { label:'트러블슈팅',cls:'bg-orange-100 text-orange-800 border-orange-200' },
+  RESPONSE: { label:'대응매뉴얼',cls:'bg-purple-100 text-purple-800 border-purple-200' },
+  POLICY:   { label:'정책공지',  cls:'bg-red-100 text-red-700 border-red-200' },
 };
 
-const TYPE_META = {
-  SOP:      { label:'절차형',    bg:G.b100,  color:G.b600,  border:G.b200  },
-  DECISION: { label:'판단분기',  bg:'#fff8bb',color:'#7a4400',border:'#f0d080'},
-  REFERENCE:{ label:'참조형',    bg:G.gr100, color:G.gr700, border:G.gr200 },
-  TROUBLE:  { label:'트러블슈팅',bg:'#fff0e8',color:'#8b3000',border:'#fcc9a0'},
-  RESPONSE: { label:'대응매뉴얼',bg:'#f5eeff',color:'#5c0099',border:'#d4b0ff'},
-  POLICY:   { label:'정책공지',  bg:G.r100,  color:G.r700,  border:G.r200  },
+const STATUS_TW = {
+  safe:   'bg-green-100 text-green-700',
+  warn:   'bg-amber-100 text-amber-700',
+  danger: 'bg-red-100 text-red-700',
 };
 
-const STATUS_C = {
-  safe:   { bg:G.gr100, color:G.gr700 },
-  warn:   { bg:G.a100,  color:G.a700  },
-  danger: { bg:G.r100,  color:G.r700  },
-};
-
-const SEV_C = {
-  critical:{ bg:G.r100, color:G.r700, label:'긴급' },
-  high:    { bg:G.a100, color:G.a700, label:'높음' },
-  medium:  { bg:G.g100, color:G.g700, label:'보통' },
+const SEV_TW = {
+  critical:{ cls:'bg-red-100 text-red-700', label:'긴급' },
+  high:    { cls:'bg-amber-100 text-amber-700', label:'높음' },
+  medium:  { cls:'bg-zinc-100 text-zinc-600', label:'보통' },
 };
 
 // ─── 유의사항 ────────────────────────────────────────────────────────────────
@@ -216,30 +167,30 @@ function FeedbackWidget() {
   const [comment, setComment] = useState('');
   const [done, setDone] = useState(false);
   if (done) return (
-    <div style={{ display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', padding:'32px 24px', gap:'10px' }}>
-      <div style={{ width:'44px', height:'44px', borderRadius:'50%', backgroundColor:G.gr100, border:`1px solid ${G.gr100}`, display:'flex', alignItems:'center', justifyContent:'center' }}>
-        <CheckCircle2 size={22} color={G.gr400} />
+    <div className="flex flex-col items-center justify-center py-8 px-6 gap-2.5">
+      <div className="w-11 h-11 rounded-full bg-green-100 border border-green-100 flex items-center justify-center">
+        <CheckCircle2 size={22} className="text-green-500" />
       </div>
-      <p style={{ margin:0, fontSize:'14px', fontWeight:700, color:G.gr700, fontFamily:G.font }}>의견이 반영되었습니다. 감사합니다.</p>
+      <p className="m-0 text-sm font-bold text-green-700">의견이 반영되었습니다. 감사합니다.</p>
     </div>
   );
   return (
-    <div style={{ textAlign:'center' }}>
-      <p style={{ fontSize:'15px', fontWeight:700, color:G.g800, margin:'0 0 18px', fontFamily:G.font }}>이 가이드가 업무에 도움이 되었나요?</p>
-      <div style={{ display:'flex', gap:'10px', justifyContent:'center', marginBottom: voted===false ? '16px' : 0 }}>
-        <button onClick={()=>setVoted(true)} style={{ display:'flex', alignItems:'center', gap:'7px', padding:'9px 22px', borderRadius:'99px', border:`1px solid ${voted===true ? G.gr400 : G.g200}`, backgroundColor: voted===true ? G.gr100 : '#fff', color: voted===true ? G.gr700 : G.g600, fontWeight:700, fontSize:'13px', cursor:'pointer', transition:'all 0.15s', fontFamily:G.font }}>
+    <div className="text-center">
+      <p className="text-[15px] font-bold text-zinc-700 mb-4.5">이 가이드가 업무에 도움이 되었나요?</p>
+      <div className={`flex gap-2.5 justify-center ${voted===false ? 'mb-4' : ''}`}>
+        <button onClick={()=>setVoted(true)} className={`flex items-center gap-1.5 py-2 px-5.5 rounded-full font-bold text-[13px] cursor-pointer transition-all duration-150 border ${voted===true ? 'border-green-500 bg-green-100 text-green-700' : 'border-zinc-200 bg-white text-zinc-500'}`}>
           <ThumbsUp size={14} /> 도움됨
         </button>
-        <button onClick={()=>setVoted(false)} style={{ display:'flex', alignItems:'center', gap:'7px', padding:'9px 22px', borderRadius:'99px', border:`1px solid ${voted===false ? G.r400 : G.g200}`, backgroundColor: voted===false ? G.r100 : '#fff', color: voted===false ? G.r400 : G.g600, fontWeight:700, fontSize:'13px', cursor:'pointer', transition:'all 0.15s', fontFamily:G.font }}>
+        <button onClick={()=>setVoted(false)} className={`flex items-center gap-1.5 py-2 px-5.5 rounded-full font-bold text-[13px] cursor-pointer transition-all duration-150 border ${voted===false ? 'border-red-500 bg-red-100 text-red-500' : 'border-zinc-200 bg-white text-zinc-500'}`}>
           <ThumbsDown size={14} /> 보완 필요
         </button>
       </div>
       {voted===false && (
-        <div style={{ marginTop:'14px', textAlign:'left', maxWidth:'480px', margin:'14px auto 0' }}>
+        <div className="mt-3.5 text-left max-w-[480px] mx-auto">
           <textarea value={comment} onChange={e=>setComment(e.target.value)} placeholder="어떤 점이 부족했나요? (선택 · 200자 이내)" maxLength={200} rows={3}
-            style={{ width:'100%', padding:'10px 13px', border:`1px solid ${G.g200}`, borderRadius:'8px', fontSize:'13px', resize:'none', outline:'none', fontFamily:G.font, lineHeight:1.6, boxSizing:'border-box' }}
+            className="w-full py-2.5 px-3 border border-zinc-200 rounded-lg text-[13px] resize-none outline-none leading-relaxed box-border focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10"
           />
-          <button onClick={()=>setDone(true)} style={{ marginTop:'8px', padding:'8px 22px', backgroundColor:G.g900, color:'#fff', border:'none', borderRadius:'8px', fontSize:'13px', fontWeight:700, cursor:'pointer', fontFamily:G.font }}>제출하기</button>
+          <button onClick={()=>setDone(true)} className="mt-2 py-2 px-5.5 bg-zinc-900 text-white border-none rounded-lg text-[13px] font-bold cursor-pointer">제출하기</button>
         </div>
       )}
     </div>
@@ -271,16 +222,14 @@ function OnThisPage({ sections }) {
 
   return (
     <nav aria-label="페이지 내 목차">
-      <p style={{ fontSize:'11px', fontWeight:800, color:G.g400, textTransform:'uppercase', letterSpacing:'0.13em', marginBottom:'20px', fontFamily:G.font }}>On this page</p>
-      <ul style={{ listStyle:'none', padding:0, margin:'0 0 56px', borderLeft:`2px solid ${G.g100}` }}>
+      <p className="text-[11px] font-extrabold text-zinc-400 uppercase tracking-widest mb-5">On this page</p>
+      <ul className="list-none p-0 mb-14 border-l-2 border-zinc-100">
         {sections.map(s => {
           const isActive = active === s.id;
           return (
             <li key={s.id}
               onClick={() => scrollTo(s.id)}
-              style={{ paddingLeft:'18px', borderLeft: isActive ? `2px solid ${G.b400}` : '2px solid transparent', marginLeft:'-2px', fontSize:'13px', fontWeight: isActive ? 700 : 500, color: isActive ? G.b400 : G.g400, marginBottom:'16px', cursor:'pointer', transition:'all 0.15s', lineHeight:1.4, fontFamily:G.font }}
-              onMouseEnter={e=>{ if(!isActive) e.currentTarget.style.color=G.g900; }}
-              onMouseLeave={e=>{ if(!isActive) e.currentTarget.style.color=G.g400; }}
+              className={`pl-4.5 -ml-0.5 text-[13px] mb-4 cursor-pointer transition-all duration-150 leading-snug border-l-2 ${isActive ? 'border-blue-500 font-bold text-blue-500' : 'border-transparent font-medium text-zinc-400 hover:text-zinc-900'}`}
             >{s.label}</li>
           );
         })}
@@ -292,7 +241,7 @@ function OnThisPage({ sections }) {
 // ─── 섹션 ID 기반 헤딩 래퍼 ─────────────────────────────────────────────────
 function SecHeading({ id, children }) {
   return (
-    <h2 id={id} style={{ fontSize:'22px', fontWeight:800, color:G.g900, marginBottom:'28px', letterSpacing:'-0.025em', lineHeight:1.25, fontFamily:G.font, scrollMarginTop:'80px' }}>
+    <h2 id={id} className="text-[22px] font-extrabold text-zinc-900 mb-7 -tracking-wide leading-tight scroll-mt-20">
       {children}
     </h2>
   );
@@ -303,7 +252,7 @@ export default function GuidePage() {
   const { id } = useParams();
   const guide = ALL_GUIDES[id] || ALL_GUIDES['member-merge'];
   const [searchTerm, setSearchTerm] = useState('');
-  const tm = TYPE_META[guide.type] || TYPE_META.SOP;
+  const tm = TYPE_TW[guide.type] || TYPE_TW.SOP;
 
   // 유형별 미니맵 섹션 동적 생성
   const sections = [
@@ -322,92 +271,90 @@ export default function GuidePage() {
   ].filter(Boolean);
 
   return (
-    <div style={{ display:'flex', width:'100%', maxWidth:'1440px', margin:'0 auto', padding:'56px 40px 120px', gap:'72px', alignItems:'flex-start', fontFamily:G.font }}>
+    <div className="flex w-full max-w-[1440px] mx-auto px-10 pt-14 pb-30 gap-18 items-start">
 
       {/* ── 본문 ────────────────────────────────────────────────────────── */}
-      <article style={{ flex:1, minWidth:0 }}>
+      <article className="flex-1 min-w-0">
 
         {/* 01 메타 헤더 */}
-        <div id="sec-overview" style={{ marginBottom:'52px', scrollMarginTop:'80px' }}>
-          <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:'22px', flexWrap:'wrap', gap:'10px' }}>
-            <div style={{ display:'flex', alignItems:'center', gap:'7px', flexWrap:'wrap' }}>
-              <span style={{ fontSize:'11px', fontWeight:800, padding:'4px 12px', backgroundColor:G.bg2, color:G.b600, borderRadius:'99px', border:`1px solid ${G.b200}`, letterSpacing:'0.05em' }}>{guide.module}</span>
-              <span style={{ fontSize:'11px', fontWeight:700, padding:'4px 12px', backgroundColor:tm.bg, color:tm.color, borderRadius:'99px', border:`1px solid ${tm.border}` }}>{tm.label}</span>
+        <div id="sec-overview" className="mb-13 scroll-mt-20">
+          <div className="flex items-center justify-between mb-5.5 flex-wrap gap-2.5">
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span className="text-[11px] font-extrabold py-1 px-3 bg-zinc-50 text-blue-700 rounded-full border border-blue-200 tracking-wide">{guide.module}</span>
+              <span className={`text-[11px] font-bold py-1 px-3 rounded-full border ${tm.cls}`}>{tm.label}</span>
               {guide.targets?.map(t=>(
-                <span key={t} style={{ fontSize:'11px', fontWeight:600, padding:'3px 10px', backgroundColor:G.g100, color:G.g600, borderRadius:'99px' }}>{t}</span>
+                <span key={t} className="text-[11px] font-semibold py-0.5 px-2.5 bg-zinc-100 text-zinc-500 rounded-full">{t}</span>
               ))}
             </div>
-            <Link to="/editor" style={{ display:'flex', alignItems:'center', gap:'6px', fontSize:'12px', fontWeight:600, color:G.g400, textDecoration:'none', padding:'6px 12px', border:`1px solid ${G.g200}`, borderRadius:'8px', transition:'all 0.15s' }}
-              onMouseEnter={e=>{ e.currentTarget.style.color=G.g700; e.currentTarget.style.borderColor=G.g300; }}
-              onMouseLeave={e=>{ e.currentTarget.style.color=G.g400; e.currentTarget.style.borderColor=G.g200; }}
+            <Link to="/editor" className="flex items-center gap-1.5 text-xs font-semibold text-zinc-400 no-underline py-1.5 px-3 border border-zinc-200 rounded-lg transition-all duration-150 hover:text-zinc-600 hover:border-zinc-300"
             ><Clock size={12}/> 버전 이력</Link>
           </div>
 
-          <h1 style={{ fontSize:'clamp(32px, 4vw, 46px)', fontWeight:850, color:G.g900, margin:'0 0 20px', letterSpacing:'-0.04em', lineHeight:1.12, fontFamily:G.font }}>{guide.title}</h1>
+          <h1 className="text-[clamp(32px,4vw,46px)] font-[850] text-zinc-900 mb-5 -tracking-[0.04em] leading-[1.12]">{guide.title}</h1>
 
-          <div style={{ display:'flex', alignItems:'center', gap:'16px', flexWrap:'wrap' }}>
-            <span style={{ fontSize:'13px', color:G.g400, display:'flex', alignItems:'center', gap:'5px' }}><Calendar size={12}/> {guide.updated}</span>
-            <span style={{ width:'3px', height:'3px', borderRadius:'50%', backgroundColor:G.g300 }} />
-            <span style={{ fontSize:'13px', color:G.g400, display:'flex', alignItems:'center', gap:'5px' }}><User size={12}/> 플랫폼서비스실</span>
+          <div className="flex items-center gap-4 flex-wrap">
+            <span className="text-[13px] text-zinc-400 flex items-center gap-1.5"><Calendar size={12}/> {guide.updated}</span>
+            <span className="w-[3px] h-[3px] rounded-full bg-zinc-300" />
+            <span className="text-[13px] text-zinc-400 flex items-center gap-1.5"><User size={12}/> 플랫폼서비스실</span>
           </div>
         </div>
 
-        {/* 02 TL;DR — Geist Note 스타일 (액센트 바 없음) */}
-        <div style={{ padding:'20px 24px', backgroundColor:G.bg2, borderRadius:'12px', border:`1px solid ${G.b200}`, marginBottom:'40px' }}>
-          <p style={{ margin:'0 0 6px', fontSize:'11px', fontWeight:700, color:G.b400, textTransform:'uppercase', letterSpacing:'0.07em' }}>TL;DR</p>
-          <p style={{ margin:0, fontSize:'14px', lineHeight:1.75, color:G.g800, whiteSpace:'pre-wrap', fontFamily:G.font }}>{guide.tldr}</p>
+        {/* 02 TL;DR */}
+        <div className="py-5 px-6 bg-zinc-50 rounded-xl border border-blue-200 mb-10">
+          <p className="m-0 mb-1.5 text-[11px] font-bold text-blue-500 uppercase tracking-widest">TL;DR</p>
+          <p className="m-0 text-sm leading-7 text-zinc-700 whitespace-pre-wrap">{guide.tldr}</p>
         </div>
 
         {/* 03 메뉴 경로 */}
-        <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'13px 20px', marginBottom:'64px', borderRadius:'12px', border:`1px solid ${G.g100}`, backgroundColor:G.bg2 }}>
-          <div style={{ display:'flex', alignItems:'center', gap:'6px', fontSize:'13px', color:G.g400, fontFamily:'monospace', flexWrap:'wrap' }}>
+        <div className="flex items-center justify-between py-3 px-5 mb-16 rounded-xl border border-zinc-100 bg-zinc-50">
+          <div className="flex items-center gap-1.5 text-[13px] text-zinc-400 font-mono flex-wrap">
             {guide.path.split('>').map((p,i,arr)=>(
-              <span key={i} style={{ display:'flex', alignItems:'center', gap:'6px' }}>
-                <span style={{ color: i===arr.length-1 ? G.g900 : G.g400, fontWeight: i===arr.length-1 ? 700 : 400 }}>{p.trim()}</span>
-                {i!==arr.length-1 && <ChevronRight size={11} color={G.g300} />}
+              <span key={i} className="flex items-center gap-1.5">
+                <span className={i===arr.length-1 ? 'text-zinc-900 font-bold' : 'text-zinc-400'}>{p.trim()}</span>
+                {i!==arr.length-1 && <ChevronRight size={11} className="text-zinc-300" />}
               </span>
             ))}
           </div>
-          <a href="#" style={{ display:'flex', alignItems:'center', gap:'5px', fontSize:'13px', fontWeight:700, color:G.b400, textDecoration:'none' }}>
+          <a href="#" className="flex items-center gap-1.5 text-[13px] font-bold text-blue-500 no-underline">
             AMS 바로가기 <ArrowUpRight size={13}/>
           </a>
         </div>
 
         {/* ── SOP 절차형 ── */}
         {guide.type==='SOP' && guide.steps && (
-          <section style={{ marginBottom:'72px' }}>
+          <section className="mb-18">
             <SecHeading id="sec-steps">단계별 가이드</SecHeading>
-            <div style={{ position:'relative', paddingLeft:'24px' }}>
+            <div className="relative pl-6">
               {/* 세로 연결선 */}
-              <div style={{ position:'absolute', top:'14px', bottom:'14px', left:'35px', width:'2px', background:`linear-gradient(to bottom, ${G.b200} 0%, ${G.g100} 100%)` }} />
+              <div className="absolute top-3.5 bottom-3.5 left-[35px] w-0.5 bg-gradient-to-b from-blue-200 to-zinc-100" />
               {guide.steps.map((s,i)=>(
-                <div key={i} style={{ position:'relative', display:'flex', gap:'36px', marginBottom:'60px' }}>
-                  <div style={{ position:'relative', zIndex:10, width:'26px', height:'26px', borderRadius:'50%', backgroundColor:'#fff', border:`2px solid ${G.b400}`, color:G.b400, fontSize:'12px', fontWeight:900, display:'flex', alignItems:'center', justifyContent:'center', marginTop:'4px', flexShrink:0, boxShadow:`0 0 0 5px #fff, ${G.sm}` }}>{i+1}</div>
-                  <div style={{ flex:1 }}>
-                    <h3 style={{ fontSize:'19px', fontWeight:800, color:G.g900, marginBottom:'18px', letterSpacing:'-0.02em', fontFamily:G.font }}>{s.title}</h3>
-                    <div style={{ backgroundColor:G.bg2, borderRadius:'12px', border:`1px solid ${G.g100}`, overflow:'hidden', width:'100%' }}>
+                <div key={i} className="relative flex gap-9 mb-15">
+                  <div className="relative z-10 w-6.5 h-6.5 rounded-full bg-white border-2 border-blue-500 text-blue-500 text-xs font-black flex items-center justify-center mt-1 shrink-0 shadow-[0_0_0_5px_#fff] ring-1 ring-black/8">{i+1}</div>
+                  <div className="flex-1">
+                    <h3 className="text-[19px] font-extrabold text-zinc-900 mb-4.5 -tracking-tight">{s.title}</h3>
+                    <div className="bg-zinc-50 rounded-xl border border-zinc-100 overflow-hidden w-full">
                       {s.image ? (
                         <div>
                           <img
                             src={s.image.url}
                             alt={s.image.name || s.title}
-                            style={{ width:'100%', display:'block', borderRadius:'0' }}
+                            className="w-full block rounded-none"
                             onError={e => {
                               e.target.style.display = 'none';
                               e.target.nextSibling.style.display = 'flex';
                             }}
                           />
-                          <div style={{ display:'none', padding:'40px', justifyContent:'center', alignItems:'center', color:G.g400, fontSize:'13px' }}>
+                          <div className="hidden p-10 justify-center items-center text-zinc-400 text-[13px]">
                             [ {s.image.name || 'AMS 화면 캡처'} ]
                           </div>
                         </div>
                       ) : (
-                        <div style={{ padding:'48px', display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:'8px', minHeight:'120px' }}>
-                          <div style={{ padding:'10px 20px', backgroundColor:'#fff', border:`1px solid ${G.g200}`, borderRadius:'8px', color:G.g400, fontSize:'13px' }}>[ AMS 화면 캡처 ]</div>
+                        <div className="p-12 flex flex-col items-center justify-center gap-2 min-h-[120px]">
+                          <div className="py-2.5 px-5 bg-white border border-zinc-200 rounded-lg text-zinc-400 text-[13px]">[ AMS 화면 캡처 ]</div>
                         </div>
                       )}
-                      <div style={{ padding:'16px 20px', borderTop:`1px solid ${G.g100}`, backgroundColor:'#fff' }}>
-                        <p style={{ color:G.g700, fontSize:'14px', lineHeight:1.7, margin:0, fontFamily:G.font }}>{s.desc}</p>
+                      <div className="py-4 px-5 border-t border-zinc-100 bg-white">
+                        <p className="text-zinc-600 text-sm leading-7 m-0">{s.desc}</p>
                       </div>
                     </div>
                   </div>
@@ -419,30 +366,27 @@ export default function GuidePage() {
 
         {/* ── DECISION 판단분기 ── */}
         {guide.type==='DECISION' && guide.decisionTable && (
-          <section style={{ marginBottom:'72px' }}>
+          <section className="mb-18">
             <SecHeading id="sec-decision">판단 기준</SecHeading>
-            <div style={{ borderRadius:'12px', border:`1px solid ${G.g200}`, overflow:'hidden', boxShadow:G.sm }}>
-              <table style={{ width:'100%', borderCollapse:'collapse', textAlign:'left' }}>
-                <thead style={{ backgroundColor:G.bg2 }}>
+            <div className="rounded-xl border border-zinc-200 overflow-hidden ring-1 ring-black/8">
+              <table className="w-full border-collapse text-left">
+                <thead className="bg-zinc-50">
                   <tr>
                     {['상황 (Condition)','처리 방법 (Action)','비고'].map(h=>(
-                      <th key={h} style={{ padding:'18px 22px', fontSize:'11px', fontWeight:800, color:G.g400, textTransform:'uppercase', letterSpacing:'0.06em', borderBottom:`1px solid ${G.g100}`, fontFamily:G.font }}>{h}</th>
+                      <th key={h} className="py-4.5 px-5.5 text-[11px] font-extrabold text-zinc-400 uppercase tracking-wide border-b border-zinc-100">{h}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
                   {guide.decisionTable.map((row,i)=>{
-                    const sc = STATUS_C[row.status] || STATUS_C.safe;
+                    const sc = STATUS_TW[row.status] || STATUS_TW.safe;
                     return (
-                      <tr key={i} style={{ borderBottom: i<guide.decisionTable.length-1 ? `1px solid ${G.g100}` : 'none', transition:'background 0.12s' }}
-                        onMouseEnter={e=>e.currentTarget.style.backgroundColor=G.bg2}
-                        onMouseLeave={e=>e.currentTarget.style.backgroundColor='transparent'}
-                      >
-                        <td style={{ padding:'20px 22px', fontWeight:700, color:G.g900, fontSize:'15px', fontFamily:G.font }}>{row.cond}</td>
-                        <td style={{ padding:'20px 22px' }}>
-                          <span style={{ padding:'6px 14px', borderRadius:'8px', fontSize:'13px', fontWeight:700, backgroundColor:sc.bg, color:sc.color, fontFamily:G.font }}>{row.action}</span>
+                      <tr key={i} className={`transition-colors duration-150 hover:bg-zinc-50 ${i<guide.decisionTable.length-1 ? 'border-b border-zinc-100' : ''}`}>
+                        <td className="py-5 px-5.5 font-bold text-zinc-900 text-[15px]">{row.cond}</td>
+                        <td className="py-5 px-5.5">
+                          <span className={`py-1.5 px-3.5 rounded-lg text-[13px] font-bold ${sc}`}>{row.action}</span>
                         </td>
-                        <td style={{ padding:'20px 22px', color:G.g400, fontSize:'14px', lineHeight:1.6, fontFamily:G.font }}>{row.note}</td>
+                        <td className="py-5 px-5.5 text-zinc-400 text-sm leading-relaxed">{row.note}</td>
                       </tr>
                     );
                   })}
@@ -454,26 +398,24 @@ export default function GuidePage() {
 
         {/* ── REFERENCE 용어사전 ── */}
         {guide.type==='REFERENCE' && guide.referenceData && (
-          <section style={{ marginBottom:'72px' }}>
+          <section className="mb-18">
             <SecHeading id="sec-reference">용어 참조</SecHeading>
-            <div style={{ position:'relative', marginBottom:'28px' }}>
-              <SearchIcon size={17} color={G.g300} style={{ position:'absolute', left:'15px', top:'50%', transform:'translateY(-50%)', pointerEvents:'none' }} />
+            <div className="relative mb-7">
+              <SearchIcon size={17} className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none text-zinc-300" />
               <input type="text" placeholder="용어 검색…" value={searchTerm} onChange={e=>setSearchTerm(e.target.value)}
-                style={{ width:'100%', padding:'12px 15px 12px 42px', borderRadius:'12px', border:`1px solid ${G.g200}`, fontSize:'14px', outline:'none', boxSizing:'border-box', fontFamily:G.font, color:G.g900 }}
-                onFocus={e=>{ e.target.style.borderColor=G.b400; e.target.style.boxShadow=`0 0 0 3px rgba(59,130,246,0.12)`; }}
-                onBlur={e=>{ e.target.style.borderColor=G.g200; e.target.style.boxShadow='none'; }}
+                className="w-full py-3 pr-4 pl-[42px] rounded-xl border border-zinc-200 text-sm outline-none box-border text-zinc-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10"
               />
             </div>
-            <div style={{ border:`1px solid ${G.g200}`, borderRadius:'12px', overflow:'hidden', boxShadow:G.sm }}>
+            <div className="border border-zinc-200 rounded-xl overflow-hidden ring-1 ring-black/8">
               {guide.referenceData
                 .filter(d => d.term.toLowerCase().includes(searchTerm.toLowerCase()) || d.def.toLowerCase().includes(searchTerm.toLowerCase()))
                 .map((d,i,arr)=>(
-                  <div key={i} style={{ padding:'32px 36px', borderBottom: i<arr.length-1 ? `1px solid ${G.g100}` : 'none' }}>
-                    <div style={{ display:'flex', alignItems:'center', gap:'10px', marginBottom:'10px' }}>
-                      <div style={{ width:'7px', height:'7px', borderRadius:'50%', backgroundColor:G.b400, flexShrink:0 }} />
-                      <strong style={{ color:G.g900, fontSize:'17px', fontWeight:800, fontFamily:G.font }}>{d.term}</strong>
+                  <div key={i} className={`py-8 px-9 ${i<arr.length-1 ? 'border-b border-zinc-100' : ''}`}>
+                    <div className="flex items-center gap-2.5 mb-2.5">
+                      <div className="w-[7px] h-[7px] rounded-full bg-blue-500 shrink-0" />
+                      <strong className="text-zinc-900 text-[17px] font-extrabold">{d.term}</strong>
                     </div>
-                    <p style={{ margin:0, color:G.g600, lineHeight:1.8, fontSize:'14px', paddingLeft:'17px', fontFamily:G.font }}>{d.def}</p>
+                    <p className="m-0 text-zinc-500 leading-7 text-sm pl-4">{d.def}</p>
                   </div>
                 ))}
             </div>
@@ -482,29 +424,26 @@ export default function GuidePage() {
 
         {/* ── TROUBLE 트러블슈팅 ── */}
         {guide.type==='TROUBLE' && guide.troubleTable && (
-          <section style={{ marginBottom:'72px' }}>
+          <section className="mb-18">
             <SecHeading id="sec-trouble">문제 → 원인 → 해결</SecHeading>
-            <div style={{ borderRadius:'12px', border:`1px solid ${G.g200}`, overflow:'hidden', boxShadow:G.sm }}>
-              <table style={{ width:'100%', borderCollapse:'collapse', textAlign:'left' }}>
-                <thead style={{ backgroundColor:G.bg2 }}>
+            <div className="rounded-xl border border-zinc-200 overflow-hidden ring-1 ring-black/8">
+              <table className="w-full border-collapse text-left">
+                <thead className="bg-zinc-50">
                   <tr>
                     {['심각도','문제 현상','원인','해결 방법'].map(h=>(
-                      <th key={h} style={{ padding:'15px 20px', fontSize:'11px', fontWeight:800, color:G.g400, textTransform:'uppercase', letterSpacing:'0.06em', borderBottom:`1px solid ${G.g100}`, fontFamily:G.font }}>{h}</th>
+                      <th key={h} className="py-4 px-5 text-[11px] font-extrabold text-zinc-400 uppercase tracking-wide border-b border-zinc-100">{h}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
                   {guide.troubleTable.map((row,i)=>{
-                    const sc = SEV_C[row.severity] || SEV_C.medium;
+                    const sc = SEV_TW[row.severity] || SEV_TW.medium;
                     return (
-                      <tr key={i} style={{ borderBottom: i<guide.troubleTable.length-1 ? `1px solid ${G.g100}` : 'none', transition:'background 0.12s' }}
-                        onMouseEnter={e=>e.currentTarget.style.backgroundColor=G.bg2}
-                        onMouseLeave={e=>e.currentTarget.style.backgroundColor='transparent'}
-                      >
-                        <td style={{ padding:'16px 20px' }}><span style={{ padding:'3px 10px', borderRadius:'99px', fontSize:'11px', fontWeight:800, backgroundColor:sc.bg, color:sc.color, fontFamily:G.font }}>{sc.label}</span></td>
-                        <td style={{ padding:'16px 20px', fontWeight:700, color:G.g900, fontSize:'14px', fontFamily:G.font }}>{row.issue}</td>
-                        <td style={{ padding:'16px 20px', color:G.g400, fontSize:'13px', fontFamily:G.font }}>{row.cause}</td>
-                        <td style={{ padding:'16px 20px', color:G.g700, fontSize:'13px', lineHeight:1.6, fontFamily:G.font }}>{row.solution}</td>
+                      <tr key={i} className={`transition-colors duration-150 hover:bg-zinc-50 ${i<guide.troubleTable.length-1 ? 'border-b border-zinc-100' : ''}`}>
+                        <td className="py-4 px-5"><span className={`py-0.5 px-2.5 rounded-full text-[11px] font-extrabold ${sc.cls}`}>{sc.label}</span></td>
+                        <td className="py-4 px-5 font-bold text-zinc-900 text-sm">{row.issue}</td>
+                        <td className="py-4 px-5 text-zinc-400 text-[13px]">{row.cause}</td>
+                        <td className="py-4 px-5 text-zinc-600 text-[13px] leading-relaxed">{row.solution}</td>
                       </tr>
                     );
                   })}
@@ -516,20 +455,20 @@ export default function GuidePage() {
 
         {/* ── RESPONSE 대응매뉴얼 ── */}
         {guide.type==='RESPONSE' && guide.responses && (
-          <section style={{ marginBottom:'72px' }}>
+          <section className="mb-18">
             <SecHeading id="sec-response">상황별 응대 스크립트</SecHeading>
             {guide.responses.map((r,i)=>{
-              const sc = SEV_C[r.severity] || SEV_C.medium;
+              const sc = SEV_TW[r.severity] || SEV_TW.medium;
               return (
-                <div key={i} style={{ border:`1px solid ${G.g100}`, borderRadius:'12px', marginBottom:'14px', overflow:'hidden', boxShadow:G.sm }}>
-                  <div style={{ padding:'14px 20px', backgroundColor:G.bg2, borderBottom:`1px solid ${G.g100}`, display:'flex', alignItems:'center', gap:'10px', flexWrap:'wrap' }}>
-                    <span style={{ fontSize:'11px', fontWeight:800, padding:'3px 10px', borderRadius:'99px', backgroundColor:sc.bg, color:sc.color, fontFamily:G.font }}>{sc.label}</span>
-                    <span style={{ fontSize:'15px', fontWeight:800, color:G.g900, flex:1, fontFamily:G.font }}>{r.case}</span>
-                    <span style={{ fontSize:'11px', fontWeight:600, padding:'3px 10px', backgroundColor:G.bg2, color:G.b600, borderRadius:'99px', border:`1px solid ${G.b200}`, fontFamily:G.font }}>{r.tag}</span>
+                <div key={i} className="border border-zinc-100 rounded-xl mb-3.5 overflow-hidden ring-1 ring-black/8">
+                  <div className="py-3.5 px-5 bg-zinc-50 border-b border-zinc-100 flex items-center gap-2.5 flex-wrap">
+                    <span className={`text-[11px] font-extrabold py-0.5 px-2.5 rounded-full ${sc.cls}`}>{sc.label}</span>
+                    <span className="text-[15px] font-extrabold text-zinc-900 flex-1">{r.case}</span>
+                    <span className="text-[11px] font-semibold py-0.5 px-2.5 bg-zinc-50 text-blue-700 rounded-full border border-blue-200">{r.tag}</span>
                   </div>
-                  <div style={{ padding:'18px 20px', display:'flex', gap:'12px' }}>
-                    <MessageCircle size={15} color={G.g300} style={{ flexShrink:0, marginTop:'2px' }} />
-                    <p style={{ margin:0, fontSize:'14px', lineHeight:1.8, color:G.g700, fontFamily:G.font }}>{r.script}</p>
+                  <div className="py-4.5 px-5 flex gap-3">
+                    <MessageCircle size={15} className="text-zinc-300 shrink-0 mt-0.5" />
+                    <p className="m-0 text-sm leading-7 text-zinc-600">{r.script}</p>
                   </div>
                 </div>
               );
@@ -539,26 +478,26 @@ export default function GuidePage() {
 
         {/* ── POLICY 정책변경 ── */}
         {guide.type==='POLICY' && guide.policyDiff && (
-          <section style={{ marginBottom:'72px' }}>
+          <section className="mb-18">
             <SecHeading id="sec-policy">정책 변경 내용</SecHeading>
             {guide.policyDiff.effectiveDate && (
-              <div style={{ display:'inline-flex', alignItems:'center', gap:'7px', padding:'6px 14px', backgroundColor:G.bg2, border:`1px solid ${G.b200}`, borderRadius:'99px', fontSize:'13px', fontWeight:700, color:G.b600, marginBottom:'24px', fontFamily:G.font }}>
+              <div className="inline-flex items-center gap-1.5 py-1.5 px-3.5 bg-zinc-50 border border-blue-200 rounded-full text-[13px] font-bold text-blue-700 mb-6">
                 <Calendar size={12}/> 적용일: {guide.policyDiff.effectiveDate}
-                {guide.policyDiff.scope && <span style={{ color:G.b400 }}>· {guide.policyDiff.scope}</span>}
+                {guide.policyDiff.scope && <span className="text-blue-500">· {guide.policyDiff.scope}</span>}
               </div>
             )}
-            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:'20px' }}>
-              <div style={{ padding:'32px', backgroundColor:G.r100, borderRadius:'12px', border:`1px solid ${G.r100}` }}>
-                <div style={{ display:'flex', alignItems:'center', gap:'8px', color:G.r700, fontWeight:800, marginBottom:'18px', fontSize:'13px', fontFamily:G.font }}>
+            <div className="grid grid-cols-2 gap-5">
+              <div className="p-8 bg-red-100 rounded-xl border border-red-100">
+                <div className="flex items-center gap-2 text-red-700 font-extrabold mb-4.5 text-[13px]">
                   <AlertTriangle size={16}/> 변경 전 (Legacy)
                 </div>
-                <p style={{ margin:0, color:'#9f1239', lineHeight:1.8, fontSize:'15px', fontWeight:500, fontFamily:G.font }}>{guide.policyDiff.before}</p>
+                <p className="m-0 text-rose-800 leading-7 text-[15px] font-medium">{guide.policyDiff.before}</p>
               </div>
-              <div style={{ padding:'32px', backgroundColor:G.gr100, borderRadius:'12px', border:`1px solid ${G.gr100}` }}>
-                <div style={{ display:'flex', alignItems:'center', gap:'8px', color:G.gr700, fontWeight:800, marginBottom:'18px', fontSize:'13px', fontFamily:G.font }}>
+              <div className="p-8 bg-green-100 rounded-xl border border-green-100">
+                <div className="flex items-center gap-2 text-green-700 font-extrabold mb-4.5 text-[13px]">
                   <CheckCircle2 size={16}/> 변경 후 (Current)
                 </div>
-                <p style={{ margin:0, color:G.gr700, lineHeight:1.8, fontSize:'15px', fontWeight:600, fontFamily:G.font }}>{guide.policyDiff.after}</p>
+                <p className="m-0 text-green-700 leading-7 text-[15px] font-semibold">{guide.policyDiff.after}</p>
               </div>
             </div>
           </section>
@@ -566,27 +505,24 @@ export default function GuidePage() {
 
         {/* ── 주요 항목 설명 테이블 ── */}
         {guide.mainItemsTable && (
-          <section style={{ marginBottom:'60px' }}>
+          <section className="mb-15">
             <SecHeading id="sec-items">주요 항목 설명</SecHeading>
-            <div style={{ border:`1px solid ${G.g200}`, borderRadius:'12px', overflow:'hidden', boxShadow:G.sm }}>
-              <table style={{ width:'100%', borderCollapse:'collapse', textAlign:'left' }}>
-                <thead style={{ backgroundColor:G.bg2 }}>
+            <div className="border border-zinc-200 rounded-xl overflow-hidden ring-1 ring-black/8">
+              <table className="w-full border-collapse text-left">
+                <thead className="bg-zinc-50">
                   <tr>
                     {['항목명','설명','필수'].map(h=>(
-                      <th key={h} style={{ padding:'13px 18px', fontSize:'11px', fontWeight:800, color:G.g400, textTransform:'uppercase', letterSpacing:'0.06em', borderBottom:`1px solid ${G.g100}`, fontFamily:G.font }}>{h}</th>
+                      <th key={h} className="py-3 px-4.5 text-[11px] font-extrabold text-zinc-400 uppercase tracking-wide border-b border-zinc-100">{h}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
                   {guide.mainItemsTable.map((row,i)=>(
-                    <tr key={i} style={{ borderBottom: i<guide.mainItemsTable.length-1 ? `1px solid ${G.g100}` : 'none' }}
-                      onMouseEnter={e=>e.currentTarget.style.backgroundColor=G.bg2}
-                      onMouseLeave={e=>e.currentTarget.style.backgroundColor='transparent'}
-                    >
-                      <td style={{ padding:'13px 18px', fontWeight:700, color:G.g900, fontSize:'13px', fontFamily:'monospace' }}>{row.field}</td>
-                      <td style={{ padding:'13px 18px', color:G.g600, fontSize:'13px', lineHeight:1.6, fontFamily:G.font }}>{row.desc}</td>
-                      <td style={{ padding:'13px 18px' }}>
-                        <span style={{ fontSize:'11px', fontWeight:700, padding:'2px 9px', borderRadius:'99px', backgroundColor: row.required ? G.r100 : G.g100, color: row.required ? G.r700 : G.g400, fontFamily:G.font }}>{row.required ? '필수' : '선택'}</span>
+                    <tr key={i} className={`hover:bg-zinc-50 transition-colors duration-150 ${i<guide.mainItemsTable.length-1 ? 'border-b border-zinc-100' : ''}`}>
+                      <td className="py-3 px-4.5 font-bold text-zinc-900 text-[13px] font-mono">{row.field}</td>
+                      <td className="py-3 px-4.5 text-zinc-500 text-[13px] leading-relaxed">{row.desc}</td>
+                      <td className="py-3 px-4.5">
+                        <span className={`text-[11px] font-bold py-0.5 px-2 rounded-full ${row.required ? 'bg-red-100 text-red-700' : 'bg-zinc-100 text-zinc-400'}`}>{row.required ? '필수' : '선택'}</span>
                       </td>
                     </tr>
                   ))}
@@ -598,7 +534,7 @@ export default function GuidePage() {
 
         {/* ── 운영 케이스 아코디언 ── */}
         {guide.cases?.length > 0 && (
-          <section style={{ marginBottom:'60px' }}>
+          <section className="mb-15">
             <SecHeading id="sec-cases">운영 케이스</SecHeading>
             {guide.cases.map((c,i)=><CaseItem key={i} item={c} index={i} />)}
           </section>
@@ -606,7 +542,7 @@ export default function GuidePage() {
 
         {/* ── 유의사항 ── */}
         {guide.cautions?.length > 0 && (
-          <section style={{ marginBottom:'60px' }}>
+          <section className="mb-15">
             <SecHeading id="sec-cautions">유의사항</SecHeading>
             <CautionBlock items={guide.cautions} />
           </section>
@@ -620,20 +556,17 @@ export default function GuidePage() {
             .slice(0, 3);
           if (related.length === 0) return null;
           return (
-            <section style={{ marginBottom:'60px' }}>
+            <section className="mb-15">
               <SecHeading id="sec-related">관련 가이드</SecHeading>
-              <div style={{ display:'flex', flexDirection:'column', gap:'8px' }}>
+              <div className="flex flex-col gap-2">
                 {related.map(([gid, g]) => (
-                  <Link key={gid} to={`/guides/${gid}`} style={{ display:'flex', alignItems:'center', gap:'12px', padding:'14px 18px', borderRadius:'12px', border:`1px solid ${G.g100}`, backgroundColor:'#fff', textDecoration:'none', transition:'all 0.15s' }}
-                    onMouseEnter={e => { e.currentTarget.style.backgroundColor = G.bg2; e.currentTarget.style.borderColor = G.g200; }}
-                    onMouseLeave={e => { e.currentTarget.style.backgroundColor = '#fff'; e.currentTarget.style.borderColor = G.g100; }}
-                  >
-                    <BookOpen size={14} color={G.g400} style={{ flexShrink:0 }} />
-                    <div style={{ flex:1 }}>
-                      <p style={{ margin:0, fontSize:'14px', fontWeight:600, color:G.g900 }}>{g.title}</p>
-                      <p style={{ margin:'2px 0 0', fontSize:'12px', color:G.g400 }}>{g.module}</p>
+                  <Link key={gid} to={`/guides/${gid}`} className="flex items-center gap-3 py-3.5 px-4.5 rounded-xl border border-zinc-100 bg-white no-underline transition-all duration-150 hover:bg-zinc-50 hover:border-zinc-200">
+                    <BookOpen size={14} className="text-zinc-400 shrink-0" />
+                    <div className="flex-1">
+                      <p className="m-0 text-sm font-semibold text-zinc-900">{g.title}</p>
+                      <p className="mt-0.5 mb-0 text-xs text-zinc-400">{g.module}</p>
                     </div>
-                    <ChevronRight size={14} color={G.g300} />
+                    <ChevronRight size={14} className="text-zinc-300" />
                   </Link>
                 ))}
               </div>
@@ -642,24 +575,21 @@ export default function GuidePage() {
         })()}
 
         {/* ── 피드백 ── */}
-        <div id="sec-feedback" style={{ marginTop:'96px', padding:'48px 40px', borderTop:`1px solid ${G.g100}`, scrollMarginTop:'80px' }}>
+        <div id="sec-feedback" className="mt-24 py-12 px-10 border-t border-zinc-100 scroll-mt-20">
           <FeedbackWidget />
         </div>
       </article>
 
       {/* ── 우측 미니맵 ─────────────────────────────────────────────────── */}
-      <aside style={{ position:'sticky', top:'88px', width:'220px', flexShrink:0 }}>
+      <aside className="sticky top-[88px] w-[220px] shrink-0">
         <OnThisPage sections={sections} />
 
         {/* 슬랙 지원 카드 */}
-        <div style={{ padding:'22px', backgroundColor:G.bg2, borderRadius:'12px', border:`1px solid ${G.g100}`, boxShadow:G.sx }}>
-          <MessageCircle size={18} color={G.b400} style={{ marginBottom:'10px' }} />
-          <p style={{ fontSize:'13px', fontWeight:800, color:G.g900, margin:'0 0 6px', fontFamily:G.font }}>실시간 지원</p>
-          <p style={{ fontSize:'12px', color:G.g400, margin:'0 0 14px', lineHeight:1.6, fontFamily:G.font }}>가이드로 해결되지 않는 문제는 플랫폼서비스실 슬랙 채널에 문의해 주세요.</p>
-          <button style={{ width:'100%', padding:'10px', borderRadius:'9px', border:'none', backgroundColor:G.g900, fontSize:'12px', fontWeight:700, color:'#fff', cursor:'pointer', fontFamily:G.font }}
-            onMouseEnter={e=>e.currentTarget.style.backgroundColor=G.g800}
-            onMouseLeave={e=>e.currentTarget.style.backgroundColor=G.g900}
-          >슬랙 문의하기</button>
+        <div className="p-5.5 bg-zinc-50 rounded-xl border border-zinc-100 shadow-sm">
+          <MessageCircle size={18} className="text-blue-500 mb-2.5" />
+          <p className="text-[13px] font-extrabold text-zinc-900 mb-1.5 mt-0">실시간 지원</p>
+          <p className="text-xs text-zinc-400 mb-3.5 mt-0 leading-relaxed">가이드로 해결되지 않는 문제는 플랫폼서비스실 슬랙 채널에 문의해 주세요.</p>
+          <button className="w-full py-2.5 rounded-[9px] border-none bg-zinc-900 text-xs font-bold text-white cursor-pointer hover:bg-zinc-700 transition-colors duration-150">슬랙 문의하기</button>
         </div>
       </aside>
     </div>

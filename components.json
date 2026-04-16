@@ -1,0 +1,56 @@
+{
+  "$schema": "https://ui.shadcn.com/schema.json",
+  "style": "default",
+  "rsc": false,
+  "tsx": false,
+  "aliasPrefix": "@",
+  "baseColor": "slate",
+  "baseFont": "'Pretendard', sans-serif",
+  "components": {
+    "alert": {
+      "path": "src/components/ui/alert.jsx"
+    },
+    "badge": {
+      "path": "src/components/ui/badge.jsx"
+    },
+    "button": {
+      "path": "src/components/ui/button.jsx"
+    },
+    "card": {
+      "path": "src/components/ui/card.jsx"
+    },
+    "checkbox": {
+      "path": "src/components/ui/checkbox.jsx"
+    },
+    "dialog": {
+      "path": "src/components/ui/dialog.jsx"
+    },
+    "input": {
+      "path": "src/components/ui/input.jsx"
+    },
+    "label": {
+      "path": "src/components/ui/label.jsx"
+    },
+    "radio": {
+      "path": "src/components/ui/radio.jsx"
+    },
+    "scroll-area": {
+      "path": "src/components/ui/scroll-area.jsx"
+    },
+    "select": {
+      "path": "src/components/ui/select.jsx"
+    },
+    "separator": {
+      "path": "src/components/ui/separator.jsx"
+    },
+    "tabs": {
+      "path": "src/components/ui/tabs.jsx"
+    },
+    "textarea": {
+      "path": "src/components/ui/textarea.jsx"
+    },
+    "tooltip": {
+      "path": "src/components/ui/tooltip.jsx"
+    }
+  }
+}

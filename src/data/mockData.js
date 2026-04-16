@@ -310,6 +310,56 @@ export const GUIDES = {
     },
     steps: null, mainItemsTable: null, cases: null, cautions: null, troubleTable: null, responses: null, decisionTable: null, referenceData: null,
   },
+
+  // ── 추가 가이드 ─────────────────────────────────────────────────────────────
+  'class-transfer': {
+    type: 'SOP', module: '수업운영관리', title: '전반 처리 가이드',
+    updated: '2026-04-12', confluenceId: '1920123456', targets: ['운영자', '실장'],
+    tldr: "수강 종료 후 다음 반으로 옮기는 전반 처리 절차입니다.",
+    path: 'AMS 어드민 > 수업운영관리 > 수업상세',
+    amsUrl: `${AMS}/operation/class/manage`,
+    confluenceUrl: `${CONFLUENCE}/1920123456`,
+    steps: [
+      { title: "전반 대상자 선택", desc: "현재 수강 중인 회원 중 전반할 대상을 선택합니다." },
+      { title: "새로운 강좌 지정", desc: "[새 강좌] 드롭다운에서 전반할 새 강좌를 선택합니다." },
+      { title: "전반 처리 버튼 클릭", desc: "[전반 처리] 버튼을 누르고 확인합니다." },
+    ],
+    mainItemsTable: null, cases: null, cautions: ["전반 후 이전 강좌는 퇴반 상태로 변경됨"],
+    troubleTable: null, responses: null, decisionTable: null, referenceData: null, policyDiff: null,
+  },
+
+  'payment-method': {
+    type: 'SOP', module: '청구/수납/결제/환불', title: '결제 수단 등록 가이드',
+    updated: '2026-04-05', confluenceId: '1920234567', targets: ['운영자'],
+    tldr: "학부모가 AMS에 신용카드, 체크카드, 계좌이체 등을 등록하는 방법을 안내합니다.",
+    path: 'AMS 모바일앱 > 결제 관리',
+    amsUrl: `${AMS}/payment/method`,
+    confluenceUrl: `${CONFLUENCE}/1920234567`,
+    steps: [
+      { title: "앱에서 [결제 관리] 메뉴 진입", desc: "AMS 모바일앱 메인 > 결제 관리 탭 클릭" },
+      { title: "[결제 수단 추가] 클릭", desc: "카드 또는 계좌이체 선택" },
+      { title: "결제 수단 정보 입력", desc: "카드번호, 유효기간, CVC 또는 계좌정보 입력" },
+    ],
+    mainItemsTable: null, cases: null, cautions: ["결제 수단은 최대 3개까지 등록 가능"],
+    troubleTable: null, responses: null, decisionTable: null, referenceData: null, policyDiff: null,
+  },
+
+  'class-schedule': {
+    type: 'REFERENCE', module: '수업운영관리', title: '강좌 스케줄 관리 가이드',
+    updated: '2026-03-30', confluenceId: '1920345678', targets: ['운영자', '실장', '관리자'],
+    tldr: "AMS에서 강좌의 개강일, 종강일, 수업요일, 시간을 관리하는 방법입니다.",
+    path: 'AMS 어드민 > 강좌/교재 관리 > 강좌관리',
+    amsUrl: `${AMS}/course/manage`,
+    confluenceUrl: `${CONFLUENCE}/1920345678`,
+    referenceData: [
+      { term: "개강일", def: "강좌의 첫 수업일. 이 날짜부터 청구가 시작됩니다." },
+      { term: "종강일", def: "강좌의 마지막 수업일. 이후 자동으로 강좌 상태가 종료됨." },
+      { term: "수업요일", def: "주중 반복되는 수업 요일 (예: 월, 수, 금)" },
+      { term: "수업 시간", def: "하루에 구성된 시간 (예: 2시간, 3시간)" },
+    ],
+    steps: null, mainItemsTable: null, cases: null, cautions: ["개강일 변경 시 기존 청구 이력이 영향받을 수 있음"],
+    troubleTable: null, responses: null, decisionTable: null, policyDiff: null,
+  },
 };
 
 // AMS 실제 메뉴 구조 (https://ams.sdij.com 기준)

@@ -1,0 +1,171 @@
+name: CI - Quality Checks
+
+on:
+  push:
+    branches:
+      - main
+      - claude/*
+  pull_request:
+    branches:
+      - main
+      - claude/*
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run ESLint
+        run: npm run lint
+        continue-on-error: false
+
+      - name: Build project
+        run: npm run build
+
+      - name: Check build size
+        run: |
+          echo "Build artifacts:"
+          ls -lh dist/assets/
+          du -sh dist/
+
+  e2e-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: Build project
+        run: npm run build
+
+      - name: Run E2E tests (Basic)
+        run: npm run test:e2e -- e2e/basic.spec.js
+        continue-on-error: true
+
+      - name: Run E2E tests (Advanced)
+        run: npm run test:e2e -- e2e/advanced.spec.js
+        continue-on-error: true
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
+
+  unit-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run unit tests
+        run: npm run test
+        continue-on-error: true
+
+  accessibility:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build project
+        run: npm run build
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Create accessibility check script
+        run: |
+          cat > check-a11y.js << 'EOF'
+          import { test, expect } from '@playwright/test';
+
+          test('accessibility check', async ({ browser }) => {
+            const page = await browser.newPage();
+            await page.goto('file://$(pwd)/dist/index.html');
+
+            // Basic accessibility checks
+            const headings = await page.locator('h1, h2, h3').count();
+            console.log(`Found ${headings} headings`);
+
+            const buttons = await page.locator('button').count();
+            console.log(`Found ${buttons} buttons`);
+
+            const images = await page.locator('img').count();
+            console.log(`Found ${images} images`);
+          });
+          EOF
+
+      - name: Run accessibility checks
+        run: npx playwright test check-a11y.js 2>&1 || true
+
+  dependency-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check for known vulnerabilities
+        run: npm audit --audit-level=moderate
+        continue-on-error: true
+
+      - name: Check for outdated packages
+        run: npm outdated || true

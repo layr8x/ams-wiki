@@ -324,16 +324,16 @@ function ImageUploadSlot({ image, onUpload, onRemove }) {
   };
 
   if (image) return (
-    <div style={{ borderRadius: R.lg, overflow:'hidden', border:`1px solid ${C.gray200}` }}>
-      <img src={image.url} alt="" style={{ width:'100%', display:'block', maxHeight:'260px', objectFit:'cover' }} />
-      <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'8px 14px', backgroundColor: C.gray50, borderTop:`1px solid ${C.gray100}` }}>
-        <span style={{ fontSize:'12px', color: C.gray400 }}>{image.name} · {image.size ? `${(image.size/1024).toFixed(1)} KB` : ''}</span>
-        <div style={{ display:'flex', gap:'6px' }}>
-          <button onClick={() => fileRef.current?.click()} style={{ fontSize:'12px', fontWeight:600, padding:'4px 10px', border:`1px solid ${C.gray200}`, borderRadius: R.md, backgroundColor:'#fff', cursor:'pointer', color: C.gray600 }}>교체</button>
-          <button onClick={onRemove} style={{ fontSize:'12px', fontWeight:600, padding:'4px 10px', border:`1px solid ${C.red100}`, borderRadius: R.md, backgroundColor: C.red50, cursor:'pointer', color: C.red700 }}>삭제</button>
+    <div className="rounded-xl overflow-hidden border border-zinc-200">
+      <img src={image.url} alt="" className="w-full block max-h-[260px] object-cover" />
+      <div className="flex items-center justify-between px-3.5 py-2 bg-zinc-50 border-t border-zinc-100">
+        <span className="text-xs text-zinc-400">{image.name} · {image.size ? `${(image.size/1024).toFixed(1)} KB` : ''}</span>
+        <div className="flex gap-1.5">
+          <button onClick={() => fileRef.current?.click()} className="text-xs font-semibold px-2.5 py-1 border border-zinc-200 rounded-lg bg-white cursor-pointer text-zinc-600">교체</button>
+          <button onClick={onRemove} className="text-xs font-semibold px-2.5 py-1 border border-red-100 rounded-lg bg-red-50 cursor-pointer text-red-700">삭제</button>
         </div>
       </div>
-      <input ref={fileRef} type="file" accept="image/*" onChange={handleFile} style={{ display:'none' }} />
+      <input ref={fileRef} type="file" accept="image/*" onChange={handleFile} className="hidden" />
     </div>
   );
 
@@ -344,20 +344,15 @@ function ImageUploadSlot({ image, onUpload, onRemove }) {
         onDragLeave={() => setIsDragging(false)}
         onDrop={handleDrop}
         onClick={() => fileRef.current?.click()}
-        style={{
-          border: `1.5px dashed ${isDragging ? C.blue500 : C.gray200}`,
-          borderRadius: R.lg, padding:'28px 20px',
-          backgroundColor: isDragging ? C.blue50 : C.gray50,
-          cursor:'pointer', textAlign:'center', transition:'all 0.15s',
-        }}
+        className={`border-[1.5px] border-dashed rounded-xl px-5 py-7 cursor-pointer text-center transition-all duration-150 ${isDragging ? 'border-blue-500 bg-blue-50' : 'border-zinc-200 bg-zinc-50'}`}
       >
-        <div style={{ width:'40px', height:'40px', borderRadius: R.lg, backgroundColor: isDragging ? C.blue100 : '#fff', border:`1px solid ${isDragging ? C.blue200 : C.gray200}`, display:'flex', alignItems:'center', justifyContent:'center', margin:'0 auto 12px', boxShadow: SHADOW.xs }}>
-          <Upload size={18} color={isDragging ? C.blue600 : C.gray400} />
+        <div className={`w-10 h-10 rounded-xl border flex items-center justify-center mx-auto mb-3 shadow-xs ${isDragging ? 'bg-blue-100 border-blue-200' : 'bg-white border-zinc-200'}`}>
+          <Upload size={18} className={isDragging ? 'text-blue-600' : 'text-zinc-400'} />
         </div>
-        <p style={{ margin:'0 0 4px', fontSize:'13px', fontWeight:700, color: isDragging ? C.blue700 : C.gray700 }}>이미지 드래그 또는 클릭하여 업로드</p>
-        <p style={{ margin:0, fontSize:'12px', color: C.gray400 }}>PNG · JPG · GIF · 최대 10MB</p>
+        <p className={`m-0 mb-1 text-[13px] font-bold ${isDragging ? 'text-blue-700' : 'text-zinc-700'}`}>이미지 드래그 또는 클릭하여 업로드</p>
+        <p className="m-0 text-xs text-zinc-400">PNG · JPG · GIF · 최대 10MB</p>
       </div>
-      <input ref={fileRef} type="file" accept="image/*" onChange={handleFile} style={{ display:'none' }} />
+      <input ref={fileRef} type="file" accept="image/*" onChange={handleFile} className="hidden" />
     </>
   );
 }
@@ -368,61 +363,66 @@ function VersionDrawer({ isOpen, onClose }) {
 
   return (
     <>
-      <div onClick={onClose} style={{ position:'fixed', inset:0, backgroundColor:'rgba(0,0,0,0.25)', backdropFilter:'blur(2px)', zIndex:400, opacity: isOpen ? 1 : 0, pointerEvents: isOpen ? 'all' : 'none', transition:'opacity 0.2s' }} />
-      <div style={{ position:'fixed', top:0, right:0, bottom:0, width:'460px', backgroundColor:'#fff', zIndex:401, boxShadow:'-1px 0 0 0 ' + C.gray100 + ', -20px 0 60px rgba(0,0,0,0.1)', transform: isOpen ? 'translateX(0)' : 'translateX(100%)', transition:'transform 0.28s cubic-bezier(0.4,0,0.2,1)', display:'flex', flexDirection:'column' }}>
+      {/* Backdrop */}
+      <div
+        onClick={onClose}
+        className={`fixed inset-0 bg-black/25 backdrop-blur-sm z-[400] transition-opacity duration-200 ${isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
+      />
+      {/* Panel */}
+      <div className={`fixed top-0 right-0 bottom-0 w-[460px] bg-white z-[401] shadow-xl flex flex-col transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}>
         {/* Header */}
-        <div style={{ padding:'20px 24px', borderBottom:`1px solid ${C.gray100}`, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
-          <div style={{ display:'flex', alignItems:'center', gap:'10px' }}>
-            <div style={{ width:'32px', height:'32px', borderRadius: R.md, backgroundColor: C.gray100, display:'flex', alignItems:'center', justifyContent:'center' }}>
-              <Clock size={15} color={C.gray600} />
+        <div className="px-6 py-5 border-b border-zinc-100 flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-zinc-100 flex items-center justify-center">
+              <Clock size={15} className="text-zinc-600" />
             </div>
             <div>
-              <h3 style={{ margin:0, fontSize:'15px', fontWeight:700, color: C.gray900 }}>버전 이력</h3>
-              <p style={{ margin:0, fontSize:'12px', color: C.gray400 }}>{VERSION_HISTORY.length}개 버전 관리 중</p>
+              <h3 className="m-0 text-[15px] font-bold text-zinc-900">버전 이력</h3>
+              <p className="m-0 text-xs text-zinc-400">{VERSION_HISTORY.length}개 버전 관리 중</p>
             </div>
           </div>
-          <button onClick={onClose} style={{ width:'32px', height:'32px', border:`1px solid ${C.gray200}`, borderRadius: R.md, backgroundColor:'#fff', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', transition:'background 0.1s' }} onMouseEnter={e=>e.currentTarget.style.backgroundColor=C.gray50} onMouseLeave={e=>e.currentTarget.style.backgroundColor='#fff'}>
-            <X size={14} color={C.gray500} />
+          <button onClick={onClose} className="w-8 h-8 border border-zinc-200 rounded-lg bg-white cursor-pointer flex items-center justify-center transition-colors hover:bg-zinc-50">
+            <X size={14} className="text-zinc-500" />
           </button>
         </div>
 
         {/* Current version banner */}
-        <div style={{ margin:'16px 20px 8px', padding:'14px 18px', backgroundColor: C.green50, borderRadius: R.lg, border:`1px solid ${C.green100}`, display:'flex', alignItems:'center', gap:'10px' }}>
-          <div style={{ width:'8px', height:'8px', borderRadius:'50%', backgroundColor:'#22c55e', flexShrink:0 }} />
-          <div style={{ flex:1 }}>
-            <div style={{ display:'flex', alignItems:'baseline', gap:'8px' }}>
-              <span style={{ fontSize:'15px', fontWeight:800, color: C.gray900, fontFamily:'monospace' }}>{VERSION_HISTORY[0].version}</span>
-              <span style={{ fontSize:'12px', fontWeight:600, padding:'1px 8px', backgroundColor: C.green100, color: C.green700, borderRadius: R.full }}>현재 배포</span>
+        <div className="mx-5 mt-4 mb-2 px-[18px] py-3.5 bg-green-50 rounded-xl border border-green-100 flex items-center gap-2.5">
+          <div className="w-2 h-2 rounded-full bg-green-500 shrink-0" />
+          <div className="flex-1">
+            <div className="flex items-baseline gap-2">
+              <span className="text-[15px] font-extrabold text-zinc-900 font-mono">{VERSION_HISTORY[0].version}</span>
+              <span className="text-xs font-semibold px-2 py-px bg-green-100 text-green-700 rounded-full">현재 배포</span>
             </div>
-            <p style={{ margin:'2px 0 0', fontSize:'12px', color: C.gray400 }}>{VERSION_HISTORY[0].date} · {VERSION_HISTORY[0].author}</p>
+            <p className="mt-0.5 mb-0 text-xs text-zinc-400">{VERSION_HISTORY[0].date} · {VERSION_HISTORY[0].author}</p>
           </div>
         </div>
 
         {/* Version list */}
-        <div style={{ flex:1, overflowY:'auto', padding:'4px 20px 24px' }}>
-          <p style={{ fontSize:'11px', fontWeight:700, color: C.gray400, textTransform:'uppercase', letterSpacing:'0.08em', margin:'16px 0 10px' }}>전체 이력</p>
+        <div className="flex-1 overflow-y-auto px-5 pt-1 pb-6">
+          <p className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider mt-4 mb-2.5">전체 이력</p>
           {VERSION_HISTORY.map((v, i) => {
             const isCurrent = i === 0;
             const isExp = expanded === v.version;
             return (
-              <div key={v.version} style={{ border:`1px solid ${isExp ? C.blue200 : C.gray100}`, borderRadius: R.lg, marginBottom:'8px', overflow:'hidden', backgroundColor: isExp ? C.blue50 : '#fff', transition:'all 0.15s' }}>
-                <div onClick={() => setExpanded(isExp ? null : v.version)} style={{ padding:'12px 16px', cursor:'pointer', display:'flex', alignItems:'center', gap:'12px' }} onMouseEnter={e=>{if(!isExp)e.currentTarget.parentElement.style.backgroundColor=C.gray50}} onMouseLeave={e=>{if(!isExp)e.currentTarget.parentElement.style.backgroundColor='#fff'}}>
-                  <span style={{ fontSize:'14px', fontWeight:800, color: C.gray900, fontFamily:'monospace', minWidth:'40px' }}>{v.version}</span>
-                  <div style={{ flex:1 }}>
-                    <p style={{ margin:0, fontSize:'13px', color: C.gray700, fontWeight:500 }}>{v.summary}</p>
-                    <p style={{ margin:'2px 0 0', fontSize:'11px', color: C.gray400 }}>{v.date} · {v.author}</p>
+              <div key={v.version} className={`border rounded-xl mb-2 overflow-hidden transition-all duration-150 ${isExp ? 'border-blue-200 bg-blue-50' : 'border-zinc-100 bg-white hover:bg-zinc-50'}`}>
+                <div onClick={() => setExpanded(isExp ? null : v.version)} className="px-4 py-3 cursor-pointer flex items-center gap-3">
+                  <span className="text-sm font-extrabold text-zinc-900 font-mono min-w-[40px]">{v.version}</span>
+                  <div className="flex-1">
+                    <p className="m-0 text-[13px] text-zinc-700 font-medium">{v.summary}</p>
+                    <p className="mt-0.5 mb-0 text-[11px] text-zinc-400">{v.date} · {v.author}</p>
                   </div>
-                  {isCurrent && <span style={{ fontSize:'11px', fontWeight:700, padding:'2px 8px', backgroundColor: C.green100, color: C.green700, borderRadius: R.full, flexShrink:0 }}>현재</span>}
-                  <ChevronDown size={13} color={C.gray400} style={{ flexShrink:0, transform: isExp ? 'rotate(180deg)' : 'none', transition:'transform 0.2s' }} />
+                  {isCurrent && <span className="text-[11px] font-bold px-2 py-0.5 bg-green-100 text-green-700 rounded-full shrink-0">현재</span>}
+                  <ChevronDown size={13} className={`text-zinc-400 shrink-0 transition-transform duration-200 ${isExp ? 'rotate-180' : ''}`} />
                 </div>
                 {isExp && (
-                  <div style={{ padding:'0 16px 14px', borderTop:`1px solid ${C.blue200}`, display:'flex', gap:'8px', paddingTop:'12px' }}>
+                  <div className="px-4 pb-3.5 pt-3 border-t border-blue-200 flex gap-2">
                     {!isCurrent && (
-                      <button style={{ flex:1, padding:'8px', border:`1px solid ${C.gray200}`, borderRadius: R.md, backgroundColor:'#fff', fontSize:'12px', fontWeight:700, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', gap:'5px', color: C.gray600 }}>
+                      <button className="flex-1 p-2 border border-zinc-200 rounded-lg bg-white text-xs font-bold cursor-pointer flex items-center justify-center gap-[5px] text-zinc-600">
                         <RotateCcw size={12} /> 이 버전으로 복원
                       </button>
                     )}
-                    <button style={{ flex:1, padding:'8px', border:`1px solid ${C.gray200}`, borderRadius: R.md, backgroundColor:'#fff', fontSize:'12px', fontWeight:700, cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center', gap:'5px', color: C.gray600 }}>
+                    <button className="flex-1 p-2 border border-zinc-200 rounded-lg bg-white text-xs font-bold cursor-pointer flex items-center justify-center gap-[5px] text-zinc-600">
                       <Eye size={12} /> 미리보기
                     </button>
                   </div>

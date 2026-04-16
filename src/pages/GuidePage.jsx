@@ -170,15 +170,15 @@ const SEV_C = {
 // ─── 유의사항 ────────────────────────────────────────────────────────────────
 function CautionBlock({ items }) {
   return (
-    <div style={{ border:`1px solid ${G.a100}`, borderRadius:'12px', overflow:'hidden', boxShadow:G.sx }}>
-      <div style={{ padding:'11px 18px', backgroundColor:G.a100, borderBottom:`1px solid ${G.a100}`, display:'flex', alignItems:'center', gap:'8px' }}>
-        <AlertTriangle size={13} color={G.a400} />
-        <span style={{ fontSize:'12px', fontWeight:800, color:G.a700, letterSpacing:'0.02em' }}>반드시 확인하세요</span>
+    <div className="border border-amber-100 rounded-xl overflow-hidden shadow-sm">
+      <div className="py-2.5 px-4.5 bg-amber-100 border-b border-amber-100 flex items-center gap-2">
+        <AlertTriangle size={13} className="text-amber-500" />
+        <span className="text-xs font-extrabold text-amber-700 tracking-wide">반드시 확인하세요</span>
       </div>
       {items.map((c,i)=>(
-        <div key={i} style={{ display:'flex', gap:'12px', padding:'13px 18px', borderBottom: i<items.length-1 ? `1px solid ${G.a100}` : 'none', backgroundColor:'#fff' }}>
-          <div style={{ width:'5px', height:'5px', borderRadius:'50%', backgroundColor:G.a400, flexShrink:0, marginTop:'7px' }} />
-          <p style={{ margin:0, fontSize:'14px', color:G.g700, lineHeight:1.7, fontFamily:G.font }}>{c}</p>
+        <div key={i} className={`flex gap-3 py-3 px-4.5 bg-white ${i<items.length-1 ? 'border-b border-amber-100' : ''}`}>
+          <div className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0 mt-1.5" />
+          <p className="m-0 text-sm text-zinc-600 leading-relaxed">{c}</p>
         </div>
       ))}
     </div>
@@ -189,18 +189,18 @@ function CautionBlock({ items }) {
 function CaseItem({ item, index }) {
   const [open, setOpen] = useState(false);
   return (
-    <div style={{ border:`1px solid ${open ? G.b200 : G.g100}`, borderRadius:'12px', marginBottom:'8px', backgroundColor: open ? G.bg2 : '#fff', transition:'all 0.18s', overflow:'hidden' }}>
-      <button onClick={()=>setOpen(o=>!o)} style={{ width:'100%', display:'flex', alignItems:'center', gap:'14px', padding:'14px 20px', background:'none', border:'none', cursor:'pointer', textAlign:'left', fontFamily:G.font }}>
-        <div style={{ width:'26px', height:'26px', borderRadius:'50%', backgroundColor: open ? G.b400 : G.g200, color: open ? '#fff' : G.g600, fontSize:'12px', fontWeight:800, display:'flex', alignItems:'center', justifyContent:'center', flexShrink:0, transition:'all 0.18s' }}>{index+1}</div>
-        <span style={{ flex:1, fontSize:'15px', fontWeight:700, color:G.g900 }}>{item.label}</span>
-        <ChevronDown size={14} color={G.g400} style={{ transform: open ? 'rotate(180deg)' : 'none', transition:'transform 0.2s', flexShrink:0 }} />
+    <div className={`border rounded-xl mb-2 transition-all duration-150 overflow-hidden ${open ? 'border-blue-200 bg-zinc-50' : 'border-zinc-100 bg-white'}`}>
+      <button onClick={()=>setOpen(o=>!o)} className="w-full flex items-center gap-3.5 py-3.5 px-5 bg-transparent border-none cursor-pointer text-left">
+        <div className={`w-6.5 h-6.5 rounded-full text-xs font-extrabold flex items-center justify-center shrink-0 transition-all duration-150 ${open ? 'bg-blue-500 text-white' : 'bg-zinc-200 text-zinc-500'}`}>{index+1}</div>
+        <span className="flex-1 text-[15px] font-bold text-zinc-900">{item.label}</span>
+        <ChevronDown size={14} className={`text-zinc-400 shrink-0 transition-transform duration-200 ${open ? 'rotate-180' : ''}`} />
       </button>
       {open && (
-        <div style={{ padding:'0 20px 18px', paddingLeft:'60px' }}>
-          <p style={{ fontSize:'14px', lineHeight:1.75, color:G.g700, margin:'0 0 10px', whiteSpace:'pre-wrap', fontFamily:G.font }}>{item.action}</p>
+        <div className="pr-5 pb-4.5 pl-15">
+          <p className="text-sm leading-7 text-zinc-600 mb-2.5 whitespace-pre-wrap">{item.action}</p>
           {item.note && (
-            <div style={{ padding:'9px 14px', backgroundColor:G.a100, border:`1px solid ${G.a100}`, borderRadius:'8px', fontSize:'13px', color:G.a700, display:'flex', gap:'8px', lineHeight:1.55 }}>
-              <AlertTriangle size={12} color={G.a400} style={{ flexShrink:0, marginTop:'2px' }} />
+            <div className="py-2 px-3.5 bg-amber-100 border border-amber-100 rounded-lg text-[13px] text-amber-700 flex gap-2 leading-relaxed">
+              <AlertTriangle size={12} className="text-amber-500 shrink-0 mt-0.5" />
               {item.note}
             </div>
           )}

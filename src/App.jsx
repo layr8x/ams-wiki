@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 import Layout from './components/common/Layout';
 import HomePage from './pages/HomePage';
 import GuideListPage from './pages/GuideListPage';
@@ -35,6 +36,7 @@ export default function App() {
           </Routes>
           <SearchOverlay />
         </BrowserRouter>
+        <SpeedInsights />
       </SearchProvider>
     </AuthProvider>
   </I18nProvider>

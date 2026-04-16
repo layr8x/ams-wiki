@@ -1,11 +1,49 @@
 {
-  "buildCommand": "npm run build",
+  "buildCommand": "npm ci && npm run build",
   "outputDirectory": "dist",
   "framework": "vite",
+  "nodeVersion": "18.x",
+  "installCommand": "npm ci",
+  "env": {
+    "VITE_CONFLUENCE_EMAIL": "@VITE_CONFLUENCE_EMAIL",
+    "VITE_CONFLUENCE_TOKEN": "@VITE_CONFLUENCE_TOKEN",
+    "VITE_ENABLE_ANALYTICS": "true",
+    "VITE_ENV": "production",
+    "VITE_API_BASE_URL": "https://sdij-ams-wiki.app"
+  },
+  "regions": ["icn1"],
   "rewrites": [
     {
       "source": "/(.*)",
       "destination": "/index.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/assets/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        }
+      ]
     }
   ]
 }

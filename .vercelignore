@@ -1,0 +1,42 @@
+# Development files
+node_modules
+npm-debug.log
+yarn-error.log
+.env.local
+.env.*.local
+
+# Git files
+.git
+.gitignore
+
+# Test files
+.vitest
+*.test.js
+*.test.ts
+*.spec.js
+*.spec.ts
+e2e
+__tests__
+
+# Documentation
+docs
+*.md
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# Playwright
+.playwright
+test-results
+
+# ESLint
+.eslintcache
+
+# Build outputs (not needed in Vercel)
+dist
+.next
+out

@@ -1,4 +1,4 @@
-// src/components/common/Sidebar.jsx — AMS 실제 메뉴 구조 + Geist 디자인
+// src/components/common/Sidebar.jsx — Tailwind CSS + shadcn/ui
 import { NavLink } from 'react-router-dom';
 import { useState } from 'react';
 import {
@@ -8,15 +8,7 @@ import {
 } from 'lucide-react';
 import { useSearchStore } from '@/store/searchStore.jsx';
 import { MODULE_TREE, RECENT_GUIDES } from '@/data/mockData';
-
-const G = {
-  bg: '#ffffff', bg2: '#fafafa',
-  g100: '#f2f2f2', g200: '#ebebeb', g300: '#e2e2e2',
-  g400: '#8f8f8f', g600: '#666666', g900: '#1a1a1a', g1000: '#000000',
-  border: 'rgba(0,0,0,0.08)',
-  b100: '#d3e5ff', b400: '#0070f3', b600: '#0052b2',
-  font: "'Pretendard', -apple-system, sans-serif",
-};
+import { Separator } from '@/components/ui/separator';
 
 const ICON_MAP = {
   ClipboardList, BookOpen, Calendar, CreditCard, Users,
@@ -28,121 +20,87 @@ export default function Sidebar() {
   const [expanded, setExpanded] = useState({ operation: true, customer: true });
   const toggle = id => setExpanded(p => ({ ...p, [id]: !p[id] }));
 
-  const hoverOn  = e => { e.currentTarget.style.backgroundColor = G.g100; };
-  const hoverOff = e => { e.currentTarget.style.backgroundColor = 'transparent'; };
-
   return (
-    <aside style={{
-      width: '260px', flexShrink: 0,
-      height: 'calc(100dvh - 56px)',
-      backgroundColor: G.bg,
-      borderRight: `1px solid ${G.border}`,
-      position: 'sticky', top: '56px',
-      display: 'flex', flexDirection: 'column',
-      fontFamily: G.font,
-      overflow: 'hidden',
-    }}>
+    <aside className="w-[260px] shrink-0 h-[calc(100dvh-56px)] bg-white border-r border-black/8 sticky top-14 flex flex-col font-[Pretendard,-apple-system,sans-serif] overflow-hidden">
 
       {/* ── 상단 고정: 검색 + 최근 조회 ── */}
-      <div style={{ padding: '12px 10px 0', flexShrink: 0 }}>
+      <div className="px-2.5 pt-3 shrink-0">
         {/* 검색 진입점 */}
-        <button onClick={open} style={{
-          display:'flex', alignItems:'center', gap:'8px', width:'100%',
-          height:'36px', padding:'0 10px', marginBottom:'10px',
-          borderRadius:'8px', border:`1px solid ${G.g200}`,
-          backgroundColor: G.bg, cursor:'pointer',
-          fontSize:'13px', color: G.g400, fontFamily: G.font,
-          transition:'border-color 120ms ease',
-        }}
-          onMouseEnter={e => e.currentTarget.style.borderColor = G.g300}
-          onMouseLeave={e => e.currentTarget.style.borderColor = G.g200}
-        >
-          <Search size={13} color={G.g400} style={{ flexShrink:0 }} />
-          <span style={{ flex:1, textAlign:'left' }}>가이드 검색</span>
-          <kbd style={{ fontSize:'11px', fontWeight:600, padding:'1px 5px', backgroundColor: G.g100, border:`1px solid ${G.g200}`, borderRadius:'4px', color: G.g400, fontFamily:'monospace' }}>/</kbd>
+        <button onClick={open} className="flex items-center gap-2 w-full h-9 px-2.5 mb-2.5 rounded-lg border border-zinc-200 bg-white cursor-pointer text-[13px] text-zinc-400 font-[Pretendard,-apple-system,sans-serif] transition-[border-color] duration-[120ms] ease-in-out hover:border-zinc-300">
+          <Search size={13} className="text-zinc-400 shrink-0" />
+          <span className="flex-1 text-left">가이드 검색</span>
+          <kbd className="text-[11px] font-semibold px-[5px] py-px bg-zinc-100 border border-zinc-200 rounded text-zinc-400 font-mono">/</kbd>
         </button>
 
-        <p style={{ fontSize: '10px', fontWeight: 700, color: G.g400, textTransform: 'uppercase', letterSpacing: '0.08em', padding: '0 6px', marginBottom: '4px' }}>최근 조회</p>
+        <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-[0.08em] px-1.5 mb-1">최근 조회</p>
         {RECENT_GUIDES.slice(0,5).map(r => (
           <NavLink key={r.id} to={`/guides/${r.id}`}
-            style={({ isActive }) => ({
-              display: 'flex', alignItems: 'center', gap: '7px', padding: '6px 8px',
-              borderRadius: '6px', textDecoration: 'none', marginBottom: '1px',
-              backgroundColor: isActive ? G.b100 : 'transparent', transition: 'background 100ms ease',
-            })}
-            onMouseEnter={e => { if (!e.currentTarget.style.backgroundColor.includes('d3e5ff')) e.currentTarget.style.backgroundColor = G.g100; }}
-            onMouseLeave={e => { if (!e.currentTarget.style.backgroundColor.includes('d3e5ff')) e.currentTarget.style.backgroundColor = 'transparent'; }}
+            className={({ isActive }) =>
+              `flex items-center gap-[7px] py-1.5 px-2 rounded-md no-underline mb-px transition-colors duration-100 ${
+                isActive ? 'bg-blue-100' : 'hover:bg-zinc-100'
+              }`
+            }
           >
-            <Clock size={11} color={G.g400} style={{ flexShrink:0 }} />
-            <span style={{ flex:1, fontSize:'12px', color: G.g900, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', fontWeight:400 }}>{r.title}</span>
-            <span style={{ fontSize:'10px', color: G.g400, whiteSpace:'nowrap', flexShrink:0 }}>{r.module.split('/')[0]}</span>
+            <Clock size={11} className="text-zinc-400 shrink-0" />
+            <span className="flex-1 text-xs text-zinc-900 overflow-hidden text-ellipsis whitespace-nowrap font-normal">{r.title}</span>
+            <span className="text-[10px] text-zinc-400 whitespace-nowrap shrink-0">{r.module.split('/')[0]}</span>
           </NavLink>
         ))}
 
-        <div style={{ height:'1px', backgroundColor: G.border, margin:'10px 2px' }} />
+        <Separator className="my-2.5 mx-0.5" />
 
         {/* 대시보드 */}
         <NavLink to="/"
-          style={({ isActive }) => ({
-            display:'flex', alignItems:'center', gap:'8px', padding:'7px 8px',
-            borderRadius:'6px', textDecoration:'none', fontSize:'13px',
-            fontWeight: isActive ? 600 : 400,
-            color: isActive ? G.b400 : G.g900,
-            backgroundColor: isActive ? G.b100 : 'transparent',
-            marginBottom:'2px', transition:'all 100ms ease', fontFamily: G.font,
-          })}
-          onMouseEnter={hoverOn} onMouseLeave={hoverOff}
+          className={({ isActive }) =>
+            `flex items-center gap-2 py-[7px] px-2 rounded-md no-underline text-[13px] mb-0.5 transition-all duration-100 font-[Pretendard,-apple-system,sans-serif] ${
+              isActive
+                ? 'font-semibold text-blue-500 bg-blue-100'
+                : 'font-normal text-zinc-900 hover:bg-zinc-100'
+            }`
+          }
         >
-          <LayoutGrid size={14} style={{ flexShrink:0 }} /> 대시보드
+          <LayoutGrid size={14} className="shrink-0" /> 대시보드
         </NavLink>
 
-        <div style={{ height:'1px', backgroundColor: G.border, margin:'8px 2px 6px' }} />
-        <p style={{ fontSize:'10px', fontWeight:700, color: G.g400, textTransform:'uppercase', letterSpacing:'0.08em', padding:'0 6px', marginBottom:'4px', marginTop:'4px' }}>운영 가이드</p>
+        <Separator className="mt-2 mb-1.5 mx-0.5" />
+        <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-[0.08em] px-1.5 mb-1 mt-1">운영 가이드</p>
       </div>
 
       {/* ── 스크롤 가능한 모듈 트리 ── */}
-      <nav style={{ flex:1, overflowY:'auto', padding:'0 10px' }}>
+      <nav className="flex-1 overflow-y-auto px-2.5">
         {MODULE_TREE.map(mod => {
           const isOpen = !!expanded[mod.id];
           const Icon = ICON_MAP[mod.icon] || Settings;
           const hasGuides = mod.guides && mod.guides.length > 0;
           return (
-            <div key={mod.id} style={{ marginBottom:'1px' }}>
+            <div key={mod.id} className="mb-px">
               <button
                 onClick={() => hasGuides && toggle(mod.id)}
-                style={{
-                  display:'flex', alignItems:'center', gap:'7px', width:'100%',
-                  padding:'7px 8px', borderRadius:'6px', border:'none',
-                  backgroundColor:'transparent', cursor: hasGuides ? 'pointer' : 'default',
-                  textAlign:'left', fontSize:'13px', fontWeight:500,
-                  color: G.g900, fontFamily: G.font, transition:'background 100ms ease',
-                }}
-                onMouseEnter={e => hasGuides && hoverOn(e)}
-                onMouseLeave={e => hasGuides && hoverOff(e)}
+                className={`flex items-center gap-[7px] w-full py-[7px] px-2 rounded-md border-none bg-transparent text-left text-[13px] font-medium text-zinc-900 font-[Pretendard,-apple-system,sans-serif] transition-colors duration-100 ${
+                  hasGuides ? 'cursor-pointer hover:bg-zinc-100' : 'cursor-default'
+                }`}
               >
-                <Icon size={13} color={G.g400} style={{ flexShrink:0 }} />
-                <span style={{ flex:1, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{mod.label}</span>
+                <Icon size={13} className="text-zinc-400 shrink-0" />
+                <span className="flex-1 overflow-hidden text-ellipsis whitespace-nowrap">{mod.label}</span>
                 {hasGuides && (
-                  <ChevronDown size={11} color={G.g400} style={{ transform: isOpen ? 'none' : 'rotate(-90deg)', transition:'transform 180ms ease', flexShrink:0 }} />
+                  <ChevronDown size={11} className={`text-zinc-400 shrink-0 transition-transform duration-[180ms] ease-in-out ${isOpen ? '' : '-rotate-90'}`} />
                 )}
               </button>
 
               {isOpen && hasGuides && (
-                <div style={{ paddingLeft:'20px', marginBottom:'2px' }}>
+                <div className="pl-5 mb-0.5">
                   {mod.guides.map(g => (
                     <NavLink key={g.id} to={`/guides/${g.id}`}
-                      style={({ isActive }) => ({
-                        display:'flex', alignItems:'center', gap:'6px', padding:'5px 8px',
-                        borderRadius:'6px', textDecoration:'none', fontSize:'12px',
-                        fontWeight: isActive ? 600 : 400,
-                        color: isActive ? G.b400 : G.g600,
-                        backgroundColor: isActive ? G.b100 : 'transparent',
-                        marginBottom:'1px', transition:'all 100ms ease', fontFamily: G.font,
-                      })}
-                      onMouseEnter={hoverOn} onMouseLeave={hoverOff}
+                      className={({ isActive }) =>
+                        `flex items-center gap-1.5 py-[5px] px-2 rounded-md no-underline text-xs mb-px transition-all duration-100 font-[Pretendard,-apple-system,sans-serif] ${
+                          isActive
+                            ? 'font-semibold text-blue-500 bg-blue-100'
+                            : 'font-normal text-zinc-500 hover:bg-zinc-100'
+                        }`
+                      }
                     >
-                      <FileText size={10} style={{ flexShrink:0, opacity:0.45 }} />
-                      <span style={{ overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{g.label}</span>
+                      <FileText size={10} className="shrink-0 opacity-45" />
+                      <span className="overflow-hidden text-ellipsis whitespace-nowrap">{g.label}</span>
                     </NavLink>
                   ))}
                 </div>
@@ -151,39 +109,29 @@ export default function Sidebar() {
           );
         })}
 
-        <div style={{ height:'1px', backgroundColor: G.border, margin:'10px 2px' }} />
+        <Separator className="my-2.5 mx-0.5" />
 
         {/* 하단 링크 */}
         {[{ to:'/faq', label:'운영 FAQ', Icon:HelpCircle }, { to:'/updates', label:'업데이트 이력', Icon:Bell }].map(item => (
           <NavLink key={item.to} to={item.to}
-            style={({ isActive }) => ({
-              display:'flex', alignItems:'center', gap:'8px', padding:'7px 8px',
-              borderRadius:'6px', textDecoration:'none', fontSize:'13px',
-              fontWeight: isActive ? 600 : 400,
-              color: isActive ? G.b400 : G.g900,
-              backgroundColor: isActive ? G.b100 : 'transparent',
-              marginBottom:'1px', transition:'all 100ms ease', fontFamily: G.font,
-            })}
-            onMouseEnter={hoverOn} onMouseLeave={hoverOff}
+            className={({ isActive }) =>
+              `flex items-center gap-2 py-[7px] px-2 rounded-md no-underline text-[13px] mb-px transition-all duration-100 font-[Pretendard,-apple-system,sans-serif] ${
+                isActive
+                  ? 'font-semibold text-blue-500 bg-blue-100'
+                  : 'font-normal text-zinc-900 hover:bg-zinc-100'
+              }`
+            }
           >
-            <item.Icon size={13} style={{ flexShrink:0 }} /> {item.label}
+            <item.Icon size={13} className="shrink-0" /> {item.label}
           </NavLink>
         ))}
-        <div style={{ height:'8px' }} />
+        <div className="h-2" />
       </nav>
 
       {/* ── 새 가이드 작성 버튼 (하단 고정) ── */}
-      <div style={{ padding:'10px', borderTop:`1px solid ${G.border}`, flexShrink:0, backgroundColor: G.bg }}>
+      <div className="p-2.5 border-t border-black/8 shrink-0 bg-white">
         <NavLink to="/editor"
-          style={{
-            display:'flex', alignItems:'center', justifyContent:'center', gap:'6px',
-            height:'32px', borderRadius:'8px',
-            backgroundColor: G.g1000, color:'#ffffff',
-            textDecoration:'none', fontSize:'13px', fontWeight:600,
-            transition:'background 120ms ease', fontFamily: G.font,
-          }}
-          onMouseEnter={e => e.currentTarget.style.backgroundColor = '#333333'}
-          onMouseLeave={e => e.currentTarget.style.backgroundColor = G.g1000}
+          className="flex items-center justify-center gap-1.5 h-8 rounded-lg bg-black text-white no-underline text-[13px] font-semibold transition-colors duration-[120ms] ease-in-out font-[Pretendard,-apple-system,sans-serif] hover:bg-zinc-800"
         >
           <PlusCircle size={13} /> 새 가이드 작성
         </NavLink>

@@ -9,55 +9,31 @@ import {
 import { useSearchStore } from '@/store/searchStore.jsx'
 import { MODULES } from '@/api/mockData'
 import { RECENT_GUIDES } from '@/data/mockData'
+import { Card } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
 
 const ICON_MAP = { ClipboardList, BookOpen, Calendar, CreditCard, Gift, MessageSquare, Users, Building, GraduationCap, Shield, BarChart3 }
 const POPULAR = ['계정이관', '환불 처리', 'QR 출석', '중복결제', '전반']
 
-// 인라인 스타일로 완벽하게 제어되는 모듈 카드
 function ModuleCard({ m }) {
   const Icon = ICON_MAP[m.icon] || BookOpen
   return (
-    <Link 
-      to={`/modules/${m.id}`} 
-      style={{
-        display: 'flex', flexDirection: 'column', gap: '12px', padding: '20px',
-        borderRadius: '14px', border: '1px solid #e5e7eb', backgroundColor: '#ffffff',
-        textDecoration: 'none', transition: 'all 0.2s ease', cursor: 'pointer',
-      }}
-      onMouseEnter={e => {
-        e.currentTarget.style.borderColor = '#d1d5db';
-        e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.05)';
-        e.currentTarget.querySelector('.icon-wrap').style.backgroundColor = '#eff6ff';
-        e.currentTarget.querySelector('.icon-svg').style.color = '#2563eb';
-      }}
-      onMouseLeave={e => {
-        e.currentTarget.style.borderColor = '#e5e7eb';
-        e.currentTarget.style.boxShadow = 'none';
-        e.currentTarget.querySelector('.icon-wrap').style.backgroundColor = '#f9fafb';
-        e.currentTarget.querySelector('.icon-svg').style.color = '#6b7280';
-      }}
-    >
-      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-        <div 
-          className="icon-wrap"
-          style={{
-            width: '40px', height: '40px', borderRadius: '10px', backgroundColor: '#f9fafb',
-            display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.2s ease'
-          }}
-        >
-          <Icon className="icon-svg" size={18} strokeWidth={2.5} color="#6b7280" style={{ transition: 'color 0.2s ease' }} />
+    <Link to={`/modules/${m.id}`} className="group no-underline">
+      <Card className="flex flex-col gap-3 p-5">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-[10px] bg-zinc-50 flex items-center justify-center transition-all group-hover:bg-blue-50">
+            <Icon size={18} strokeWidth={2.5} className="text-zinc-500 transition-colors group-hover:text-blue-600" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-semibold text-zinc-900 m-0 truncate">{m.label}</p>
+            <p className="text-xs font-medium text-zinc-400 mt-0.5 mb-0">{m.guide_count}개 가이드</p>
+          </div>
+          <ChevronRight size={16} className="text-zinc-300" />
         </div>
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <p style={{ fontSize: '14px', fontWeight: 600, color: '#111827', margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-            {m.label}
-          </p>
-          <p style={{ fontSize: '12px', fontWeight: 500, color: '#9ca3af', margin: '2px 0 0 0' }}>{m.guide_count}개 가이드</p>
-        </div>
-        <ChevronRight size={16} color="#d1d5db" />
-      </div>
-      <p style={{ fontSize: '13px', color: '#6b7280', margin: 0, lineHeight: 1.5, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-        {m.description}
-      </p>
+        <p className="text-[13px] text-zinc-500 m-0 leading-relaxed line-clamp-2">
+          {m.description}
+        </p>
+      </Card>
     </Link>
   )
 }
@@ -65,30 +41,25 @@ function ModuleCard({ m }) {
 function RecentItem({ g, isLast }) {
   const [isNew] = useState(() => g.updated_at && Date.now() - new Date(g.updated_at).getTime() < 7*24*60*60*1000)
   return (
-    <Link 
-      to={`/guides/${g.id}`} 
-      style={{
-        display: 'flex', alignItems: 'center', gap: '16px', padding: '14px 20px',
-        borderBottom: isLast ? 'none' : '1px solid #f3f4f6', textDecoration: 'none', transition: 'background-color 0.2s ease'
-      }}
-      onMouseEnter={e => e.currentTarget.style.backgroundColor = '#f9fafb'}
-      onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
+    <Link
+      to={`/guides/${g.id}`}
+      className={`flex items-center gap-4 px-5 py-3.5 no-underline transition-colors hover:bg-zinc-50 ${isLast ? '' : 'border-b border-zinc-100'}`}
     >
-      <span style={{ fontSize: '11px', fontWeight: 600, padding: '4px 10px', backgroundColor: '#f3f4f6', color: '#4b5563', borderRadius: '99px', whiteSpace: 'nowrap' }}>
+      <Badge variant="default" size="sm" className="whitespace-nowrap font-semibold">
         {g.module}
-      </span>
-      <span style={{ flex: 1, fontSize: '14px', fontWeight: 500, color: '#111827', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+      </Badge>
+      <span className="flex-1 text-sm font-medium text-zinc-900 truncate">
         {g.title}
       </span>
       {isNew && (
-        <span style={{ fontSize: '11px', fontWeight: 700, padding: '2px 8px', backgroundColor: '#dbeafe', color: '#1d4ed8', borderRadius: '99px', whiteSpace: 'nowrap' }}>
+        <Badge variant="blue" size="sm" className="whitespace-nowrap font-bold">
           업데이트됨
-        </span>
+        </Badge>
       )}
-      <span style={{ fontSize: '12px', fontWeight: 500, color: '#9ca3af', fontFamily: 'monospace' }}>
+      <span className="text-xs font-medium text-zinc-400 font-mono">
         {g.updated_at?.slice(0,10)}
       </span>
-      <ArrowRight size={14} color="#d1d5db" />
+      <ArrowRight size={14} className="text-zinc-300" />
     </Link>
   )
 }
@@ -99,63 +70,43 @@ export default function HomePage() {
   const recents = RECENT_GUIDES
 
   return (
-    <div style={{ flex: 1, width: '100%', maxWidth: '1100px', margin: '0 auto', padding: '64px 40px', boxSizing: 'border-box' }}>
-      
-      {/* ── 히어로 영역 ── */}
-      <section style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '20px', marginBottom: '80px' }}>
-        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '6px 14px', borderRadius: '99px', backgroundColor: '#eff6ff', border: '1px solid #dbeafe', color: '#1d4ed8', fontSize: '12px', fontWeight: 700, letterSpacing: '0.02em' }}>
-          <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#2563eb' }} />
-          AMS 운영 위키
-        </div>
+    <div className="flex-1 w-full max-w-[1100px] mx-auto px-10 py-16 box-border">
 
-        <h1 style={{ fontSize: '40px', fontWeight: 800, letterSpacing: '-0.02em', color: '#111827', margin: 0, lineHeight: 1.2 }}>
+      {/* ── 히어로 영역 ── */}
+      <section className="flex flex-col items-center text-center gap-5 mb-20">
+        <Badge variant="blue" size="md" className="gap-2 px-3.5 py-1.5 border border-blue-100 font-bold tracking-wide text-xs">
+          <span className="w-1.5 h-1.5 rounded-full bg-blue-600" />
+          AMS 운영 위키
+        </Badge>
+
+        <h1 className="text-[40px] font-extrabold tracking-tight text-zinc-900 m-0 leading-tight">
           어떤 가이드를 찾으시나요?
         </h1>
-        <p style={{ fontSize: '16px', color: '#6b7280', fontWeight: 500, margin: 0 }}>
+        <p className="text-base text-zinc-500 font-medium m-0">
           AMS 기능 사용법, 운영 케이스, 정책 기준을 한 곳에서 검색하세요.
         </p>
 
         {/* 검색바 */}
-        <button 
-          onClick={open} 
-          style={{
-            marginTop: '16px', display: 'flex', alignItems: 'center', gap: '12px', width: '100%', maxWidth: '560px', height: '52px', padding: '0 20px',
-            borderRadius: '16px', border: '1px solid #e5e7eb', backgroundColor: '#ffffff', boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
-            cursor: 'pointer', transition: 'all 0.2s ease', boxSizing: 'border-box'
-          }}
-          onMouseEnter={e => {
-            e.currentTarget.style.borderColor = '#d1d5db';
-            e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0,0,0,0.1)';
-            e.currentTarget.querySelector('.search-icon').style.color = '#3b82f6';
-          }}
-          onMouseLeave={e => {
-            e.currentTarget.style.borderColor = '#e5e7eb';
-            e.currentTarget.style.boxShadow = '0 1px 2px rgba(0,0,0,0.05)';
-            e.currentTarget.querySelector('.search-icon').style.color = '#9ca3af';
-          }}
+        <button
+          onClick={open}
+          className="group mt-4 flex items-center gap-3 w-full max-w-[560px] h-[52px] px-5 rounded-2xl border border-zinc-200 bg-white shadow-sm cursor-pointer transition-all hover:border-zinc-300 hover:shadow-md box-border"
         >
-          <Search className="search-icon" size={18} color="#9ca3af" style={{ transition: 'color 0.2s ease' }} />
-          <span style={{ flex: 1, textAlign: 'left', fontSize: '15px', color: '#9ca3af', fontWeight: 500 }}>가이드 검색 (단축키 '/')</span>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-            <kbd style={{ fontFamily: 'monospace', fontSize: '11px', fontWeight: 600, color: '#9ca3af', backgroundColor: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: '4px', padding: '2px 8px' }}>⌘</kbd>
-            <kbd style={{ fontFamily: 'monospace', fontSize: '11px', fontWeight: 600, color: '#9ca3af', backgroundColor: '#f9fafb', border: '1px solid #e5e7eb', borderRadius: '4px', padding: '2px 8px' }}>K</kbd>
+          <Search size={18} className="text-zinc-400 transition-colors group-hover:text-blue-500" />
+          <span className="flex-1 text-left text-[15px] text-zinc-400 font-medium">가이드 검색 (단축키 '/')</span>
+          <div className="flex items-center gap-1">
+            <kbd className="font-mono text-[11px] font-semibold text-zinc-400 bg-zinc-50 border border-zinc-200 rounded px-2 py-0.5">⌘</kbd>
+            <kbd className="font-mono text-[11px] font-semibold text-zinc-400 bg-zinc-50 border border-zinc-200 rounded px-2 py-0.5">K</kbd>
           </div>
         </button>
 
         {/* 인기 검색어 칩 */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '8px' }}>
-          <span style={{ fontSize: '13px', fontWeight: 500, color: '#9ca3af', marginRight: '4px' }}>인기 검색어:</span>
+        <div className="flex items-center gap-2 mt-2">
+          <span className="text-[13px] font-medium text-zinc-400 mr-1">인기 검색어:</span>
           {POPULAR.map(q => (
-            <button 
-              key={q} 
-              onClick={open} 
-              style={{
-                fontSize: '13px', fontWeight: 500, padding: '4px 12px', borderRadius: '99px',
-                backgroundColor: '#ffffff', border: '1px solid #e5e7eb', color: '#4b5563',
-                cursor: 'pointer', transition: 'all 0.2s ease'
-              }}
-              onMouseEnter={e => { e.currentTarget.style.borderColor = '#d1d5db'; e.currentTarget.style.backgroundColor = '#f9fafb'; }}
-              onMouseLeave={e => { e.currentTarget.style.borderColor = '#e5e7eb'; e.currentTarget.style.backgroundColor = '#ffffff'; }}
+            <button
+              key={q}
+              onClick={open}
+              className="text-[13px] font-medium px-3 py-1 rounded-full bg-white border border-zinc-200 text-zinc-600 cursor-pointer transition-all hover:border-zinc-300 hover:bg-zinc-50"
             >
               {q}
             </button>
@@ -164,57 +115,41 @@ export default function HomePage() {
       </section>
 
       {/* ── 모듈 그리드 ── */}
-      <section style={{ marginBottom: '64px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
-          <h2 style={{ fontSize: '16px', fontWeight: 700, color: '#111827', margin: 0, letterSpacing: '-0.01em' }}>카테고리 탐색</h2>
+      <section className="mb-16">
+        <div className="flex items-center justify-between mb-5">
+          <h2 className="text-base font-bold text-zinc-900 m-0 tracking-tight">카테고리 탐색</h2>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
+        <div className="grid grid-cols-3 gap-4">
           {mods.map(m => <ModuleCard key={m.id} m={m} />)}
         </div>
       </section>
 
       {/* ── 하단 영역 (최근 업데이트 & 빠른 링크) ── */}
-      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '32px' }}>
+      <div className="grid grid-cols-[2fr_1fr] gap-8">
         <section>
-          <h2 style={{ fontSize: '16px', fontWeight: 700, color: '#111827', margin: '0 0 20px 0', letterSpacing: '-0.01em' }}>최근 업데이트</h2>
-          <div style={{ borderRadius: '16px', border: '1px solid #e5e7eb', backgroundColor: '#ffffff', overflow: 'hidden', boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}>
+          <h2 className="text-base font-bold text-zinc-900 mb-5 m-0 tracking-tight">최근 업데이트</h2>
+          <Card hover={false} className="overflow-hidden shadow-sm">
             {recents.map((g, i) => <RecentItem key={g.id} g={g} isLast={i === recents.length - 1} />)}
-          </div>
+          </Card>
         </section>
 
-        <section style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          <h2 style={{ fontSize: '16px', fontWeight: 700, color: '#111827', margin: '0 0 8px 0', letterSpacing: '-0.01em' }}>빠른 링크</h2>
+        <section className="flex flex-col gap-3">
+          <h2 className="text-base font-bold text-zinc-900 mb-2 m-0 tracking-tight">빠른 링크</h2>
           {[
             { to:'/faq', Icon:HelpCircle, label:'운영 FAQ', desc:'반복 문의 해결' },
             { to:'/updates', Icon:Bell, label:'업데이트 이력', desc:'정책 및 기능 변경' },
             { to:'/feedback', Icon:ExternalLink, label:'오류 제보', desc:'시스템 개선 요청' },
           ].map((link, i) => (
-            <Link 
-              key={i} 
-              to={link.to} 
-              style={{
-                display: 'flex', alignItems: 'center', gap: '12px', padding: '16px',
-                borderRadius: '14px', border: '1px solid #e5e7eb', backgroundColor: '#ffffff',
-                textDecoration: 'none', transition: 'all 0.2s ease'
-              }}
-              onMouseEnter={e => {
-                e.currentTarget.style.borderColor = '#d1d5db';
-                e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.05)';
-                e.currentTarget.querySelector('.link-icon').style.color = '#2563eb';
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.borderColor = '#e5e7eb';
-                e.currentTarget.style.boxShadow = 'none';
-                e.currentTarget.querySelector('.link-icon').style.color = '#6b7280';
-              }}
-            >
-              <div style={{ width: '36px', height: '36px', borderRadius: '8px', backgroundColor: '#f9fafb', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <link.Icon className="link-icon" size={18} strokeWidth={2.5} color="#6b7280" style={{ transition: 'color 0.2s ease' }} />
-              </div>
-              <div>
-                <p style={{ fontSize: '14px', fontWeight: 700, color: '#111827', margin: 0 }}>{link.label}</p>
-                <p style={{ fontSize: '12px', fontWeight: 500, color: '#9ca3af', margin: '2px 0 0 0' }}>{link.desc}</p>
-              </div>
+            <Link key={i} to={link.to} className="group no-underline">
+              <Card className="flex items-center gap-3 p-4">
+                <div className="w-9 h-9 rounded-lg bg-zinc-50 flex items-center justify-center">
+                  <link.Icon size={18} strokeWidth={2.5} className="text-zinc-500 transition-colors group-hover:text-blue-600" />
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-zinc-900 m-0">{link.label}</p>
+                  <p className="text-xs font-medium text-zinc-400 mt-0.5 mb-0">{link.desc}</p>
+                </div>
+              </Card>
             </Link>
           ))}
         </section>

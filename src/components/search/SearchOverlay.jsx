@@ -1,4 +1,4 @@
-// src/components/search/SearchOverlay.jsx
+// src/components/search/SearchOverlay.jsx — Tailwind CSS
 import { useState, useEffect, useRef } from 'react';
 import { Search, FileText, CornerDownLeft } from 'lucide-react';
 import { useSearchStore } from '@/store/searchStore.jsx';
@@ -15,11 +15,11 @@ const GUIDES_LIST = Object.entries(GUIDES).map(([id, guide]) => ({
 export default function SearchOverlay() {
   const { isOpen, close, open } = useSearchStore();
   const [query, setQuery] = useState('');
-  const [selectedIndex, setSelectedIndex] = useState(0); // 💡 현재 선택된 인덱스 기억
+  const [selectedIndex, setSelectedIndex] = useState(0);
   const inputRef = useRef(null);
   const navigate = useNavigate();
 
-  const results = GUIDES_LIST.filter(g => 
+  const results = GUIDES_LIST.filter(g =>
     g.title.includes(query) || g.snippet.includes(query) || g.module.includes(query)
   );
 
@@ -32,31 +32,27 @@ export default function SearchOverlay() {
   // 현재 표시 중인 목록 (빈 쿼리면 최근 조회, 아니면 검색 결과)
   const activeList = query.trim() === '' ? RECENT_GUIDES.slice(0, 5) : results;
 
-  // 🚀 키보드 네비게이션 제어
+  // 키보드 네비게이션 제어
   const handleKeyDown = (e) => {
-    // 1. 방향키 아래 (↓)
     if (e.key === 'ArrowDown') {
       e.preventDefault();
       setSelectedIndex(prev => (prev < activeList.length - 1 ? prev + 1 : prev));
     }
-    // 2. 방향키 위 (↑)
     else if (e.key === 'ArrowUp') {
       e.preventDefault();
       setSelectedIndex(prev => (prev > 0 ? prev - 1 : prev));
     }
-    // 3. 엔터 (Enter) - 선택한 항목으로 이동
     else if (e.key === 'Enter' && activeList.length > 0) {
       e.preventDefault();
       navigate(`/guides/${activeList[selectedIndex].id}`);
       close();
     }
-    // 4. 창 닫기 (ESC)
     else if (e.key === 'Escape') {
       close();
     }
   };
 
-  // 슬래시(/) 단축키로 검색창 열기 (바탕화면 감지용)
+  // 슬래시(/) 단축키로 검색창 열기
   useEffect(() => {
     const handleGlobalKeyDown = (e) => {
       if (e.key === '/' && !isOpen && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
@@ -79,95 +75,75 @@ export default function SearchOverlay() {
 
   if (!isOpen) return null;
 
+  const renderItem = (item, idx) => {
+    const isSelected = selectedIndex === idx;
+    return (
+      <div
+        key={item.id}
+        onClick={() => { navigate(`/guides/${item.id}`); close(); }}
+        onMouseEnter={() => setSelectedIndex(idx)}
+        className={`py-3 px-[15px] rounded-[10px] cursor-pointer transition-all duration-100 border-l-[3px] ${
+          isSelected
+            ? 'bg-blue-50 border-l-blue-500'
+            : 'bg-transparent border-l-transparent hover:bg-blue-50'
+        }`}
+      >
+        <div className="flex items-center gap-2.5">
+          <FileText size={16} className={isSelected ? 'text-blue-600' : 'text-gray-400'} />
+          <span className={`font-semibold text-sm ${isSelected ? 'text-blue-700' : 'text-gray-900'}`}>{item.title}</span>
+          <span className="text-[11px] font-semibold px-2 py-0.5 bg-gray-100 text-gray-500 rounded-full whitespace-nowrap">{item.module}</span>
+        </div>
+        {item.snippet && (
+          <p className="text-[13px] text-gray-500 mt-1 ml-[26px]">{item.snippet}</p>
+        )}
+      </div>
+    );
+  };
+
   return (
-    <div 
-      style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)', zIndex: 9999, display: 'flex', justifyContent: 'center', paddingTop: '10vh' }}
+    <div
+      className="fixed inset-0 bg-black/50 backdrop-blur-[4px] z-[9999] flex justify-center pt-[10vh]"
       onClick={(e) => e.target === e.currentTarget && close()}
     >
-      <div style={{ width: '100%', maxWidth: '600px', backgroundColor: '#fff', borderRadius: '16px', boxShadow: '0 20px 40px rgba(0,0,0,0.2)', overflow: 'hidden' }}>
-        
+      <div className="w-full max-w-[600px] bg-white rounded-2xl shadow-2xl overflow-hidden h-fit">
+
         {/* 입력창 */}
-        <div style={{ display: 'flex', alignItems: 'center', padding: '0 20px', borderBottom: '1px solid #eee' }}>
-          <Search size={20} color="#9ca3af" />
+        <div className="flex items-center px-5 border-b border-zinc-200">
+          <Search size={20} className="text-gray-400" />
           <input
             ref={inputRef}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            onKeyDown={handleKeyDown} // 💡 입력창에서 키보드 이벤트 감지
+            onKeyDown={handleKeyDown}
             placeholder="찾으시는 가이드 이름을 입력하세요..."
-            style={{ flex: 1, height: '60px', border: 'none', outline: 'none', padding: '0 15px', fontSize: '16px' }}
+            className="flex-1 h-[60px] border-none outline-none px-[15px] text-base bg-transparent"
           />
-          <button onClick={close} style={{ border: 'none', background: '#f3f4f6', padding: '4px 8px', borderRadius: '4px', cursor: 'pointer', fontSize: '12px', fontWeight: 'bold', color: '#6b7280' }}>ESC</button>
+          <button onClick={close} className="border-none bg-gray-100 px-2 py-1 rounded cursor-pointer text-xs font-bold text-gray-500 hover:bg-gray-200">ESC</button>
         </div>
 
         {/* 결과창 */}
-        <div style={{ maxHeight: '400px', overflowY: 'auto', padding: '10px' }}>
+        <div className="max-h-[400px] overflow-y-auto p-2.5">
           {query.trim() === '' ? (
             <>
-              <div style={{ padding: '8px 15px', fontSize: '12px', fontWeight: 600, color: '#9ca3af', textTransform: 'uppercase' }}>최근 조회</div>
-              {RECENT_GUIDES.slice(0, 5).map((item, idx) => {
-                const isSelected = selectedIndex === idx;
-                return (
-                  <div
-                    key={item.id}
-                    onClick={() => { navigate(`/guides/${item.id}`); close(); }}
-                    onMouseEnter={() => setSelectedIndex(idx)}
-                    style={{
-                      padding: '12px 15px',
-                      borderRadius: '10px',
-                      cursor: 'pointer',
-                      transition: '0.1s',
-                      backgroundColor: isSelected ? '#eff6ff' : 'transparent',
-                      borderLeft: isSelected ? '3px solid #3b82f6' : '3px solid transparent'
-                    }}
-                  >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <FileText size={16} color={isSelected ? "#2563eb" : "#9ca3af"} />
-                      <span style={{ fontWeight: 600, fontSize: '14px', color: isSelected ? '#1d4ed8' : '#111827' }}>{item.title}</span>
-                      <span style={{ fontSize: '11px', fontWeight: 600, padding: '2px 8px', backgroundColor: '#f3f4f6', color: '#6b7280', borderRadius: '99px', whiteSpace: 'nowrap' }}>{item.module}</span>
-                    </div>
-                  </div>
-                );
-              })}
+              <div className="py-2 px-[15px] text-xs font-semibold text-gray-400 uppercase">최근 조회</div>
+              {RECENT_GUIDES.slice(0, 5).map((item, idx) => renderItem(item, idx))}
             </>
-          ) : results.length > 0 ? results.map((item, idx) => {
-            const isSelected = selectedIndex === idx; // 현재 방향키가 위치한 곳인지 확인
-            return (
-              <div
-                key={item.id}
-                onClick={() => { navigate(`/guides/${item.id}`); close(); }}
-                onMouseEnter={() => setSelectedIndex(idx)} // 💡 마우스가 올라가도 선택된 것처럼 동기화
-                style={{
-                  padding: '12px 15px',
-                  borderRadius: '10px',
-                  cursor: 'pointer',
-                  transition: '0.1s',
-                  backgroundColor: isSelected ? '#eff6ff' : 'transparent', // 💡 선택되면 파란색 배경
-                  borderLeft: isSelected ? '3px solid #3b82f6' : '3px solid transparent' // 💡 선택되면 왼쪽 강조 바
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <FileText size={16} color={isSelected ? "#2563eb" : "#9ca3af"} />
-                  <span style={{ fontWeight: 600, fontSize: '14px', color: isSelected ? '#1d4ed8' : '#111827' }}>{item.title}</span>
-                  <span style={{ fontSize: '11px', fontWeight: 600, padding: '2px 8px', backgroundColor: '#f3f4f6', color: '#6b7280', borderRadius: '99px', whiteSpace: 'nowrap' }}>{item.module}</span>
-                </div>
-                <p style={{ fontSize: '13px', color: '#6b7280', margin: '4px 0 0 26px' }}>{item.snippet}</p>
-              </div>
-            )
-          }) : (
-            <div style={{ padding: '40px', textAlign: 'center', color: '#9ca3af', fontSize: '14px' }}>
+          ) : results.length > 0 ? (
+            results.map((item, idx) => renderItem(item, idx))
+          ) : (
+            <div className="py-10 text-center text-gray-400 text-sm">
               <p>검색 결과가 없습니다.</p>
-              <Link to="/feedback" onClick={close} style={{ color: '#3b82f6', textDecoration: 'underline', fontSize: '13px', marginTop: '8px', display: 'inline-block' }}>개선/불편사항 접수</Link>
+              <Link to="/feedback" onClick={close} className="text-blue-500 underline text-[13px] mt-2 inline-block">개선/불편사항 접수</Link>
             </div>
           )}
         </div>
 
         {/* 푸터 */}
-        <div style={{ padding: '12px 20px', backgroundColor: '#f9fafb', borderTop: '1px solid #eee', display: 'flex', fontSize: '12px', color: '#9ca3af' }}>
-          <span style={{ display: 'flex', alignItems: 'center', gap: '4px', marginRight: '16px' }}>
-            <span style={{ fontFamily: 'monospace', fontWeight: 'bold' }}>↑↓</span> 이동
+        <div className="py-3 px-5 bg-gray-50 border-t border-zinc-200 flex text-xs text-gray-400">
+          <span className="flex items-center gap-1 mr-4">
+            <span className="font-mono font-bold">↑↓</span> 이동
           </span>
-          <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+          <span className="flex items-center gap-1">
             <CornerDownLeft size={12}/> 선택
           </span>
         </div>

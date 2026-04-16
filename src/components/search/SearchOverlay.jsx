@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Search, FileText, CornerDownLeft } from 'lucide-react';
 import { useSearchStore } from '@/store/searchStore.jsx';
+import { Button } from '@/components/ui';
 import { useNavigate, Link } from 'react-router-dom';
 import { GUIDES, RECENT_GUIDES } from '@/data/mockData';
 
@@ -118,7 +119,7 @@ export default function SearchOverlay() {
             placeholder="찾으시는 가이드 이름을 입력하세요..."
             className="flex-1 h-[60px] border-none outline-none px-[15px] text-base bg-transparent"
           />
-          <button onClick={close} className="border-none bg-gray-100 px-2 py-1 rounded cursor-pointer text-xs font-bold text-gray-500 hover:bg-gray-200">ESC</button>
+          <Button variant="ghost" size="xs" onClick={close} className="bg-gray-100 hover:bg-gray-200 text-gray-500">ESC</Button>
         </div>
 
         {/* 결과창 */}

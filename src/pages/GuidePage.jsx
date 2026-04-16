@@ -13,6 +13,10 @@ import {
   User, Calendar, ArrowUpRight, BookOpen
 } from 'lucide-react';
 import { GUIDES } from '../data/mockData';
+import { Button } from '@/components/ui';
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui';
+import { Input } from '@/components/ui';
+import { Textarea } from '@/components/ui';
 
 // ─── 인라인 데이터 제거됨 — src/data/mockData.js 참조 ─────────────────────
 // 하위 호환 폴백 (mockData에 없는 id 대비)
@@ -121,18 +125,20 @@ const SEV_TW = {
 // ─── 유의사항 ────────────────────────────────────────────────────────────────
 function CautionBlock({ items }) {
   return (
-    <div className="border border-amber-100 rounded-xl overflow-hidden shadow-sm">
+    <Alert variant="warning" className="rounded-xl p-0 overflow-hidden shadow-sm">
       <div className="py-2.5 px-4.5 bg-amber-100 border-b border-amber-100 flex items-center gap-2">
         <AlertTriangle size={13} className="text-amber-500" />
-        <span className="text-xs font-extrabold text-amber-700 tracking-wide">반드시 확인하세요</span>
+        <AlertTitle className="text-xs font-extrabold text-amber-700 tracking-wide mb-0">반드시 확인하세요</AlertTitle>
       </div>
-      {items.map((c,i)=>(
-        <div key={i} className={`flex gap-3 py-3 px-4.5 bg-white ${i<items.length-1 ? 'border-b border-amber-100' : ''}`}>
-          <div className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0 mt-1.5" />
-          <p className="m-0 text-sm text-zinc-600 leading-relaxed">{c}</p>
-        </div>
-      ))}
-    </div>
+      <AlertDescription className="p-0">
+        {items.map((c,i)=>(
+          <div key={i} className={`flex gap-3 py-3 px-4.5 bg-white ${i<items.length-1 ? 'border-b border-amber-100' : ''}`}>
+            <div className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0 mt-1.5" />
+            <p className="m-0 text-sm text-zinc-600 leading-relaxed">{c}</p>
+          </div>
+        ))}
+      </AlertDescription>
+    </Alert>
   );
 }
 
@@ -150,10 +156,10 @@ function CaseItem({ item, index }) {
         <div className="pr-5 pb-4.5 pl-15">
           <p className="text-sm leading-7 text-zinc-600 mb-2.5 whitespace-pre-wrap">{item.action}</p>
           {item.note && (
-            <div className="py-2 px-3.5 bg-amber-100 border border-amber-100 rounded-lg text-[13px] text-amber-700 flex gap-2 leading-relaxed">
+            <Alert variant="warning" className="py-2 px-3.5 rounded-lg text-[13px] flex gap-2 leading-relaxed">
               <AlertTriangle size={12} className="text-amber-500 shrink-0 mt-0.5" />
-              {item.note}
-            </div>
+              <AlertDescription className="p-0">{item.note}</AlertDescription>
+            </Alert>
           )}
         </div>
       )}
@@ -178,19 +184,19 @@ function FeedbackWidget() {
     <div className="text-center">
       <p className="text-[15px] font-bold text-zinc-700 mb-4.5">이 가이드가 업무에 도움이 되었나요?</p>
       <div className={`flex gap-2.5 justify-center ${voted===false ? 'mb-4' : ''}`}>
-        <button onClick={()=>setVoted(true)} className={`flex items-center gap-1.5 py-2 px-5.5 rounded-full font-bold text-[13px] cursor-pointer transition-all duration-150 border ${voted===true ? 'border-green-500 bg-green-100 text-green-700' : 'border-zinc-200 bg-white text-zinc-500'}`}>
+        <Button variant={voted===true ? 'secondary' : 'outline'} size="sm" onClick={()=>setVoted(true)} className={`rounded-full px-5.5 ${voted===true ? 'border-green-500 bg-green-100 text-green-700' : ''}`}>
           <ThumbsUp size={14} /> 도움됨
-        </button>
-        <button onClick={()=>setVoted(false)} className={`flex items-center gap-1.5 py-2 px-5.5 rounded-full font-bold text-[13px] cursor-pointer transition-all duration-150 border ${voted===false ? 'border-red-500 bg-red-100 text-red-500' : 'border-zinc-200 bg-white text-zinc-500'}`}>
+        </Button>
+        <Button variant={voted===false ? 'secondary' : 'outline'} size="sm" onClick={()=>setVoted(false)} className={`rounded-full px-5.5 ${voted===false ? 'border-red-500 bg-red-100 text-red-500' : ''}`}>
           <ThumbsDown size={14} /> 보완 필요
-        </button>
+        </Button>
       </div>
       {voted===false && (
         <div className="mt-3.5 text-left max-w-[480px] mx-auto">
-          <textarea value={comment} onChange={e=>setComment(e.target.value)} placeholder="어떤 점이 부족했나요? (선택 · 200자 이내)" maxLength={200} rows={3}
-            className="w-full py-2.5 px-3 border border-zinc-200 rounded-lg text-[13px] resize-none outline-none leading-relaxed box-border focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10"
+          <Textarea value={comment} onChange={e=>setComment(e.target.value)} placeholder="어떤 점이 부족했나요? (선택 · 200자 이내)" maxLength={200} rows={3}
+            className="py-2.5 px-3 text-[13px] min-h-0 leading-relaxed"
           />
-          <button onClick={()=>setDone(true)} className="mt-2 py-2 px-5.5 bg-zinc-900 text-white border-none rounded-lg text-[13px] font-bold cursor-pointer">제출하기</button>
+          <Button variant="primary" size="sm" onClick={()=>setDone(true)} className="mt-2">제출하기</Button>
         </div>
       )}
     </div>
@@ -402,8 +408,8 @@ export default function GuidePage() {
             <SecHeading id="sec-reference">용어 참조</SecHeading>
             <div className="relative mb-7">
               <SearchIcon size={17} className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none text-zinc-300" />
-              <input type="text" placeholder="용어 검색…" value={searchTerm} onChange={e=>setSearchTerm(e.target.value)}
-                className="w-full py-3 pr-4 pl-[42px] rounded-xl border border-zinc-200 text-sm outline-none box-border text-zinc-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/10"
+              <Input type="text" placeholder="용어 검색…" value={searchTerm} onChange={e=>setSearchTerm(e.target.value)}
+                className="py-3 pr-4 pl-[42px] rounded-xl"
               />
             </div>
             <div className="border border-zinc-200 rounded-xl overflow-hidden ring-1 ring-black/8">
@@ -589,7 +595,7 @@ export default function GuidePage() {
           <MessageCircle size={18} className="text-blue-500 mb-2.5" />
           <p className="text-[13px] font-extrabold text-zinc-900 mb-1.5 mt-0">실시간 지원</p>
           <p className="text-xs text-zinc-400 mb-3.5 mt-0 leading-relaxed">가이드로 해결되지 않는 문제는 플랫폼서비스실 슬랙 채널에 문의해 주세요.</p>
-          <button className="w-full py-2.5 rounded-[9px] border-none bg-zinc-900 text-xs font-bold text-white cursor-pointer hover:bg-zinc-700 transition-colors duration-150">슬랙 문의하기</button>
+          <Button variant="primary" size="sm" className="w-full rounded-[9px]">슬랙 문의하기</Button>
         </div>
       </aside>
     </div>

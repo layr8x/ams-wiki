@@ -7,6 +7,13 @@ import {
   GripVertical, AlertTriangle, RotateCcw, Eye, EyeOff, Upload,
   User, Calendar, Hash, Layers, Tag, ShieldCheck, MessageCircle
 } from 'lucide-react';
+import { Button } from '@/components/ui';
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui';
+import { Input } from '@/components/ui';
+import { Textarea } from '@/components/ui';
+import {
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter
+} from '@/components/ui';
 
 // ─── Mock Data ─────────────────────────────────────────────────────────────
 const GUIDES_LIST = [
@@ -314,8 +321,8 @@ function ImageUploadSlot({ image, onUpload, onRemove }) {
       <div className="flex items-center justify-between px-3.5 py-2 bg-zinc-50 border-t border-zinc-100">
         <span className="text-xs text-zinc-400">{image.name} · {image.size ? `${(image.size/1024).toFixed(1)} KB` : ''}</span>
         <div className="flex gap-1.5">
-          <button onClick={() => fileRef.current?.click()} className="text-xs font-semibold px-2.5 py-1 border border-zinc-200 rounded-lg bg-white cursor-pointer text-zinc-600">교체</button>
-          <button onClick={onRemove} className="text-xs font-semibold px-2.5 py-1 border border-red-100 rounded-lg bg-red-50 cursor-pointer text-red-700">삭제</button>
+          <Button variant="secondary" size="xs" onClick={() => fileRef.current?.click()}>교체</Button>
+          <Button variant="danger" size="xs" onClick={onRemove}>삭제</Button>
         </div>
       </div>
       <input ref={fileRef} type="file" accept="image/*" onChange={handleFile} className="hidden" />
@@ -366,9 +373,9 @@ function VersionDrawer({ isOpen, onClose }) {
               <p className="m-0 text-xs text-zinc-400">{VERSION_HISTORY.length}개 버전 관리 중</p>
             </div>
           </div>
-          <button onClick={onClose} className="w-8 h-8 border border-zinc-200 rounded-lg bg-white cursor-pointer flex items-center justify-center transition-colors hover:bg-zinc-50">
+          <Button variant="outline" size="icon" onClick={onClose}>
             <X size={14} className="text-zinc-500" />
-          </button>
+          </Button>
         </div>
 
         {/* Current version banner */}
@@ -403,13 +410,13 @@ function VersionDrawer({ isOpen, onClose }) {
                 {isExp && (
                   <div className="px-4 pb-3.5 pt-3 border-t border-blue-200 flex gap-2">
                     {!isCurrent && (
-                      <button className="flex-1 p-2 border border-zinc-200 rounded-lg bg-white text-xs font-bold cursor-pointer flex items-center justify-center gap-[5px] text-zinc-600">
+                      <Button variant="secondary" size="sm" className="flex-1">
                         <RotateCcw size={12} /> 이 버전으로 복원
-                      </button>
+                      </Button>
                     )}
-                    <button className="flex-1 p-2 border border-zinc-200 rounded-lg bg-white text-xs font-bold cursor-pointer flex items-center justify-center gap-[5px] text-zinc-600">
+                    <Button variant="secondary" size="sm" className="flex-1">
                       <Eye size={12} /> 미리보기
-                    </button>
+                    </Button>
                   </div>
                 )}
               </div>
@@ -476,17 +483,17 @@ function StepCard({ step, index, onUpdate, onRemove }) {
           placeholder={`Step ${index + 1} 제목`}
           className="flex-1 border-none outline-none text-sm font-bold text-zinc-900 bg-transparent font-[inherit]"
         />
-        <button onClick={onRemove} className="border-none bg-transparent cursor-pointer p-1 text-zinc-400 flex items-center hover:text-red-500">
+        <Button variant="ghost" size="icon" onClick={onRemove} className="w-6 h-6 text-zinc-400 hover:text-red-500">
           <Trash2 size={13} />
-        </button>
+        </Button>
       </div>
       <div className="p-4">
-        <textarea
+        <Textarea
           value={step.desc}
           onChange={e => onUpdate({ ...step, desc: e.target.value })}
           placeholder="이 단계에서 수행할 내용을 구체적으로 작성하세요 (실제 버튼/메뉴 기준)"
           rows={3}
-          className="w-full px-3 py-2 border border-zinc-200 rounded-lg text-sm text-zinc-900 bg-white outline-none transition-colors focus:border-blue-500 focus:ring-[3px] focus:ring-blue-500/15 resize-y leading-relaxed mb-3 box-border"
+          className="px-3 py-2 min-h-0 resize-y leading-relaxed mb-3"
         />
         <p className="text-xs font-semibold text-zinc-500 mt-0 mb-2">스크린샷</p>
         <ImageUploadSlot image={step.image} onUpload={img => onUpdate({ ...step, image: img })} onRemove={() => onUpdate({ ...step, image: null })} />
@@ -503,59 +510,55 @@ function CaseCard({ item, index, onUpdate, onRemove }) {
         <GripVertical size={13} className="text-zinc-300 cursor-grab shrink-0" />
         <span className="text-[11px] font-bold text-zinc-400 tracking-wide shrink-0">CASE {index + 1}</span>
         <input type="text" value={item.label} onChange={e => onUpdate({ ...item, label: e.target.value })} placeholder="상황 라벨 (예: 중도 입반 시, 중복결제 발생 시)" className="flex-1 border-none outline-none text-[13px] font-bold text-zinc-900 bg-transparent font-[inherit]" />
-        <button onClick={onRemove} className="border-none bg-transparent cursor-pointer text-zinc-400 flex items-center hover:text-red-500"><Trash2 size={13} /></button>
+        <Button variant="ghost" size="icon" onClick={onRemove} className="w-6 h-6 text-zinc-400 hover:text-red-500"><Trash2 size={13} /></Button>
       </div>
       <div className="px-4 py-3.5 grid grid-cols-2 gap-3">
         <div>
           <p className="text-xs font-semibold text-zinc-500 m-0 mb-1.5">처리 방법</p>
-          <textarea value={item.action} onChange={e => onUpdate({ ...item, action: e.target.value })} placeholder="처리 절차" rows={3} className="w-full px-3 py-2.5 border border-zinc-200 rounded-lg text-sm text-zinc-900 bg-white outline-none transition-[border-color,box-shadow] focus:border-blue-500 focus:ring-[3px] focus:ring-blue-500/15 resize-none leading-relaxed" />
+          <Textarea value={item.action} onChange={e => onUpdate({ ...item, action: e.target.value })} placeholder="처리 절차" rows={3} className="px-3 py-2.5 min-h-0 leading-relaxed" />
         </div>
         <div>
           <p className="text-xs font-semibold text-zinc-500 m-0 mb-1.5">참고사항 <span className="text-zinc-300 font-normal">선택</span></p>
-          <textarea value={item.note} onChange={e => onUpdate({ ...item, note: e.target.value })} placeholder="예외 케이스, 주의사항" rows={3} className="w-full px-3 py-2.5 border border-zinc-200 rounded-lg text-sm text-zinc-900 bg-white outline-none transition-[border-color,box-shadow] focus:border-blue-500 focus:ring-[3px] focus:ring-blue-500/15 resize-none leading-relaxed" />
+          <Textarea value={item.note} onChange={e => onUpdate({ ...item, note: e.target.value })} placeholder="예외 케이스, 주의사항" rows={3} className="px-3 py-2.5 min-h-0 leading-relaxed" />
         </div>
       </div>
     </div>
   );
 }
 
-// ─── Icon Button ────────────────────────────────────────────────────────────
+// ─── Icon Button (wraps shadcn/ui Button) ──────────────────────────────────
 function Btn({ children, onClick, variant = 'default', icon: Icon, active }) {
-  const base = 'inline-flex items-center gap-1.5 cursor-pointer transition-all duration-100 text-[13px] rounded-lg hover:opacity-80';
-  const variants = {
-    default: `px-3.5 py-[7px] border border-zinc-200 font-semibold ${active ? 'bg-zinc-100 text-zinc-900' : 'bg-white text-zinc-700'}`,
-    primary: 'px-4 py-[7px] border-none bg-zinc-900 text-white font-bold',
-    ghost:   'px-3.5 py-[7px] border-none bg-transparent text-zinc-600 font-semibold',
-  };
+  const variantMap = { default: 'secondary', primary: 'primary', ghost: 'ghost' };
   return (
-    <button onClick={onClick} className={`${base} ${variants[variant] || variants.default}`}>
+    <Button
+      variant={variantMap[variant] || 'secondary'}
+      size="sm"
+      onClick={onClick}
+      className={active ? 'bg-zinc-100 text-zinc-900' : ''}
+    >
       {Icon && <Icon size={13} />}{children}
-    </button>
+    </Button>
   );
 }
 
 // ─── 검수 요청 모달 ──────────────────────────────────────────────────────────
-function ReviewModal({ onClose, onConfirm }) {
+function ReviewModal({ isOpen, onClose, onConfirm }) {
   const [reviewer, setReviewer] = useState('');
   const [note, setNote] = useState('');
   const REVIEWERS = ['이지원 (콘텐츠팀)', '박수진 (운영팀)', '김도현 (플랫폼서비스실)'];
-  return createPortal(
-    <div className="fixed inset-0 bg-black/40 backdrop-blur-[4px] z-[9000] flex items-center justify-center" onClick={e => e.target===e.currentTarget && onClose()}>
-      <div className="w-[480px] bg-white rounded-[20px] shadow-[0_24px_64px_rgba(0,0,0,0.18)] overflow-hidden animate-[modalIn_0.18s_ease]">
-        <style>{`@keyframes modalIn{from{opacity:0;transform:scale(0.96) translateY(8px)}to{opacity:1;transform:none}}`}</style>
+  return (
+    <Dialog open={isOpen} onOpenChange={(open) => { if (!open) onClose(); }}>
+      <DialogContent className="max-w-[480px] p-0 gap-0 rounded-[20px]">
         <div className="px-7 pt-6 pb-0">
-          <div className="flex items-center justify-between mb-5">
-            <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-[10px] bg-yellow-100 flex items-center justify-center">
-                <Send size={16} className="text-yellow-700" />
-              </div>
-              <div>
-                <h3 className="m-0 text-[15px] font-extrabold text-zinc-900">검수 요청</h3>
-                <p className="m-0 text-xs text-zinc-400">리뷰어를 지정하고 요청 메모를 남겨주세요</p>
-              </div>
+          <DialogHeader className="flex-row items-center gap-2.5 mb-5 space-y-0">
+            <div className="w-9 h-9 rounded-[10px] bg-yellow-100 flex items-center justify-center shrink-0">
+              <Send size={16} className="text-yellow-700" />
             </div>
-            <button onClick={onClose} className="border-none bg-transparent cursor-pointer p-1 text-zinc-400"><X size={18} /></button>
-          </div>
+            <div>
+              <DialogTitle className="text-[15px] font-extrabold text-zinc-900">검수 요청</DialogTitle>
+              <DialogDescription className="text-xs text-zinc-400 mt-0">리뷰어를 지정하고 요청 메모를 남겨주세요</DialogDescription>
+            </div>
+          </DialogHeader>
           <div className="mb-4">
             <label className="text-xs font-bold text-zinc-600 block mb-1.5">리뷰어 선택 *</label>
             <div className="relative">
@@ -568,47 +571,45 @@ function ReviewModal({ onClose, onConfirm }) {
           </div>
           <div className="mb-6">
             <label className="text-xs font-bold text-zinc-600 block mb-1.5">요청 메모 (선택)</label>
-            <textarea value={note} onChange={e=>setNote(e.target.value)} placeholder='리뷰어에게 전달할 내용을 입력하세요' rows={3} className="w-full px-3 py-2.5 border border-zinc-200 rounded-lg text-[13px] resize-none outline-none font-[inherit] leading-relaxed box-border focus:border-blue-500 focus:ring-[3px] focus:ring-blue-500/15" />
+            <Textarea value={note} onChange={e=>setNote(e.target.value)} placeholder='리뷰어에게 전달할 내용을 입력하세요' rows={3} className="px-3 py-2.5 text-[13px] min-h-0 font-[inherit] leading-relaxed" />
           </div>
         </div>
-        <div className="px-7 pt-4 pb-6 flex gap-2 justify-end border-t border-zinc-100">
-          <button onClick={onClose} className="py-2.5 px-[18px] border border-zinc-200 rounded-lg bg-white text-[13px] font-semibold cursor-pointer text-zinc-700 hover:bg-zinc-50">취소</button>
-          <button onClick={() => { if(reviewer) { onConfirm(reviewer, note); } }} disabled={!reviewer} className={`py-2.5 px-5 border-none rounded-lg text-white text-[13px] font-bold transition-colors duration-150 ${reviewer ? 'bg-zinc-900 cursor-pointer hover:bg-zinc-800' : 'bg-zinc-300 cursor-not-allowed'}`}>검수 요청 보내기</button>
-        </div>
-      </div>
-    </div>,
-    document.body
+        <DialogFooter className="px-7 pt-4 pb-6 border-t border-zinc-100 flex-row justify-end gap-2">
+          <Button variant="secondary" size="md" onClick={onClose}>취소</Button>
+          <Button variant="primary" size="md" onClick={() => { if(reviewer) { onConfirm(reviewer, note); } }} disabled={!reviewer}>검수 요청 보내기</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
 
 // ─── 발행 확인 모달 ──────────────────────────────────────────────────────────
-function PublishModal({ title, version, onClose, onConfirm }) {
+function PublishModal({ isOpen, title, version, onClose, onConfirm }) {
   const [confirmed, setConfirmed] = useState(false);
-  return createPortal(
-    <div className="fixed inset-0 bg-black/40 backdrop-blur-[4px] z-[9000] flex items-center justify-center" onClick={e => e.target===e.currentTarget && onClose()}>
-      <div className="w-[460px] bg-white rounded-[20px] shadow-[0_24px_64px_rgba(0,0,0,0.18)] overflow-hidden animate-[modalIn_0.18s_ease]">
-        <div className="p-7">
+  return (
+    <Dialog open={isOpen} onOpenChange={(open) => { if (!open) onClose(); }}>
+      <DialogContent className="max-w-[460px] p-7 gap-0 rounded-[20px]">
+        <DialogHeader className="space-y-0 mb-0">
           <div className="w-11 h-11 rounded-xl bg-green-100 flex items-center justify-center mb-4">
             <Check size={22} className="text-green-600" />
           </div>
-          <h3 className="m-0 mb-2 text-[17px] font-extrabold text-zinc-900">가이드를 발행할까요?</h3>
-          <p className="m-0 mb-5 text-sm text-zinc-500 leading-relaxed">
+          <DialogTitle className="text-[17px] font-extrabold text-zinc-900 mb-2">가이드를 발행할까요?</DialogTitle>
+          <DialogDescription className="text-sm text-zinc-500 leading-relaxed mb-5">
             <strong className="text-zinc-800">"{title || '제목 없음'}"</strong> ({version})이 배포완료 상태로 전환되며, 모든 운영자에게 즉시 노출됩니다.
-          </p>
-          <label className="flex items-center gap-2.5 px-4 py-3 bg-zinc-50 rounded-[10px] border border-zinc-200 cursor-pointer mb-5">
-            <div onClick={()=>setConfirmed(p=>!p)} className={`w-[18px] h-[18px] rounded-[5px] border-[1.5px] flex items-center justify-center shrink-0 transition-all duration-150 ${confirmed ? 'border-green-600 bg-green-600' : 'border-zinc-300 bg-white'}`}>
-              {confirmed && <Check size={11} color='#fff' strokeWidth={3} />}
-            </div>
-            <span className="text-[13px] text-zinc-700 font-medium">내용을 최종 검토했으며 발행에 동의합니다.</span>
-          </label>
-          <div className="flex gap-2 justify-end">
-            <button onClick={onClose} className="py-2.5 px-[18px] border border-zinc-200 rounded-lg bg-white text-[13px] font-semibold cursor-pointer text-zinc-700 hover:bg-zinc-50">취소</button>
-            <button onClick={() => confirmed && onConfirm()} disabled={!confirmed} className={`py-2.5 px-[22px] border-none rounded-lg text-white text-[13px] font-bold transition-colors duration-150 ${confirmed ? 'bg-gray-900 cursor-pointer hover:bg-gray-800' : 'bg-zinc-300 cursor-not-allowed'}`}>발행하기</button>
+          </DialogDescription>
+        </DialogHeader>
+        <label className="flex items-center gap-2.5 px-4 py-3 bg-zinc-50 rounded-[10px] border border-zinc-200 cursor-pointer mb-5">
+          <div onClick={()=>setConfirmed(p=>!p)} className={`w-[18px] h-[18px] rounded-[5px] border-[1.5px] flex items-center justify-center shrink-0 transition-all duration-150 ${confirmed ? 'border-green-600 bg-green-600' : 'border-zinc-300 bg-white'}`}>
+            {confirmed && <Check size={11} color='#fff' strokeWidth={3} />}
           </div>
-        </div>
-      </div>
-    </div>,
-    document.body
+          <span className="text-[13px] text-zinc-700 font-medium">내용을 최종 검토했으며 발행에 동의합니다.</span>
+        </label>
+        <DialogFooter className="flex-row justify-end gap-2">
+          <Button variant="secondary" size="md" onClick={onClose}>취소</Button>
+          <Button variant="primary" size="md" onClick={() => confirmed && onConfirm()} disabled={!confirmed}>발행하기</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
 
@@ -732,31 +733,29 @@ export default function EditorPage() {
       </header>
 
       {/* ── 검수요청 모달 ── */}
-      {showReview && (
-        <ReviewModal
-          onClose={() => setShowReview(false)}
-          onConfirm={(reviewer) => {
-            set('status', '검수중');
-            setShowReview(false);
-            setToast(`${reviewer}에게 검수 요청을 보냈습니다.`);
-          }}
-        />
-      )}
+      <ReviewModal
+        isOpen={showReview}
+        onClose={() => setShowReview(false)}
+        onConfirm={(reviewer) => {
+          set('status', '검수중');
+          setShowReview(false);
+          setToast(`${reviewer}에게 검수 요청을 보냈습니다.`);
+        }}
+      />
 
       {/* ── 발행 모달 ── */}
-      {showPublish && (
-        <PublishModal
-          title={form.title}
-          version={form.version}
-          onClose={() => setShowPublish(false)}
-          onConfirm={() => {
-            set('status', '배포완료');
-            setShowPublish(false);
-            setToast('가이드가 성공적으로 발행되었습니다!');
-            save();
-          }}
-        />
-      )}
+      <PublishModal
+        isOpen={showPublish}
+        title={form.title}
+        version={form.version}
+        onClose={() => setShowPublish(false)}
+        onConfirm={() => {
+          set('status', '배포완료');
+          setShowPublish(false);
+          setToast('가이드가 성공적으로 발행되었습니다!');
+          save();
+        }}
+      />
 
       {/* ── 토스트 ── */}
       {toast && <Toast message={toast} onClose={() => setToast(null)} />}
@@ -785,7 +784,7 @@ export default function EditorPage() {
                     const active = form.guideType === t;
                     const tw = TYPE_BADGE_TW[t] || TYPE_BADGE_TW.SOP;
                     return (
-                      <button key={t} onClick={() => set('guideType', t)} className={`py-[5px] px-3 rounded-full text-xs font-bold cursor-pointer border transition-all duration-100 ${active ? tw.chip : 'border-zinc-200 bg-white text-zinc-600'}`}>{t}</button>
+                      <Button key={t} variant="outline" size="xs" onClick={() => set('guideType', t)} className={`rounded-full ${active ? tw.chip : ''}`}>{t}</Button>
                     );
                   })}
                 </div>
@@ -794,10 +793,10 @@ export default function EditorPage() {
 
             <div className="grid grid-cols-[1fr_2fr] gap-4 mb-4">
               <Field label="가이드 그룹" required>
-                <input type="text" value={form.guideGroup} onChange={e=>set('guideGroup',e.target.value)} placeholder="예: 환불 가이드" className="w-full px-3 py-2.5 border border-zinc-200 rounded-lg text-sm text-zinc-900 bg-white outline-none transition-[border-color,box-shadow] focus:border-blue-500 focus:ring-[3px] focus:ring-blue-500/15" />
+                <Input type="text" value={form.guideGroup} onChange={e=>set('guideGroup',e.target.value)} placeholder="예: 환불 가이드" className="px-3 py-2.5" />
               </Field>
               <Field label="가이드명" required>
-                <input type="text" value={form.title} onChange={e=>set('title',e.target.value)} placeholder="예: 환불 승인 기준 판단 가이드" className="w-full px-3 py-2.5 border border-zinc-200 rounded-lg text-[15px] font-semibold text-zinc-900 bg-white outline-none transition-[border-color,box-shadow] focus:border-blue-500 focus:ring-[3px] focus:ring-blue-500/15" />
+                <Input type="text" value={form.title} onChange={e=>set('title',e.target.value)} placeholder="예: 환불 승인 기준 판단 가이드" className="px-3 py-2.5 text-[15px] font-semibold" />
               </Field>
             </div>
 
@@ -805,7 +804,7 @@ export default function EditorPage() {
               <Field label="메뉴 경로" required hint="실제 AMS 화면 경로, > 구분">
                 <div className="relative">
                   <Layers size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-zinc-400" />
-                  <input type="text" value={form.menuPath} onChange={e=>set('menuPath',e.target.value)} placeholder="AMS 어드민 > 고객 관리 > 회원 상세 정보" className="w-full px-3 py-2.5 pl-[30px] border border-zinc-200 rounded-lg text-[13px] font-mono text-zinc-900 bg-white outline-none transition-[border-color,box-shadow] focus:border-blue-500 focus:ring-[3px] focus:ring-blue-500/15" />
+                  <Input type="text" value={form.menuPath} onChange={e=>set('menuPath',e.target.value)} placeholder="AMS 어드민 > 고객 관리 > 회원 상세 정보" className="px-3 py-2.5 pl-[30px] text-[13px] font-mono" />
                 </div>
                 {form.menuPath && (
                   <div className="mt-1.5 py-[7px] px-3 bg-zinc-50 border border-zinc-100 rounded-lg flex items-center gap-1.5 flex-wrap">
@@ -856,7 +855,7 @@ export default function EditorPage() {
             {/* TL;DR */}
             <div className="mb-7">
               <Field label="핵심 요약 (TL;DR)" required hint="2~3줄, 30초 내 읽기">
-                <textarea value={form.summary} onChange={e=>set('summary',e.target.value)} placeholder="이 가이드의 핵심 내용을 요약하세요. CS 응대 중 30초 내에 읽을 수 있어야 합니다." rows={3} maxLength={300} className="w-full px-3 py-2.5 border border-zinc-200 rounded-lg text-sm text-zinc-900 bg-white outline-none transition-[border-color,box-shadow] focus:border-blue-500 focus:ring-[3px] focus:ring-blue-500/15 resize-y leading-[1.7]" />
+                <Textarea value={form.summary} onChange={e=>set('summary',e.target.value)} placeholder="이 가이드의 핵심 내용을 요약하세요. CS 응대 중 30초 내에 읽을 수 있어야 합니다." rows={3} maxLength={300} className="px-3 py-2.5 min-h-0 resize-y leading-[1.7]" />
                 <div className="text-right text-[11px] text-zinc-400 mt-1">{form.summary.length}/300</div>
               </Field>
             </div>
@@ -886,19 +885,19 @@ export default function EditorPage() {
                 <Field label="유의사항" required><span /></Field>
                 <Btn icon={Plus} onClick={addCaut}>항목 추가</Btn>
               </div>
-              <div className="border border-amber-100 rounded-xl overflow-hidden">
+              <Alert variant="warning" className="rounded-xl p-0 overflow-hidden">
                 <div className="py-2.5 px-3.5 bg-amber-50 border-b border-amber-100 flex items-center gap-2">
                   <AlertTriangle size={13} className="text-amber-600" />
-                  <span className="text-xs font-bold text-amber-900">실수 방지를 위한 주의사항만 작성하세요</span>
+                  <AlertTitle className="text-xs font-bold text-amber-900 mb-0">실수 방지를 위한 주의사항만 작성하세요</AlertTitle>
                 </div>
                 {form.cautions.map((c,i)=>(
                   <div key={i} className={`flex items-center gap-2.5 py-2.5 px-3.5 ${i<form.cautions.length-1 ? 'border-b border-zinc-100' : ''}`}>
                     <div className="w-[5px] h-[5px] rounded-full bg-amber-600 shrink-0" />
                     <input type="text" value={c} onChange={e=>updCaut(i,e.target.value)} placeholder="유의사항을 입력하세요" className="flex-1 border-none outline-none text-[13px] text-zinc-900 font-[inherit]" />
-                    <button onClick={()=>delCaut(i)} className="border-none bg-transparent cursor-pointer text-zinc-300 flex hover:text-red-500"><Trash2 size={12} /></button>
+                    <Button variant="ghost" size="icon" onClick={()=>delCaut(i)} className="w-6 h-6 text-zinc-300 hover:text-red-500"><Trash2 size={12} /></Button>
                   </div>
                 ))}
-              </div>
+              </Alert>
             </div>
 
             {/* Related Guides — overflow:visible 보장 */}
@@ -919,11 +918,11 @@ export default function EditorPage() {
               <Field label="작성자">
                 <div className="relative">
                   <User size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-zinc-400" />
-                  <input type="text" value={form.author} readOnly className="w-full px-3 py-2.5 pl-[30px] border border-zinc-200 rounded-lg text-sm bg-zinc-50 text-zinc-400 cursor-not-allowed outline-none" />
+                  <Input type="text" value={form.author} readOnly className="px-3 py-2.5 pl-[30px] bg-zinc-50 text-zinc-400 cursor-not-allowed" />
                 </div>
               </Field>
               <Field label="버전" required>
-                <input type="text" value={form.version} onChange={e=>set('version',e.target.value)} className="w-full px-3 py-2.5 border border-zinc-200 rounded-lg text-sm text-zinc-900 bg-white outline-none transition-[border-color,box-shadow] focus:border-blue-500 focus:ring-[3px] focus:ring-blue-500/15" />
+                <Input type="text" value={form.version} onChange={e=>set('version',e.target.value)} className="px-3 py-2.5" />
               </Field>
               <Field label="상태" required>
                 <div className="relative">
@@ -938,7 +937,7 @@ export default function EditorPage() {
               <div className="flex gap-1.5">
                 {['신규','수정','정책 변경'].map(t => {
                   const active = form.updateType===t;
-                  return <button key={t} onClick={()=>set('updateType', active?'':t)} className={`py-1.5 px-3.5 rounded-full text-xs font-bold cursor-pointer border transition-all duration-100 ${active ? 'border-blue-500 bg-blue-50 text-blue-700' : 'border-zinc-200 bg-white text-zinc-600'}`}>{t}</button>;
+                  return <Button key={t} variant="outline" size="xs" onClick={()=>set('updateType', active?'':t)} className={`rounded-full ${active ? 'border-blue-500 bg-blue-50 text-blue-700' : ''}`}>{t}</Button>;
                 })}
               </div>
             </Field>

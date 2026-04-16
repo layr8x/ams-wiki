@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import { HelpCircle, ChevronDown, ChevronUp, MessageSquare } from 'lucide-react'
 import { Card } from '@/components/ui/card'
+import { Button } from '@/components/ui'
 import { Badge } from '@/components/ui/badge'
 
 const FAQ_DATA = [
@@ -37,17 +38,15 @@ export default function FaqPage() {
       {/* 카테고리 필터 */}
       <div className="flex gap-2 mb-8 justify-center">
         {categories.map(cat => (
-          <button
+          <Button
             key={cat}
+            variant={activeCategory === cat ? 'primary' : 'ghost'}
+            size="sm"
             onClick={() => { setActiveCategory(cat); setOpenIndex(null); }}
-            className={`px-5 py-2 rounded-full text-sm font-semibold cursor-pointer transition-all duration-200 border-none ${
-              activeCategory === cat
-                ? 'bg-zinc-900 text-white'
-                : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'
-            }`}
+            className="rounded-full px-5"
           >
             {cat}
-          </button>
+          </Button>
         ))}
       </div>
 

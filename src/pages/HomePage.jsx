@@ -10,6 +10,7 @@ import { useSearchStore } from '@/store/searchStore.jsx'
 import { MODULES } from '@/api/mockData'
 import { RECENT_GUIDES } from '@/data/mockData'
 import { Card } from '@/components/ui/card'
+import { Button } from '@/components/ui'
 import { Badge } from '@/components/ui/badge'
 
 const ICON_MAP = { ClipboardList, BookOpen, Calendar, CreditCard, Gift, MessageSquare, Users, Building, GraduationCap, Shield, BarChart3 }
@@ -103,13 +104,15 @@ export default function HomePage() {
         <div className="flex items-center gap-2 mt-2">
           <span className="text-[13px] font-medium text-zinc-400 mr-1">인기 검색어:</span>
           {POPULAR.map(q => (
-            <button
+            <Button
               key={q}
+              variant="outline"
+              size="xs"
               onClick={open}
-              className="text-[13px] font-medium px-3 py-1 rounded-full bg-white border border-zinc-200 text-zinc-600 cursor-pointer transition-all hover:border-zinc-300 hover:bg-zinc-50"
+              className="rounded-full"
             >
               {q}
-            </button>
+            </Button>
           ))}
         </div>
       </section>

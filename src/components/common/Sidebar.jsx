@@ -9,6 +9,7 @@ import {
 import { useSearchStore } from '@/store/searchStore.jsx';
 import { MODULE_TREE, RECENT_GUIDES } from '@/data/mockData';
 import { Separator } from '@/components/ui/separator';
+import { Button } from '@/components/ui';
 
 const ICON_MAP = {
   ClipboardList, BookOpen, Calendar, CreditCard, Users,
@@ -26,11 +27,11 @@ export default function Sidebar() {
       {/* ── 상단 고정: 검색 + 최근 조회 ── */}
       <div className="px-2.5 pt-3 shrink-0">
         {/* 검색 진입점 */}
-        <button onClick={open} className="flex items-center gap-2 w-full h-9 px-2.5 mb-2.5 rounded-lg border border-zinc-200 bg-white cursor-pointer text-[13px] text-zinc-400 font-[Pretendard,-apple-system,sans-serif] transition-[border-color] duration-[120ms] ease-in-out hover:border-zinc-300">
+        <Button variant="outline" size="sm" onClick={open} className="w-full h-9 px-2.5 mb-2.5 justify-start text-zinc-400 font-normal">
           <Search size={13} className="text-zinc-400 shrink-0" />
           <span className="flex-1 text-left">가이드 검색</span>
           <kbd className="text-[11px] font-semibold px-[5px] py-px bg-zinc-100 border border-zinc-200 rounded text-zinc-400 font-mono">/</kbd>
-        </button>
+        </Button>
 
         <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-[0.08em] px-1.5 mb-1">최근 조회</p>
         {RECENT_GUIDES.slice(0,5).map(r => (

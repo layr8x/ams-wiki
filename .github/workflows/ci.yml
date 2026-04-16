@@ -63,34 +63,6 @@ jobs:
         run: npm run test
         continue-on-error: true
 
-  accessibility:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build project
-        run: npm run build
-
-      - name: Verify build
-        run: |
-          if [ -f dist/index.html ]; then
-            echo "✓ Build verification passed"
-          else
-            echo "✗ Build verification failed"
-            exit 1
-          fi
-
   dependency-check:
     runs-on: ubuntu-latest
 

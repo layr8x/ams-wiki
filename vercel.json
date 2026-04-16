@@ -2,11 +2,17 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "framework": "vite",
-  "ignoreCommand": "git log --oneline -1 --pretty=%B | grep -q 'skip vercel' && echo 1 || echo 0",
+  "ignoreCommand": "git log --oneline -1 --pretty=%B | grep -q 'skip vercel' && echo 0 || echo 1",
   "git": {
     "deploymentEnabled": {
       "main": true,
-      "claude/*": true
+      "claude/*": false
     }
-  }
+  },
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
 }

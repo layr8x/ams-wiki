@@ -33,8 +33,8 @@ jobs:
       - name: Build project
         run: npm run build
         env:
-          VITE_CONFLUENCE_EMAIL: ${{ secrets.VITE_CONFLUENCE_EMAIL || 'dev@example.com' }}
-          VITE_CONFLUENCE_TOKEN: ${{ secrets.VITE_CONFLUENCE_TOKEN || 'dev-token' }}
+          VITE_CONFLUENCE_EMAIL: ${{ secrets.VITE_CONFLUENCE_EMAIL || '' }}
+          VITE_CONFLUENCE_TOKEN: ${{ secrets.VITE_CONFLUENCE_TOKEN || '' }}
 
       - name: Install Vercel CLI
         run: npm install -g vercel@latest

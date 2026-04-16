@@ -1,109 +1,49 @@
-// src/components/common/Layout.jsx — Geist Design System 100% 적용
+// src/components/common/Layout.jsx — Tailwind CSS + shadcn/ui
 import { Outlet, useNavigate } from 'react-router-dom'
 import { Search, Bell, User } from 'lucide-react'
 import Sidebar from './Sidebar'
 import { useSearchStore } from '@/store/searchStore.jsx'
-
-const S = {
-  // header
-  header: {
-    position: 'sticky', top: 0, zIndex: 100,
-    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-    height: '56px', padding: '0 24px',
-    backgroundColor: 'rgba(255,255,255,0.94)',
-    backdropFilter: 'blur(16px)',
-    WebkitBackdropFilter: 'blur(16px)',
-    borderBottom: '1px solid rgba(0,0,0,0.08)',  /* --ds-gray-a200 */
-  },
-  logo: {
-    display: 'flex', alignItems: 'center', gap: '10px',
-    cursor: 'pointer', flexShrink: 0, userSelect: 'none',
-  },
-  logoMark: {
-    width: '26px', height: '26px', borderRadius: '6px',
-    backgroundColor: '#000000', color: '#ffffff',
-    display: 'flex', alignItems: 'center', justifyContent: 'center',
-    fontWeight: 800, fontSize: '11px', letterSpacing: '0.02em',
-    fontFamily: "'Pretendard', sans-serif",
-  },
-  logoText: {
-    fontWeight: 700, fontSize: '15px', letterSpacing: '-0.025em', color: '#1a1a1a',
-    fontFamily: "'Pretendard', sans-serif",
-  },
-  searchBtn: {
-    display: 'flex', alignItems: 'center', gap: '8px',
-    width: '100%', maxWidth: '480px', height: '32px',
-    padding: '0 12px', borderRadius: '8px',
-    backgroundColor: '#f2f2f2', border: '1px solid rgba(0,0,0,0.12)',
-    cursor: 'pointer',
-    transition: 'border-color 120ms ease, background-color 120ms ease',
-    fontFamily: "'Pretendard', sans-serif",
-  },
-  searchText: { flex: 1, textAlign: 'left', fontSize: '13px', color: '#8f8f8f', fontWeight: 400 },
-  kbd: {
-    fontSize: '11px', fontWeight: 600, padding: '2px 6px',
-    backgroundColor: '#ffffff', border: '1px solid rgba(0,0,0,0.12)',
-    borderRadius: '4px', color: '#8f8f8f', fontFamily: 'monospace',
-    lineHeight: 1.4,
-  },
-  rightActions: { display: 'flex', alignItems: 'center', gap: '16px', flexShrink: 0 },
-  bell: { position: 'relative', cursor: 'pointer', display: 'flex' },
-  bellDot: {
-    position: 'absolute', top: '-2px', right: '-2px',
-    width: '7px', height: '7px', borderRadius: '50%',
-    backgroundColor: '#e5484d', border: '1.5px solid #fff',
-  },
-  avatar: {
-    width: '30px', height: '30px', borderRadius: '50%',
-    backgroundColor: '#f2f2f2', border: '1px solid rgba(0,0,0,0.12)',
-    display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
-  },
-  body: { display: 'flex', flex: 1, width: '100%', overflow: 'hidden' },
-  main: { flex: 1, minWidth: 0, overflowY: 'auto', display: 'flex', flexDirection: 'column' },
-}
 
 export default function Layout() {
   const { open } = useSearchStore()
   const navigate = useNavigate()
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100dvh', backgroundColor: '#ffffff', fontFamily: "'Pretendard', -apple-system, sans-serif" }}>
+    <div className="flex flex-col h-dvh bg-white font-[Pretendard,-apple-system,sans-serif]">
 
       {/* ── Global Header ── */}
-      <header style={S.header}>
+      <header className="sticky top-0 z-100 flex items-center justify-between h-14 px-6 bg-white/95 backdrop-blur-[16px] border-b border-black/8">
         {/* Logo */}
-        <div style={S.logo} onClick={() => navigate('/')}>
-          <img src="/logo.svg" alt="AMS 운영 위키" style={{ height: '22px', width: 'auto', display: 'block' }} />
+        <div className="flex items-center gap-2.5 cursor-pointer shrink-0 select-none" onClick={() => navigate('/')}>
+          <img src="/logo.svg" alt="AMS 운영 위키" className="h-[22px] w-auto block" />
         </div>
 
         {/* Search — single source of truth */}
         <button
           onClick={open}
-          style={S.searchBtn}
-          onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#ebebeb'; e.currentTarget.style.borderColor = 'rgba(0,0,0,0.2)'; }}
-          onMouseLeave={e => { e.currentTarget.style.backgroundColor = '#f2f2f2'; e.currentTarget.style.borderColor = 'rgba(0,0,0,0.12)'; }}
+          className="flex items-center gap-2 w-full max-w-[480px] h-8 px-3 rounded-lg bg-zinc-100 border border-black/12 cursor-pointer transition-[border-color,background-color] duration-[120ms] ease-in-out font-[Pretendard,sans-serif] hover:bg-zinc-200 hover:border-black/20"
         >
-          <Search size={13} color="#8f8f8f" style={{ flexShrink: 0 }} />
-          <span style={S.searchText}>가이드 검색...</span>
-          <kbd style={S.kbd}>/</kbd>
+          <Search size={13} className="text-zinc-400 shrink-0" />
+          <span className="flex-1 text-left text-[13px] text-zinc-400 font-normal">가이드 검색...</span>
+          <kbd className="text-[11px] font-semibold px-1.5 py-0.5 bg-white border border-black/12 rounded text-zinc-400 font-mono leading-[1.4]">/</kbd>
         </button>
 
         {/* Right actions */}
-        <div style={S.rightActions}>
-          <div style={S.bell}>
-            <Bell size={18} color="#666666" />
-            <span style={S.bellDot} />
+        <div className="flex items-center gap-4 shrink-0">
+          <div className="relative cursor-pointer flex">
+            <Bell size={18} className="text-zinc-500" />
+            <span className="absolute -top-0.5 -right-0.5 w-[7px] h-[7px] rounded-full bg-red-500 border-[1.5px] border-white" />
           </div>
-          <div style={S.avatar}>
-            <User size={15} color="#666666" />
+          <div className="w-[30px] h-[30px] rounded-full bg-zinc-100 border border-black/12 flex items-center justify-center cursor-pointer">
+            <User size={15} className="text-zinc-500" />
           </div>
         </div>
       </header>
 
       {/* ── Body ── */}
-      <div style={S.body}>
+      <div className="flex flex-1 w-full overflow-hidden">
         <Sidebar />
-        <main style={S.main}>
+        <main className="flex-1 min-w-0 overflow-y-auto flex flex-col">
           <Outlet />
         </main>
       </div>

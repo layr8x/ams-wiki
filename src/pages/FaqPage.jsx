@@ -1,6 +1,8 @@
 // src/pages/FaqPage.jsx
 import { useState } from 'react'
 import { HelpCircle, ChevronDown, ChevronUp, MessageSquare } from 'lucide-react'
+import { Card } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
 
 const FAQ_DATA = [
   { category: '결제/환불', q: '카드 전환결제는 어떻게 진행하나요?', a: '기존 결제를 취소하기 전, 반드시 새로운 카드로 먼저 결제를 승인받아야 합니다. 이후 [결제 관리] > [전환결제] 탭에서 기존 결제 내역을 취소 처리하시면 됩니다.' },
@@ -12,7 +14,7 @@ const FAQ_DATA = [
 export default function FaqPage() {
   const [openIndex, setOpenIndex] = useState(null)
   const [activeCategory, setActiveCategory] = useState('전체')
-  
+
   const categories = ['전체', ...new Set(FAQ_DATA.map(f => f.category))]
   const filteredFaqs = activeCategory === '전체' ? FAQ_DATA : FAQ_DATA.filter(f => f.category === activeCategory)
 
@@ -21,29 +23,28 @@ export default function FaqPage() {
   }
 
   return (
-    <div style={{ flex: 1, width: '100%', maxWidth: '900px', margin: '0 auto', padding: '60px 40px 120px' }}>
-      
+    <div className="flex-1 w-full max-w-[900px] mx-auto px-10 pt-[60px] pb-[120px]">
+
       {/* 헤더 영역 */}
-      <div style={{ marginBottom: '48px', textAlign: 'center' }}>
-        <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '48px', height: '48px', borderRadius: '14px', backgroundColor: '#eff6ff', marginBottom: '16px' }}>
-          <HelpCircle size={24} color="#2563eb" />
+      <div className="mb-12 text-center">
+        <div className="inline-flex items-center justify-center w-12 h-12 rounded-[14px] bg-blue-50 mb-4">
+          <HelpCircle size={24} className="text-blue-600" />
         </div>
-        <h1 style={{ fontSize: '32px', fontWeight: 800, color: '#111827', margin: '0 0 12px 0', letterSpacing: '-0.02em' }}>운영 FAQ</h1>
-        <p style={{ fontSize: '16px', color: '#6b7280', margin: 0 }}>상담실장님들이 가장 자주 묻는 반복 문의들을 모았습니다.</p>
+        <h1 className="text-[32px] font-extrabold text-zinc-900 mb-3 tracking-tight">운영 FAQ</h1>
+        <p className="text-base text-zinc-500">상담실장님들이 가장 자주 묻는 반복 문의들을 모았습니다.</p>
       </div>
 
       {/* 카테고리 필터 */}
-      <div style={{ display: 'flex', gap: '8px', marginBottom: '32px', justifyContent: 'center' }}>
+      <div className="flex gap-2 mb-8 justify-center">
         {categories.map(cat => (
           <button
             key={cat}
             onClick={() => { setActiveCategory(cat); setOpenIndex(null); }}
-            style={{
-              padding: '8px 20px', borderRadius: '99px', fontSize: '14px', fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s',
-              backgroundColor: activeCategory === cat ? '#111827' : '#f3f4f6',
-              color: activeCategory === cat ? '#ffffff' : '#4b5563',
-              border: 'none',
-            }}
+            className={`px-5 py-2 rounded-full text-sm font-semibold cursor-pointer transition-all duration-200 border-none ${
+              activeCategory === cat
+                ? 'bg-zinc-900 text-white'
+                : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'
+            }`}
           >
             {cat}
           </button>
@@ -51,35 +52,35 @@ export default function FaqPage() {
       </div>
 
       {/* FAQ 리스트 */}
-      <div style={{ borderTop: '1px solid #e5e7eb' }}>
+      <div className="border-t border-zinc-200">
         {filteredFaqs.map((faq, idx) => {
           const isOpen = openIndex === idx
           return (
-            <div key={idx} style={{ borderBottom: '1px solid #e5e7eb', transition: 'background-color 0.2s' }} onMouseEnter={e => e.currentTarget.style.backgroundColor = '#f9fafb'} onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}>
-              <button 
+            <div key={idx} className="border-b border-zinc-200 transition-colors duration-200 hover:bg-zinc-50">
+              <button
                 onClick={() => toggle(idx)}
-                style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '24px 16px', background: 'none', border: 'none', cursor: 'pointer', textAlign: 'left' }}
+                className="w-full flex items-center justify-between px-4 py-6 bg-transparent border-none cursor-pointer text-left"
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                  <span style={{ fontSize: '12px', fontWeight: 700, color: '#2563eb', backgroundColor: '#eff6ff', padding: '4px 10px', borderRadius: '6px' }}>{faq.category}</span>
-                  <span style={{ fontSize: '16px', fontWeight: isOpen ? 700 : 500, color: isOpen ? '#2563eb' : '#111827', transition: 'color 0.2s' }}>{faq.q}</span>
+                <div className="flex items-center gap-4">
+                  <Badge variant="blue" size="md" className="font-bold">{faq.category}</Badge>
+                  <span className={`text-base transition-colors duration-200 ${isOpen ? 'font-bold text-blue-600' : 'font-medium text-zinc-900'}`}>{faq.q}</span>
                 </div>
-                {isOpen ? <ChevronUp size={20} color="#9ca3af" /> : <ChevronDown size={20} color="#9ca3af" />}
+                {isOpen ? <ChevronUp size={20} className="text-zinc-400" /> : <ChevronDown size={20} className="text-zinc-400" />}
               </button>
-              
+
               {isOpen && (
-                <div style={{ padding: '0 16px 24px 80px' }}>
-                  <div style={{ display: 'flex', gap: '12px', padding: '20px', backgroundColor: '#f9fafb', borderRadius: '12px', border: '1px solid #e5e7eb' }}>
-                    <MessageSquare size={18} color="#6b7280" style={{ marginTop: '2px', flexShrink: 0 }} />
-                    <p style={{ fontSize: '15px', color: '#4b5563', margin: 0, lineHeight: 1.6 }}>{faq.a}</p>
-                  </div>
+                <div className="px-4 pb-6 pl-20">
+                  <Card hover={false} className="flex gap-3 p-5 bg-zinc-50 border-zinc-200">
+                    <MessageSquare size={18} className="text-zinc-500 mt-0.5 shrink-0" />
+                    <p className="text-[15px] text-zinc-600 m-0 leading-relaxed">{faq.a}</p>
+                  </Card>
                 </div>
               )}
             </div>
           )
         })}
       </div>
-      
+
     </div>
   )
 }

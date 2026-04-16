@@ -1,5 +1,7 @@
 // src/pages/UpdatesPage.jsx
 import { Bell, Sparkles, FileCog } from 'lucide-react'
+import { Card } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
 
 const UPDATES_DATA = [
   {
@@ -24,45 +26,45 @@ const UPDATES_DATA = [
 
 export default function UpdatesPage() {
   return (
-    <div style={{ flex: 1, width: '100%', maxWidth: '800px', margin: '0 auto', padding: '60px 40px 120px' }}>
-      
+    <div className="flex-1 w-full max-w-[800px] mx-auto px-10 pt-[60px] pb-[120px]">
+
       {/* 헤더 영역 */}
-      <div style={{ marginBottom: '56px' }}>
-        <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '48px', height: '48px', borderRadius: '14px', backgroundColor: '#fef2f2', marginBottom: '16px' }}>
-          <Bell size={24} color="#dc2626" />
+      <div className="mb-14">
+        <div className="inline-flex items-center justify-center w-12 h-12 rounded-[14px] bg-red-50 mb-4">
+          <Bell size={24} className="text-red-600" />
         </div>
-        <h1 style={{ fontSize: '32px', fontWeight: 800, color: '#111827', margin: '0 0 12px 0', letterSpacing: '-0.02em' }}>업데이트 이력</h1>
-        <p style={{ fontSize: '16px', color: '#6b7280', margin: 0 }}>AMS 기능 개선 및 주요 정책 변경 사항을 확인하세요.</p>
+        <h1 className="text-[32px] font-extrabold text-zinc-900 mb-3 tracking-tight">업데이트 이력</h1>
+        <p className="text-base text-zinc-500">AMS 기능 개선 및 주요 정책 변경 사항을 확인하세요.</p>
       </div>
 
       {/* 타임라인 영역 */}
-      <div style={{ position: 'relative' }}>
+      <div className="relative">
         {/* 세로 선 */}
-        <div style={{ position: 'absolute', top: '0', bottom: '0', left: '23px', width: '2px', backgroundColor: '#e5e7eb' }}></div>
+        <div className="absolute top-0 bottom-0 left-[23px] w-0.5 bg-zinc-200"></div>
 
         {UPDATES_DATA.map((item, idx) => {
           const isFeature = item.type === 'feature'
           return (
-            <div key={idx} style={{ position: 'relative', display: 'flex', gap: '32px', marginBottom: '48px' }}>
-              
+            <div key={idx} className="relative flex gap-8 mb-12">
+
               {/* 타임라인 아이콘 노드 */}
-              <div style={{ position: 'relative', zIndex: 10, width: '48px', height: '48px', borderRadius: '50%', backgroundColor: '#ffffff', border: '2px solid #e5e7eb', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                {isFeature ? <Sparkles size={20} color="#2563eb" /> : <FileCog size={20} color="#059669" />}
+              <div className="relative z-10 w-12 h-12 rounded-full bg-white border-2 border-zinc-200 flex items-center justify-center shrink-0">
+                {isFeature ? <Sparkles size={20} className="text-blue-600" /> : <FileCog size={20} className="text-emerald-600" />}
               </div>
 
               {/* 콘텐츠 카드 */}
-              <div style={{ flex: 1, marginTop: '2px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-                  <span style={{ fontSize: '13px', fontWeight: 700, fontFamily: 'monospace', color: '#6b7280' }}>{item.date}</span>
-                  <span style={{ fontSize: '11px', fontWeight: 700, padding: '4px 10px', borderRadius: '99px', backgroundColor: isFeature ? '#eff6ff' : '#ecfdf5', color: isFeature ? '#1d4ed8' : '#047857' }}>
+              <div className="flex-1 mt-0.5">
+                <div className="flex items-center gap-3 mb-3">
+                  <span className="text-[13px] font-bold font-mono text-zinc-500">{item.date}</span>
+                  <Badge variant={isFeature ? 'blue' : 'green'} size="sm" className="font-bold">
                     {isFeature ? '기능 개선' : '정책 변경'}
-                  </span>
+                  </Badge>
                 </div>
-                
-                <div style={{ padding: '24px', backgroundColor: '#ffffff', borderRadius: '16px', border: '1px solid #e5e7eb', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', transition: 'all 0.2s', cursor: 'default' }} onMouseEnter={e => { e.currentTarget.style.borderColor = '#d1d5db'; e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0,0,0,0.1)'; }} onMouseLeave={e => { e.currentTarget.style.borderColor = '#e5e7eb'; e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.05)'; }}>
-                  <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#111827', margin: '0 0 12px 0' }}>{item.title}</h3>
-                  <p style={{ fontSize: '15px', color: '#4b5563', margin: 0, lineHeight: 1.6 }}>{item.desc}</p>
-                </div>
+
+                <Card className="p-6 cursor-default">
+                  <h3 className="text-lg font-extrabold text-zinc-900 mb-3">{item.title}</h3>
+                  <p className="text-[15px] text-zinc-600 m-0 leading-relaxed">{item.desc}</p>
+                </Card>
               </div>
 
             </div>

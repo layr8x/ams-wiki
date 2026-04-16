@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { Analytics } from '@vercel/analytics/react';
 import Layout from './components/common/Layout';
 import HomePage from './pages/HomePage';
 import GuideListPage from './pages/GuideListPage';
@@ -34,6 +35,7 @@ export default function App() {
             </Route>
           </Routes>
           <SearchOverlay />
+          <Analytics />
         </BrowserRouter>
       </SearchProvider>
     </AuthProvider>

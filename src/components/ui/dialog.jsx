@@ -1,13 +1,11 @@
 import { cn } from '@/lib/utils'
 import * as DialogPrimitive from '@radix-ui/react-dialog'
 
-export const Dialog = DialogPrimitive.Root
-
-export const DialogTrigger = DialogPrimitive.Trigger
-
-export const DialogPortal = DialogPrimitive.Portal
-
-export const DialogClose = DialogPrimitive.Close
+// Re-export Radix UI primitives
+const Dialog = DialogPrimitive.Root
+const DialogTrigger = DialogPrimitive.Trigger
+const DialogPortal = DialogPrimitive.Portal
+const DialogClose = DialogPrimitive.Close
 
 export const DialogOverlay = ({ className, ...props }) => (
   <DialogPrimitive.Overlay
@@ -79,3 +77,5 @@ export const DialogDescription = ({ className, ...props }) => (
 )
 
 DialogDescription.displayName = DialogPrimitive.Description.displayName
+
+export { Dialog, DialogTrigger, DialogPortal, DialogClose }

@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils'
 import * as TabsPrimitive from '@radix-ui/react-tabs'
 
-export const Tabs = TabsPrimitive.Root
+const Tabs = TabsPrimitive.Root
 
 export const TabsList = ({ className, ...props }) => (
   <TabsPrimitive.List
@@ -35,3 +35,5 @@ export const TabsContent = ({ className, ...props }) => (
 )
 
 TabsContent.displayName = TabsPrimitive.Content.displayName
+
+export { Tabs }

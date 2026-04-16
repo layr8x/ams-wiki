@@ -1,0 +1,16 @@
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "framework": "vite",
+  "env": {
+    "VITE_CONFLUENCE_EMAIL": "@VITE_CONFLUENCE_EMAIL",
+    "VITE_CONFLUENCE_TOKEN": "@VITE_CONFLUENCE_TOKEN"
+  },
+  "ignoreCommand": "git log --oneline -1 --pretty=%B | grep -q 'skip vercel' && echo 1 || echo 0",
+  "git": {
+    "deploymentEnabled": {
+      "main": false,
+      "claude/*": true
+    }
+  }
+}

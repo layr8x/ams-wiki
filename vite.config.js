@@ -16,7 +16,7 @@ export default defineConfig({
         rewrite: path => path.replace(/^\/confluence-img/, ''),
         headers: {
           Authorization: 'Basic ' + Buffer.from(
-            'mjk@hiconsy.com:ATATT3xFfGF0EhklEdJKr1BGdXuyUHpxEMWOSzAmOdlFtZonH6iHfQohdMv6noOq6WD4u5NDyK6i3_BrQvrPMhEyJrPz_7sQ7Wnn0uT-6nqai-neItRqic0wVROyL70GNM722zXy_i6d1CPJRSY7py-mIoW-qhL2sDUasjwu7DLbxYPZsGqlH_8=391EA860'
+            `${process.env.VITE_CONFLUENCE_EMAIL}:${process.env.VITE_CONFLUENCE_TOKEN}`
           ).toString('base64'),
         },
       },

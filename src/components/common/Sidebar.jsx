@@ -4,7 +4,7 @@ import { useState } from 'react';
 import {
   ClipboardList, BookOpen, Calendar, CreditCard, Users,
   MessageSquare, Settings, HelpCircle, Bell, PlusCircle,
-  ChevronDown, Clock, LayoutGrid, FileText
+  ChevronDown, Clock, LayoutGrid, FileText, MessageCircle
 } from 'lucide-react';
 import { MODULE_TREE, RECENT_GUIDES } from '@/data/mockData';
 
@@ -23,7 +23,10 @@ const ICON_MAP = {
 };
 
 export default function Sidebar() {
-  const [expanded, setExpanded] = useState({ operation: true, customer: true });
+  // Default: expand all modules that have guides
+  const [expanded, setExpanded] = useState(
+    () => Object.fromEntries(MODULE_TREE.filter(m => m.guides.length > 0).map(m => [m.id, true]))
+  );
   const toggle = id => setExpanded(p => ({ ...p, [id]: !p[id] }));
 
   const hoverOn  = e => { e.currentTarget.style.backgroundColor = G.g100; };
@@ -135,7 +138,7 @@ export default function Sidebar() {
         <div style={{ height:'1px', backgroundColor: G.border, margin:'10px 2px' }} />
 
         {/* 하단 링크 */}
-        {[{ to:'/faq', label:'운영 FAQ', Icon:HelpCircle }, { to:'/updates', label:'업데이트 이력', Icon:Bell }].map(item => (
+        {[{ to:'/faq', label:'운영 FAQ', Icon:HelpCircle }, { to:'/updates', label:'업데이트 이력', Icon:Bell }, { to:'/feedback', label:'오류 제보', Icon:MessageCircle }].map(item => (
           <NavLink key={item.to} to={item.to}
             style={({ isActive }) => ({
               display:'flex', alignItems:'center', gap:'8px', padding:'7px 8px',

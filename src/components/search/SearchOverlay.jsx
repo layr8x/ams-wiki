@@ -1,85 +1,116 @@
 // src/components/search/SearchOverlay.jsx
-import { useState, useEffect, useRef } from 'react';
-import { Search, FileText, CornerDownLeft } from 'lucide-react';
+import { useState, useEffect, useRef, useMemo } from 'react';
+import { Search, FileText, CornerDownLeft, Clock, TrendingUp } from 'lucide-react';
 import { useSearchStore } from '@/store/searchStore.jsx';
 import { useNavigate } from 'react-router-dom';
-import { SEARCH_SYNONYMS } from '@/data/mockData.js';
+import { GUIDES, RECENT_GUIDES, SEARCH_SYNONYMS } from '@/data/mockData.js';
 
-const GUIDES_LIST = [
-  { id: 'member-merge', title: 'AMS 회원 병합 가이드', module: '고객 관리', snippet: '중복 계정 통합 절차 및 유의사항' },
-  { id: 'billing-decision', title: '환불 승인 기준 판단 가이드', module: '결제/환불', snippet: '위약금 및 환불 가능 여부 판단 기준' },
-  { id: 'qr-trouble', title: 'QR 출석 인식 실패 대응', module: '수업 운영', snippet: '인식 실패 시 원인 파악 및 수동 처리' },
-];
+const TYPE_LABELS = { SOP:'절차', DECISION:'판단기준', REFERENCE:'참조', TROUBLE:'트러블슈팅', RESPONSE:'대응', POLICY:'정책' };
+const TYPE_CLR   = { SOP:'#1d4ed8', DECISION:'#be123c', REFERENCE:'#15803d', TROUBLE:'#c2410c', RESPONSE:'#7e22ce', POLICY:'#0369a1' };
+const TYPE_BG    = { SOP:'#eff6ff', DECISION:'#fef2f2', REFERENCE:'#f0fdf4', TROUBLE:'#fff7ed', RESPONSE:'#fdf4ff', POLICY:'#f0f9ff' };
 
-// 동의어 사전을 통한 검색어 변환
-const expandSearchQuery = (query) => {
-  let expanded = [query];
+// Build search index from GUIDES
+const SEARCH_INDEX = Object.entries(GUIDES).map(([id, g]) => ({
+  id,
+  title: g.title,
+  module: g.module,
+  type: g.type,
+  snippet: g.tldr.split('\n')[0],
+  views: g.views || 0,
+}));
+
+// Popular: top 5 by views
+const POPULAR = [...SEARCH_INDEX].sort((a, b) => b.views - a.views).slice(0, 5);
+
+// Recent: first 5 from RECENT_GUIDES
+const RECENT_IDS = RECENT_GUIDES.slice(0, 5).map(r => r.id);
+const RECENTS = RECENT_IDS.map(id => SEARCH_INDEX.find(g => g.id === id)).filter(Boolean);
+
+const expandQuery = (query) => {
+  const expanded = [query.toLowerCase()];
   for (const [term, synonyms] of Object.entries(SEARCH_SYNONYMS)) {
-    if (synonyms.some(syn => query.includes(syn))) {
-      expanded.push(term);
-    }
+    if (synonyms.some(syn => query.includes(syn))) expanded.push(term.toLowerCase());
   }
   return expanded;
 };
 
+function ResultItem({ item, isSelected, onSelect, onHover }) {
+  return (
+    <div
+      onClick={onSelect}
+      onMouseEnter={onHover}
+      style={{
+        display: 'flex', alignItems: 'flex-start', gap: '12px', padding: '10px 14px',
+        borderRadius: '10px', cursor: 'pointer', transition: 'background 80ms ease',
+        backgroundColor: isSelected ? '#eff6ff' : 'transparent',
+        borderLeft: `3px solid ${isSelected ? '#3b82f6' : 'transparent'}`,
+      }}
+    >
+      <FileText size={15} color={isSelected ? '#2563eb' : '#9ca3af'} style={{ marginTop: '2px', flexShrink: 0 }} />
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '3px', flexWrap: 'wrap' }}>
+          <span style={{ fontSize: '14px', fontWeight: 600, color: isSelected ? '#1d4ed8' : '#111827' }}>{item.title}</span>
+          <span style={{ fontSize: '10px', fontWeight: 700, padding: '2px 7px', borderRadius: '99px', backgroundColor: TYPE_BG[item.type] || '#f3f4f6', color: TYPE_CLR[item.type] || '#666', flexShrink: 0 }}>
+            {TYPE_LABELS[item.type] || item.type}
+          </span>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <span style={{ fontSize: '11px', fontWeight: 600, color: '#9ca3af', backgroundColor: '#f3f4f6', padding: '1px 7px', borderRadius: '4px' }}>{item.module}</span>
+          <span style={{ fontSize: '12px', color: '#9ca3af', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.snippet}</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function SearchOverlay() {
   const { isOpen, close, open } = useSearchStore();
   const [query, setQuery] = useState('');
-  const [selectedIndex, setSelectedIndex] = useState(0); // 💡 현재 선택된 인덱스 기억
+  const [selectedIndex, setSelectedIndex] = useState(0);
   const inputRef = useRef(null);
   const navigate = useNavigate();
 
-  // 동의어 포함 검색
-  const expandedQueries = expandSearchQuery(query);
-  const results = GUIDES_LIST.filter(g =>
-    expandedQueries.some(q =>
-      g.title.includes(q) || g.snippet.includes(q) || g.module.includes(q)
-    )
-  );
-
-  // 검색어가 바뀔 때마다 선택 인덱스를 다시 첫 번째(0)로 초기화
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setSelectedIndex(0);
+  const results = useMemo(() => {
+    if (!query.trim()) return [];
+    const expanded = expandQuery(query);
+    return SEARCH_INDEX.filter(g =>
+      expanded.some(q =>
+        g.title.toLowerCase().includes(q) ||
+        g.snippet.toLowerCase().includes(q) ||
+        g.module.toLowerCase().includes(q) ||
+        g.type.toLowerCase().includes(q)
+      )
+    );
   }, [query]);
 
-  // 🚀 키보드 네비게이션 제어
+  const showEmpty = !query.trim();
+  const listItems = showEmpty ? [] : results;
+
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  useEffect(() => { setSelectedIndex(0); }, [query]);
+
+  const goTo = (id) => { navigate(`/guides/${id}`); close(); };
+
   const handleKeyDown = (e) => {
-    // 1. 방향키 아래 (↓)
-    if (e.key === 'ArrowDown') {
-      e.preventDefault();
-      setSelectedIndex(prev => (prev < results.length - 1 ? prev + 1 : prev));
-    }
-    // 2. 방향키 위 (↑)
-    else if (e.key === 'ArrowUp') {
-      e.preventDefault();
-      setSelectedIndex(prev => (prev > 0 ? prev - 1 : prev));
-    }
-    // 3. 엔터 (Enter) - 선택한 항목으로 이동
-    else if (e.key === 'Enter' && results.length > 0) {
-      e.preventDefault();
-      navigate(`/guides/${results[selectedIndex].id}`);
-      close();
-    }
-    // 4. 창 닫기 (ESC)
-    else if (e.key === 'Escape') {
-      close();
-    }
+    if (e.key === 'ArrowDown') { e.preventDefault(); setSelectedIndex(p => Math.min(p + 1, listItems.length - 1)); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); setSelectedIndex(p => Math.max(p - 1, 0)); }
+    else if (e.key === 'Enter' && listItems.length > 0) { e.preventDefault(); goTo(listItems[selectedIndex].id); }
+    else if (e.key === 'Escape') { close(); }
   };
 
-  // 슬래시(/) 단축키로 검색창 열기 (바탕화면 감지용)
   useEffect(() => {
-    const handleGlobalKeyDown = (e) => {
-      if (e.key === '/' && !isOpen && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
-        e.preventDefault();
-        open();
+    const onKey = (e) => {
+      if ((e.key === '/' || (e.metaKey && e.key === 'k') || (e.ctrlKey && e.key === 'k'))
+          && !isOpen
+          && document.activeElement.tagName !== 'INPUT'
+          && document.activeElement.tagName !== 'TEXTAREA') {
+        e.preventDefault(); open();
       }
     };
-    window.addEventListener('keydown', handleGlobalKeyDown);
-    return () => window.removeEventListener('keydown', handleGlobalKeyDown);
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
   }, [isOpen, open]);
 
-  // 창 열릴 때 입력창 포커스
   useEffect(() => {
     if (isOpen) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -91,65 +122,75 @@ export default function SearchOverlay() {
   if (!isOpen) return null;
 
   return (
-    <div 
-      style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)', zIndex: 9999, display: 'flex', justifyContent: 'center', paddingTop: '10vh' }}
-      onClick={(e) => e.target === e.currentTarget && close()}
+    <div
+      style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.48)', backdropFilter: 'blur(4px)', zIndex: 9999, display: 'flex', justifyContent: 'center', paddingTop: '10vh' }}
+      onClick={e => e.target === e.currentTarget && close()}
     >
-      <div style={{ width: '100%', maxWidth: '600px', backgroundColor: '#fff', borderRadius: '16px', boxShadow: '0 20px 40px rgba(0,0,0,0.2)', overflow: 'hidden' }}>
-        
+      <div style={{ width: '100%', maxWidth: '620px', backgroundColor: '#fff', borderRadius: '16px', boxShadow: '0 20px 60px rgba(0,0,0,0.25)', overflow: 'hidden', display: 'flex', flexDirection: 'column', maxHeight: '80vh' }}>
+
         {/* 입력창 */}
-        <div style={{ display: 'flex', alignItems: 'center', padding: '0 20px', borderBottom: '1px solid #eee' }}>
-          <Search size={20} color="#9ca3af" />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '0 16px', borderBottom: '1px solid #e5e7eb', flexShrink: 0 }}>
+          <Search size={18} color="#9ca3af" style={{ flexShrink: 0 }} />
           <input
             ref={inputRef}
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            onKeyDown={handleKeyDown} // 💡 입력창에서 키보드 이벤트 감지
-            placeholder="찾으시는 가이드 이름을 입력하세요..."
-            style={{ flex: 1, height: '60px', border: 'none', outline: 'none', padding: '0 15px', fontSize: '16px' }}
+            onChange={e => setQuery(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="가이드 제목, 모듈, 유형으로 검색..."
+            style={{ flex: 1, height: '56px', border: 'none', outline: 'none', fontSize: '15px', fontFamily: "'Pretendard', sans-serif", color: '#111827', backgroundColor: 'transparent' }}
           />
-          <button onClick={close} style={{ border: 'none', background: '#f3f4f6', padding: '4px 8px', borderRadius: '4px', cursor: 'pointer', fontSize: '12px', fontWeight: 'bold', color: '#6b7280' }}>ESC</button>
+          <button onClick={close} style={{ border: '1px solid #e5e7eb', background: '#f9fafb', padding: '3px 8px', borderRadius: '5px', cursor: 'pointer', fontSize: '12px', fontWeight: 700, color: '#6b7280', flexShrink: 0, fontFamily: "'Pretendard', sans-serif" }}>ESC</button>
         </div>
 
         {/* 결과창 */}
-        <div style={{ maxHeight: '400px', overflowY: 'auto', padding: '10px' }}>
-          {results.length > 0 ? results.map((item, idx) => {
-            const isSelected = selectedIndex === idx; // 현재 방향키가 위치한 곳인지 확인
-            return (
-              <div 
-                key={item.id}
-                onClick={() => { navigate(`/guides/${item.id}`); close(); }}
-                onMouseEnter={() => setSelectedIndex(idx)} // 💡 마우스가 올라가도 선택된 것처럼 동기화
-                style={{ 
-                  padding: '12px 15px', 
-                  borderRadius: '10px', 
-                  cursor: 'pointer', 
-                  transition: '0.1s',
-                  backgroundColor: isSelected ? '#eff6ff' : 'transparent', // 💡 선택되면 파란색 배경
-                  borderLeft: isSelected ? '3px solid #3b82f6' : '3px solid transparent' // 💡 선택되면 왼쪽 강조 바
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <FileText size={16} color={isSelected ? "#2563eb" : "#9ca3af"} />
-                  <span style={{ fontWeight: 600, fontSize: '14px', color: isSelected ? '#1d4ed8' : '#111827' }}>{item.title}</span>
-                  <span style={{ fontSize: '11px', color: '#6b7280', marginLeft: 'auto' }}>{item.module}</span>
-                </div>
-                <p style={{ fontSize: '13px', color: '#6b7280', margin: '4px 0 0 26px' }}>{item.snippet}</p>
+        <div style={{ flex: 1, overflowY: 'auto', padding: '8px' }}>
+          {showEmpty ? (
+            <>
+              {/* 최근 업데이트 */}
+              <div style={{ padding: '6px 8px 4px', marginBottom: '2px' }}>
+                <span style={{ fontSize: '10px', fontWeight: 700, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.06em', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                  <Clock size={10} /> 최근 업데이트
+                </span>
               </div>
-            )
-          }) : (
-            <div style={{ padding: '40px', textAlign: 'center', color: '#9ca3af', fontSize: '14px' }}>검색 결과가 없습니다.</div>
+              {RECENTS.map((item) => (
+                <ResultItem key={item.id} item={item} isSelected={false} onSelect={() => goTo(item.id)} onHover={() => {}} />
+              ))}
+              <div style={{ height: '1px', backgroundColor: '#f3f4f6', margin: '8px 4px' }} />
+              {/* 인기 가이드 */}
+              <div style={{ padding: '6px 8px 4px', marginBottom: '2px' }}>
+                <span style={{ fontSize: '10px', fontWeight: 700, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.06em', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                  <TrendingUp size={10} /> 인기 가이드
+                </span>
+              </div>
+              {POPULAR.map((item) => (
+                <ResultItem key={item.id} item={item} isSelected={false} onSelect={() => goTo(item.id)} onHover={() => {}} />
+              ))}
+            </>
+          ) : listItems.length > 0 ? (
+            <>
+              <div style={{ padding: '6px 8px 4px', marginBottom: '2px' }}>
+                <span style={{ fontSize: '10px', fontWeight: 700, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                  검색 결과 {listItems.length}건
+                </span>
+              </div>
+              {listItems.map((item, idx) => (
+                <ResultItem key={item.id} item={item} isSelected={selectedIndex === idx} onSelect={() => goTo(item.id)} onHover={() => setSelectedIndex(idx)} />
+              ))}
+            </>
+          ) : (
+            <div style={{ padding: '48px 20px', textAlign: 'center', color: '#9ca3af', fontSize: '14px', fontFamily: "'Pretendard', sans-serif" }}>
+              <p style={{ margin: '0 0 8px', fontWeight: 700 }}>"{query}"에 대한 결과가 없습니다</p>
+              <p style={{ margin: 0, fontSize: '13px' }}>다른 검색어나 모듈명으로 시도해보세요</p>
+            </div>
           )}
         </div>
 
         {/* 푸터 */}
-        <div style={{ padding: '12px 20px', backgroundColor: '#f9fafb', borderTop: '1px solid #eee', display: 'flex', fontSize: '12px', color: '#9ca3af' }}>
-          <span style={{ display: 'flex', alignItems: 'center', gap: '4px', marginRight: '16px' }}>
-            <span style={{ fontFamily: 'monospace', fontWeight: 'bold' }}>↑↓</span> 이동
-          </span>
-          <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-            <CornerDownLeft size={12}/> 선택
-          </span>
+        <div style={{ padding: '10px 16px', backgroundColor: '#f9fafb', borderTop: '1px solid #e5e7eb', display: 'flex', alignItems: 'center', gap: '16px', fontSize: '11px', color: '#9ca3af', fontFamily: "'Pretendard', sans-serif", flexShrink: 0 }}>
+          <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><kbd style={{ fontFamily: 'monospace', fontWeight: 700 }}>↑↓</kbd> 이동</span>
+          <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><CornerDownLeft size={11} /> 선택</span>
+          <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><kbd style={{ fontFamily: 'monospace', fontWeight: 700 }}>ESC</kbd> 닫기</span>
+          <span style={{ marginLeft: 'auto' }}>전체 {SEARCH_INDEX.length}개 가이드</span>
         </div>
       </div>
     </div>

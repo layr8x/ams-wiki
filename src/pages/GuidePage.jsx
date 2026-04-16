@@ -246,6 +246,42 @@ function FeedbackWidget() {
   );
 }
 
+// ─── 관련 가이드 ──────────────────────────────────────────────────────────────
+const TYPE_LABELS_MINI = { SOP:'절차', DECISION:'판단기준', REFERENCE:'참조', TROUBLE:'트러블슈팅', RESPONSE:'대응', POLICY:'정책' };
+const TYPE_BG = { SOP:'#eff6ff', DECISION:'#fef2f2', REFERENCE:'#f0fdf4', TROUBLE:'#fff7ed', RESPONSE:'#fdf4ff', POLICY:'#f0f9ff' };
+const TYPE_CLR = { SOP:'#1d4ed8', DECISION:'#be123c', REFERENCE:'#15803d', TROUBLE:'#c2410c', RESPONSE:'#7e22ce', POLICY:'#0369a1' };
+
+function RelatedGuides({ currentId, module: mod }) {
+  const related = Object.entries(GUIDES)
+    .filter(([id, g]) => id !== currentId && g.module === mod)
+    .slice(0, 3);
+  if (related.length === 0) return null;
+  return (
+    <section style={{ marginTop:'72px', marginBottom:'8px' }}>
+      <h2 style={{ fontSize:'17px', fontWeight:800, color:G.g900, margin:'0 0 16px', fontFamily:G.font }}>같은 카테고리 가이드</h2>
+      <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(220px, 1fr))', gap:'12px' }}>
+        {related.map(([id, g]) => (
+          <Link key={id} to={`/guides/${id}`} style={{ textDecoration:'none' }}>
+            <div
+              style={{ padding:'18px 20px', borderRadius:'12px', border:`1px solid ${G.g200}`, backgroundColor:'#ffffff', transition:'all 0.15s', cursor:'pointer', height:'100%', boxSizing:'border-box' }}
+              onMouseEnter={e=>{ e.currentTarget.style.borderColor=G.b400; e.currentTarget.style.boxShadow=`0 4px 12px rgba(0,112,243,0.1)`; }}
+              onMouseLeave={e=>{ e.currentTarget.style.borderColor=G.g200; e.currentTarget.style.boxShadow='none'; }}
+            >
+              <span style={{ display:'inline-block', fontSize:'10px', fontWeight:700, padding:'3px 8px', borderRadius:'99px', backgroundColor: TYPE_BG[g.type]||'#f3f4f6', color: TYPE_CLR[g.type]||'#666', marginBottom:'10px', fontFamily:G.font }}>
+                {TYPE_LABELS_MINI[g.type]||g.type}
+              </span>
+              <p style={{ fontSize:'14px', fontWeight:700, color:G.g900, margin:'0 0 6px', lineHeight:1.4, fontFamily:G.font }}>{g.title}</p>
+              <p style={{ fontSize:'12px', color:G.g400, margin:0, lineHeight:1.5, fontFamily:G.font, display:'-webkit-box', WebkitLineClamp:2, WebkitBoxOrient:'vertical', overflow:'hidden' }}>
+                {g.tldr.split('\n')[0]}
+              </p>
+            </div>
+          </Link>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 // ─── On This Page 미니맵 (IntersectionObserver) ──────────────────────────────
 function OnThisPage({ sections }) {
   const [active, setActive] = useState(sections[0]?.id || '');
@@ -311,7 +347,7 @@ export default function GuidePage() {
     guide.type==='SOP'      && guide.steps       && { id:'sec-steps',    label:'단계별 가이드' },
     guide.type==='DECISION' && guide.decisionTable && { id:'sec-decision', label:'판단 기준' },
     guide.type==='REFERENCE'&& guide.referenceData && { id:'sec-reference',label:'용어 참조' },
-    guide.type==='TROUBLE'  && guide.troubleTable  && { id:'sec-trouble',  label:'트러블슈팅' },
+    guide.troubleTable?.length > 0 && { id:'sec-trouble', label:'트러블슈팅' },
     guide.type==='RESPONSE' && guide.responses     && { id:'sec-response', label:'응대 스크립트' },
     guide.type==='POLICY'   && guide.policyDiff    && { id:'sec-policy',   label:'정책 변경' },
     guide.mainItemsTable    && { id:'sec-items',    label:'주요 항목 설명' },
@@ -325,6 +361,21 @@ export default function GuidePage() {
 
       {/* ── 본문 ────────────────────────────────────────────────────────── */}
       <article style={{ flex:1, minWidth:0 }}>
+
+        {/* 브레드크럼 */}
+        <nav style={{ display:'flex', alignItems:'center', gap:'6px', marginBottom:'28px', fontSize:'13px', color:G.g400, fontFamily:G.font }}>
+          <Link to="/" style={{ color:G.g400, textDecoration:'none', fontWeight:500 }}
+            onMouseEnter={e=>e.currentTarget.style.color=G.g900}
+            onMouseLeave={e=>e.currentTarget.style.color=G.g400}
+          >홈</Link>
+          <ChevronRight size={13} color={G.g300} />
+          <Link to="/guides" style={{ color:G.g400, textDecoration:'none', fontWeight:500 }}
+            onMouseEnter={e=>e.currentTarget.style.color=G.g900}
+            onMouseLeave={e=>e.currentTarget.style.color=G.g400}
+          >가이드 목록</Link>
+          <ChevronRight size={13} color={G.g300} />
+          <span style={{ color:G.g600, fontWeight:600 }}>{guide.module}</span>
+        </nav>
 
         {/* 01 메타 헤더 */}
         <div id="sec-overview" style={{ marginBottom:'52px', scrollMarginTop:'80px' }}>
@@ -479,8 +530,8 @@ export default function GuidePage() {
           </section>
         )}
 
-        {/* ── TROUBLE 트러블슈팅 ── */}
-        {guide.type==='TROUBLE' && guide.troubleTable && (
+        {/* ── 트러블슈팅 (TROUBLE 유형 또는 troubleTable이 있는 모든 가이드) ── */}
+        {guide.troubleTable?.length > 0 && (
           <section style={{ marginBottom:'72px' }}>
             <SecHeading id="sec-trouble">문제 → 원인 → 해결</SecHeading>
             <div style={{ borderRadius:'12px', border:`1px solid ${G.g200}`, overflow:'hidden', boxShadow:G.sm }}>
@@ -611,8 +662,11 @@ export default function GuidePage() {
           </section>
         )}
 
+        {/* ── 관련 가이드 ── */}
+        <RelatedGuides currentId={id} module={guide.module} />
+
         {/* ── 피드백 ── */}
-        <div id="sec-feedback" style={{ marginTop:'96px', padding:'48px 40px', borderTop:`1px solid ${G.g100}`, scrollMarginTop:'80px' }}>
+        <div id="sec-feedback" style={{ marginTop:'64px', padding:'48px 40px', borderTop:`1px solid ${G.g100}`, scrollMarginTop:'80px' }}>
           <FeedbackWidget />
         </div>
       </article>

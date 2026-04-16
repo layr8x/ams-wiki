@@ -12,7 +12,7 @@ export const GUIDES = {
 
   // ── 회원관리 ─────────────────────────────────────────────────────────────
   'member-merge': {
-    type: 'SOP', module: '회원관리', title: 'AMS 회원 병합 가이드',
+    type: 'SOP', module: '고객(원생) 관리', title: 'AMS 회원 병합 가이드',
     updated: '2026-01-30', confluenceId: '1815216142',
     author: '김명준', version: 'v2.1', views: 342, helpful: 28, helpfulRate: 92,
     targets: ['운영자', '실장'],
@@ -62,7 +62,7 @@ export const GUIDES = {
   },
 
   'duplicate-account': {
-    type: 'DECISION', module: '회원관리', title: '중복 계정 통합 프로세스',
+    type: 'DECISION', module: '고객(원생) 관리', title: '중복 계정 통합 프로세스',
     updated: '2026-01-20', confluenceId: '1614381124',
     targets: ['운영자', '실장'],
     tldr: "로컬/통합회원 간 중복 계정 발생 시 상황별 처리 기준입니다. AMS 데이터 유무에 따라 처리 방법이 달라집니다.",
@@ -163,7 +163,7 @@ export const GUIDES = {
 
   // ── 수업운영관리 ──────────────────────────────────────────────────────────
   'class-manage': {
-    type: 'REFERENCE', module: '수업운영관리(입/퇴반/출결)', title: '수업관리 화면 가이드',
+    type: 'REFERENCE', module: '수업운영관리', title: '수업관리 화면 가이드',
     updated: '2025-12-28', confluenceId: '1693811041',
     targets: ['운영자'],
     tldr: "수업관리 시스템은 수업 일정, 출결 관리, 입퇴반, 보강 지급 등 수업 관련 전반적인 업무를 처리하는 통합 관리 시스템입니다.",
@@ -186,7 +186,7 @@ export const GUIDES = {
   },
 
   'class-transfer': {
-    type: 'SOP', module: '수업운영관리(입/퇴반/출결)', title: '전반 처리 가이드',
+    type: 'SOP', module: '수업운영관리', title: '전반 처리 가이드',
     updated: '2026-03-14', confluenceId: '1934295041',
     targets: ['운영자', '실장'],
     tldr: "전반은 수강생이 현재 강좌에서 다른 강좌로 이동하는 처리입니다.\n전반 전 강좌의 퇴반일 설정 이후 청구된 수강료의 출석예정 출결박스 및 연결교재의 수령예정 배부박스는 동일한 상태로 전반 후 강좌로 이동합니다.",
@@ -217,7 +217,7 @@ export const GUIDES = {
   },
 
   'unpaid-withdraw': {
-    type: 'SOP', module: '수업운영관리(입/퇴반/출결)', title: '미납자 퇴반처리 방법',
+    type: 'SOP', module: '수업운영관리', title: '미납자 퇴반처리 방법',
     updated: '2025-11-24', confluenceId: '1555169309',
     targets: ['운영자'],
     tldr: "미납자(이용가능회차=0) 대상 퇴반처리 방법입니다.",
@@ -235,7 +235,7 @@ export const GUIDES = {
 
   // ── 기존 유지 ─────────────────────────────────────────────────────────────
   'qr-trouble': {
-    type: 'TROUBLE', module: '수업운영관리(입/퇴반/출결)', title: 'QR 출석 인식 실패 트러블슈팅',
+    type: 'TROUBLE', module: '수업운영관리', title: 'QR 출석 인식 실패 트러블슈팅',
     updated: '2026-04-05', confluenceId: '1608876067',
     targets: ['운영자'],
     tldr: "학생 QR 리더기 인식 오류 시 현장에서 즉시 조치할 수 있는 체크리스트입니다. 해결 불가 시 수동 출석으로 대체하세요.",
@@ -329,7 +329,7 @@ export const GUIDES = {
   },
 
   'class-schedule': {
-    type: 'REFERENCE', module: '수업운영관리', title: '강좌 스케줄 관리 가이드',
+    type: 'REFERENCE', module: '강좌/교재 관리', title: '강좌 스케줄 관리 가이드',
     updated: '2026-03-30', confluenceId: '1920345678', targets: ['운영자', '실장', '관리자'],
     tldr: "AMS에서 강좌의 개강일, 종강일, 수업요일, 시간을 관리하는 방법입니다.",
     path: 'AMS 어드민 > 강좌/교재 관리 > 강좌관리',
@@ -343,6 +343,208 @@ export const GUIDES = {
     ],
     steps: null, mainItemsTable: null, cases: null, cautions: ["개강일 변경 시 기존 청구 이력이 영향받을 수 있음"],
     troubleTable: null, responses: null, decisionTable: null, policyDiff: null,
+  },
+
+  // ── 모집/접수 관리 ────────────────────────────────────────────────────────
+  'recruit-application': {
+    type: 'SOP', module: '모집/접수 관리', title: '모집 신청 접수 처리 가이드',
+    updated: '2026-04-10', confluenceId: '1920567890',
+    author: '박소연', version: 'v1.3', views: 198, helpful: 16, helpfulRate: 88,
+    targets: ['운영자'],
+    tldr: "모집 공고에 따른 수강 신청을 접수하고 대기 순번을 배정하는 절차입니다.\n접수 마감 전 중복 신청 여부와 배정 가능 인원을 반드시 확인하세요.",
+    path: 'AMS 어드민 > 모집/접수 관리 > 접수현황',
+    amsUrl: `${AMS}/recruit`,
+    confluenceUrl: `${CONFLUENCE}/1920567890`,
+    steps: [
+      { title: '모집 공고 상태 확인', desc: '모집/접수 관리 > 접수현황 메뉴에서 해당 강좌의 모집상태가 "접수중"인지 확인합니다.', image: null },
+      { title: '신청 회원 검색', desc: '접수하려는 회원의 이름 또는 연락처로 검색합니다. 동일 회원의 중복 신청 여부를 반드시 확인합니다.', image: null },
+      { title: '접수 정보 입력', desc: '강좌, 강의 시간대, 교재 선택 여부를 확인 후 [접수 등록] 버튼을 클릭합니다.', image: null },
+      { title: '대기번호 확인', desc: '정원 초과 시 자동으로 대기번호가 부여됩니다. 대기 순번을 회원에게 안내합니다.', image: null },
+    ],
+    mainItemsTable: [
+      { field: '접수 강좌', desc: '신청할 강좌명 및 시간대', required: true },
+      { field: '회원 정보', desc: '신청 회원의 이름, 연락처, 생년월일', required: true },
+      { field: '교재 신청 여부', desc: '해당 강좌의 교재 수령 여부 선택', required: false },
+    ],
+    cases: [
+      { label: '정원 초과 시', action: '자동으로 대기번호 부여. 대기 순번과 예상 입반 시기를 회원에게 안내', note: '대기 접수도 동일한 절차로 진행' },
+      { label: '타 캠퍼스 접수 문의', action: '해당 캠퍼스 운영팀에 직접 안내 — 캠퍼스 간 접수 공유 불가', note: '' },
+    ],
+    cautions: [
+      '동일 회원의 동일 강좌 중복 접수 불가 — 검색 후 기존 접수 여부 반드시 확인',
+      '접수 취소 후 재접수 시 기존 대기 순번은 초기화됨',
+    ],
+    troubleTable: [
+      { issue: '"이미 접수된 회원입니다"', cause: '동일 강좌에 이미 접수 이력 존재', solution: '접수현황에서 기존 접수 내역 확인 후 처리', severity: 'medium' },
+      { issue: '"모집이 마감된 강좌입니다"', cause: '해당 강좌 모집 상태가 마감으로 변경됨', solution: '모집상태 재확인 후 대기접수 또는 타 강좌 안내', severity: 'medium' },
+    ],
+    responses: null, decisionTable: null, referenceData: null, policyDiff: null,
+  },
+
+  'waitlist-manage': {
+    type: 'SOP', module: '모집/접수 관리', title: '대기번호 관리 및 입반 전환 가이드',
+    updated: '2026-03-28', confluenceId: '1920678901',
+    author: '이준호', version: 'v1.2', views: 134, helpful: 11, helpfulRate: 85,
+    targets: ['운영자'],
+    tldr: "대기 접수된 회원의 대기 순번 확인 및 입반 전환 처리 방법입니다.\n빠른 대기번호와 일반 대기번호의 처리 순서가 다르므로 주의가 필요합니다.",
+    path: 'AMS 어드민 > 모집/접수 관리 > 대기번호 관리',
+    amsUrl: `${AMS}/recruit`,
+    confluenceUrl: `${CONFLUENCE}/1920678901`,
+    steps: [
+      { title: '대기번호 현황 확인', desc: '모집/접수 관리 > 대기번호 관리에서 강좌별 대기자 목록을 조회합니다.', image: null },
+      { title: '입반 가능 인원 확인', desc: '수업관리에서 해당 강좌의 현재 입반 인원과 정원을 확인합니다.', image: null },
+      { title: '대기자에게 입반 의사 확인', desc: '대기 순번에 따라 회원에게 연락하여 입반 의사를 확인합니다.', image: null },
+      { title: '입반 전환 처리', desc: '입반 의사 확인 후 [입반 전환] 버튼을 클릭하여 수강 접수에서 입반 상태로 변경합니다.', image: null },
+    ],
+    cases: [
+      { label: '빠른 대기번호 우선 처리', action: '빠른 대기번호(회원 병합 시 이관된 대기번호)는 일반 대기번호보다 우선 입반 전환', note: '빠른 대기번호는 목록 상단에 표시' },
+      { label: '입반 의사 없음', action: '대기 취소 처리 후 다음 순번의 대기자에게 연락', note: '취소된 대기번호는 복구 불가' },
+    ],
+    cautions: [
+      '대기 취소 후 재접수 시 순번이 후순위로 변경됨',
+      '입반 전환 전 반드시 회원의 의사를 확인 — 무단 전환 금지',
+    ],
+    troubleTable: null,
+    responses: null, mainItemsTable: null, decisionTable: null, referenceData: null, policyDiff: null,
+  },
+
+  // ── 강좌/교재 관리 ────────────────────────────────────────────────────────
+  'course-create': {
+    type: 'SOP', module: '강좌/교재 관리', title: '강좌 생성 가이드',
+    updated: '2026-04-12', confluenceId: '1920789012',
+    author: '박소연', version: 'v2.0', views: 267, helpful: 22, helpfulRate: 90,
+    targets: ['운영자', '실장'],
+    tldr: "AMS에서 신규 강좌를 생성하고 수업 일정을 설정하는 방법입니다.\n강좌 생성 후 청구 설정 및 교재 연결까지 완료해야 운영 준비가 됩니다.",
+    path: 'AMS 어드민 > 강좌/교재 관리 > 강좌관리 > 강좌 생성',
+    amsUrl: `${AMS}/course/manage`,
+    confluenceUrl: `${CONFLUENCE}/1920789012`,
+    steps: [
+      { title: '강좌 기본 정보 입력', desc: '강좌명, 강사, 강의실, 과목, 대상 학년을 입력합니다.', image: null },
+      { title: '수업 일정 설정', desc: '개강일, 종강일, 수업 요일 및 시간을 설정합니다. 수업 일수에 따라 자동으로 회차가 생성됩니다.', image: null },
+      { title: '정원 및 모집 설정', desc: '최대 정원, 모집 시작일/마감일을 설정합니다. 대기 접수 허용 여부도 설정 가능합니다.', image: null },
+      { title: '수강료 설정', desc: '회차별 수강료, 월별 수강료 등 청구 방식을 설정합니다.', image: null },
+      { title: '교재 연결 (선택)', desc: '연결할 교재가 있는 경우 [교재 연결] 탭에서 교재를 검색하여 연결합니다.', image: null },
+      { title: '저장 및 모집 시작', desc: '[저장] 후 모집 상태를 "접수중"으로 변경하면 학부모 앱에서 신청 가능 상태가 됩니다.', image: null },
+    ],
+    mainItemsTable: [
+      { field: '강좌명', desc: '학부모/학생 앱에 표시되는 강좌 이름', required: true },
+      { field: '강사', desc: '담당 강사 선택 (사전 등록 필요)', required: true },
+      { field: '개강일', desc: '첫 수업일 — 청구의 기준이 되는 날짜', required: true },
+      { field: '수업 요일/시간', desc: '반복 수업 요일 및 시작·종료 시간', required: true },
+      { field: '정원', desc: '최대 입반 가능 인원', required: true },
+    ],
+    cases: [
+      { label: '연간반 (1년 기준) 강좌', action: '개강일은 3월 1일, 종강일은 익년 2월 말로 설정. 수강료는 월별 정액으로 설정 권장', note: '방학기간 수업 없는 주는 공휴일 설정으로 회차 제외' },
+      { label: '단기 특강 강좌', action: '개강일~종강일을 단기로 설정. 수강료는 전체 회차 일괄 청구로 설정', note: '전체 청구 방식이므로 중도 입반 시 일할 계산 필수' },
+    ],
+    cautions: [
+      '강좌 저장 후 개강일, 수업요일 변경 시 기존 청구 이력에 영향을 줄 수 있음',
+      '강사 미등록 상태에서는 강좌 생성 불가 — 사전에 강사 등록 필수',
+      '정원 설정 후 축소 시 기존 입반생이 있으면 경고 발생',
+    ],
+    troubleTable: [
+      { issue: '"강사가 등록되지 않았습니다"', cause: '선택한 강사가 AMS에 미등록 상태', solution: '강사 관리 메뉴에서 강사 등록 후 재시도', severity: 'medium' },
+      { issue: '"중복된 강의실/시간대입니다"', cause: '동일 강의실에 동일 시간대 강좌가 이미 존재', solution: '강의실 또는 시간대 변경', severity: 'medium' },
+    ],
+    responses: null, decisionTable: null, referenceData: null, policyDiff: null,
+  },
+
+  'textbook-register': {
+    type: 'SOP', module: '강좌/교재 관리', title: '교재 등록 및 강좌 연결 가이드',
+    updated: '2026-04-08', confluenceId: '1920890123',
+    author: '이준호', version: 'v1.5', views: 143, helpful: 12, helpfulRate: 87,
+    targets: ['운영자', '실장'],
+    tldr: "교재를 AMS에 등록하고 강좌와 연결하는 방법입니다.\n교재 유형(교재단품/회차패키지/선택패키지)에 따라 청구 방식이 달라집니다.",
+    path: 'AMS 어드민 > 강좌/교재 관리 > 교재관리',
+    amsUrl: `${AMS}/course/textbook`,
+    confluenceUrl: `${CONFLUENCE}/1920890123`,
+    steps: [
+      { title: '교재 기본 정보 입력', desc: '교재명, 출판사, 단가, 교재 유형(단품/패키지)을 입력합니다.', image: null },
+      { title: '교재 유형 선택', desc: '교재단품: 1회성 청구. 회차패키지: 수강료와 1:1 매칭 청구. 선택패키지: 회원이 선택적으로 구매.', image: null },
+      { title: '강좌에 교재 연결', desc: '강좌 관리에서 해당 강좌를 선택 후 [교재 연결] 탭에서 등록한 교재를 연결합니다.', image: null },
+      { title: '연결 설정 확인', desc: '연결 후 청구 생성 팝업에서 교재 청구 옵션이 정상 표시되는지 확인합니다.', image: null },
+    ],
+    mainItemsTable: [
+      { field: '교재단품', desc: '강좌와 무관하게 1회성으로 청구하는 교재', required: false },
+      { field: '회차패키지', desc: '수강료 회차와 1:1 매칭되어 출석 + 배부 함께 처리되는 교재', required: false },
+      { field: '선택패키지', desc: '회원이 특정 시점에 선택하여 일괄 청구하는 교재', required: false },
+    ],
+    cases: [
+      { label: '교재를 수강료와 함께 일괄 청구', action: '회차패키지로 등록 후 강좌에 연결 → 청구생성 시 연결교재 청구 옵션 선택', note: '출결박스와 배부박스가 함께 생성됨' },
+      { label: '교재 추가 또는 변경 필요', action: '기존 연결된 교재를 해제 후 새 교재 연결. 기청구된 회원은 별도 처리 필요', note: '기청구 교재 변경은 환불 후 재청구' },
+    ],
+    cautions: [
+      '교재 단가 변경 시 기존 청구된 금액에는 소급 적용되지 않음',
+      '회차패키지 교재는 강좌 종강 이후 수정 불가',
+    ],
+    troubleTable: [
+      { issue: '교재 연결 후 청구 팝업에 표시 안됨', cause: '강좌와 교재의 연결 설정 미완료', solution: '교재 연결 탭에서 활성화 여부 재확인', severity: 'medium' },
+    ],
+    responses: null, decisionTable: null, referenceData: null, policyDiff: null,
+  },
+
+  // ── 메시지발송 관리 ────────────────────────────────────────────────────────
+  'sms-send': {
+    type: 'SOP', module: '메시지발송 관리', title: '문자 발송 가이드',
+    updated: '2026-04-06', confluenceId: '1920901234',
+    author: '김명준', version: 'v1.4', views: 178, helpful: 15, helpfulRate: 89,
+    targets: ['운영자', '실장'],
+    tldr: "AMS에서 수강생 및 학부모에게 문자(SMS/LMS)를 일괄 또는 개별 발송하는 방법입니다.",
+    path: 'AMS 어드민 > 메시지발송 관리 > 문자발송',
+    amsUrl: `${AMS}/message`,
+    confluenceUrl: `${CONFLUENCE}/1920901234`,
+    steps: [
+      { title: '문자 발송 메뉴 진입', desc: '메시지발송 관리 > 문자발송 메뉴로 이동합니다.', image: null },
+      { title: '수신 대상 선택', desc: '강좌별, 반별, 개별 회원 등 수신 대상을 선택합니다. 다중 선택 가능합니다.', image: null },
+      { title: '발송 유형 선택', desc: 'SMS(90byte 이하) 또는 LMS(90byte 초과)를 선택합니다. 글자수에 따라 자동 전환됩니다.', image: null },
+      { title: '메시지 내용 작성', desc: '발송할 내용을 작성합니다. #{학생명}, #{강좌명} 등 변수 삽입이 가능합니다.', image: null },
+      { title: '즉시 발송 또는 예약 발송', desc: '[즉시 발송] 또는 원하는 일시로 [예약 발송]을 선택합니다.', image: null },
+    ],
+    mainItemsTable: [
+      { field: 'SMS', desc: '90byte 이하 단문. 1건당 요금 적용', required: false },
+      { field: 'LMS', desc: '90byte 초과 장문. SMS 대비 요금 높음', required: false },
+      { field: '변수', desc: '#{학생명}, #{강좌명} 등 개인화 변수 사용 가능', required: false },
+    ],
+    cases: [
+      { label: '수업 결석 안내 문자', action: '해당 강좌 입반생 중 특정일 결석 처리된 회원만 필터링하여 발송', note: '출결 관리 연동으로 자동 필터 가능' },
+      { label: '청구 안내 문자', action: '청구 생성 후 해당 강좌 청구 대상자에게 납부 안내 문자 일괄 발송', note: '가상계좌 발급 문자는 별도 메뉴 사용' },
+    ],
+    cautions: [
+      '발송 전 수신 거부 여부 확인 — 수신 거부 회원에게 발송 시 민원 발생 가능',
+      '예약 발송 후 내용 수정이 필요하면 발송 30분 전까지 취소 가능',
+      '대량 발송(500건 이상)은 발송 전 실장 승인 필요',
+    ],
+    troubleTable: [
+      { issue: '발송 실패 메시지 표시', cause: '수신 번호 형식 오류 또는 통신사 오류', solution: '수신 번호 형식 확인(010-XXXX-XXXX) 후 재발송', severity: 'medium' },
+      { issue: '예약 발송이 발송되지 않음', cause: '예약 시간 설정 오류 또는 시스템 오류', solution: '발송 이력에서 예약 상태 확인 후 수동 즉시 발송', severity: 'high' },
+    ],
+    responses: null, decisionTable: null, referenceData: null, policyDiff: null,
+  },
+
+  'virtual-account-guide': {
+    type: 'SOP', module: '메시지발송 관리', title: '가상계좌 안내 문자 발송 가이드',
+    updated: '2026-03-25', confluenceId: '1920012345',
+    author: '이준호', version: 'v1.1', views: 112, helpful: 9, helpfulRate: 83,
+    targets: ['운영자'],
+    tldr: "가상계좌 결제를 선택한 회원에게 입금 안내 문자를 발송하는 방법입니다.\n가상계좌는 회원별로 고유하게 발급되며, 입금 기한이 있으므로 신속한 안내가 필요합니다.",
+    path: 'AMS 어드민 > 메시지발송 관리 > 가상계좌 안내',
+    amsUrl: `${AMS}/message`,
+    confluenceUrl: `${CONFLUENCE}/1920012345`,
+    steps: [
+      { title: '가상계좌 발급 대상 조회', desc: '메시지발송 관리 > 가상계좌 안내에서 발급된 가상계좌 목록을 조회합니다.', image: null },
+      { title: '미안내 대상 필터링', desc: '발급 후 문자 미발송 상태인 회원을 필터링합니다.', image: null },
+      { title: '안내 문자 발송', desc: '[문자 발송] 버튼을 클릭하면 회원별 가상계좌 번호와 입금 기한이 포함된 안내 문자가 자동 발송됩니다.', image: null },
+      { title: '입금 확인', desc: '발송 후 가상계좌 입금 현황에서 입금 완료 여부를 확인합니다. 입금 기한 내 미입금 시 결제 취소 처리가 필요합니다.', image: null },
+    ],
+    cautions: [
+      '가상계좌 안내 문자는 가상계좌 발급 즉시 발송 권장 (발급 후 24시간 이내)',
+      '입금 기한 경과 후 입금된 건은 자동 취소 — 재발급 후 안내 필요',
+      '동일 회원에게 중복 발송되지 않도록 발송 이력 확인',
+    ],
+    troubleTable: [
+      { issue: '가상계좌 번호가 안내 문자에 포함되지 않음', cause: '가상계좌 발급 완료 전 문자 발송 시도', solution: '가상계좌 발급 상태 확인 후 재발송', severity: 'medium' },
+    ],
+    responses: null, mainItemsTable: null, decisionTable: null, referenceData: null, policyDiff: null,
   },
 
   'student-suspension': {
@@ -375,6 +577,117 @@ export const GUIDES = {
     ],
     mainItemsTable: null, responses: null, decisionTable: null, referenceData: null, policyDiff: null,
   },
+
+  // ── 수업운영 — 입반/출결 ─────────────────────────────────────────────────
+  'enrollment-process': {
+    type: 'SOP', module: '수업운영관리', title: '입반 처리 가이드',
+    updated: '2026-04-14', confluenceId: '1921234567',
+    author: '박소연', version: 'v1.6', views: 389, helpful: 31, helpfulRate: 91,
+    targets: ['운영자'],
+    tldr: "수강 접수가 완료된 회원을 강좌에 입반시키는 절차입니다.\n입반 처리 후 반드시 청구 생성을 진행해야 수강료가 청구됩니다.",
+    path: 'AMS 어드민 > 수업운영관리 > 수업관리 > 수업상세 > 접수생 목록',
+    amsUrl: `${AMS}/operation/class/manage`,
+    confluenceUrl: `${CONFLUENCE}/1921234567`,
+    steps: [
+      { title: '수업상세 화면 진입', desc: '수업운영관리 > 수업관리에서 입반할 강좌를 선택하여 수업상세 화면으로 이동합니다.', image: null },
+      { title: '접수생 목록 조회', desc: '[접수생] 탭을 클릭하여 접수 완료된 회원 목록을 불러옵니다.', image: null },
+      { title: '입반 대상 선택', desc: '입반시킬 회원을 체크박스로 선택합니다. 전체 선택도 가능합니다.', image: null },
+      { title: '입반일 선택 및 입반 처리', desc: '화면 상단에서 입반일을 선택한 후 [입반처리] 버튼을 클릭합니다.', image: null },
+      { title: '청구 생성', desc: '입반 처리 완료 후 [청구생성] 버튼을 클릭하여 수강료 청구를 생성합니다. 이 단계를 빠뜨리면 수강료가 청구되지 않습니다.', image: null },
+    ],
+    mainItemsTable: [
+      { field: '입반일', desc: '강좌 수강을 시작하는 날짜. 청구 기산점이 됨.', required: true },
+      { field: '입반 대상', desc: '접수생 목록에서 선택한 회원. 복수 선택 가능.', required: true },
+    ],
+    cases: [
+      { label: '월 중도 입반 (일할 계산 필요)', action: '입반일을 수업 시작일이 아닌 실제 수강 시작일로 설정. 시스템이 자동으로 일할 계산하여 첫 달 수강료를 산출', note: 'Proration 자동 계산 옵션 체크 필수' },
+      { label: '형제/자매 동시 입반', action: '각 회원별로 개별 입반 처리 후 각각 청구 생성. 일괄 처리 불가.', note: '한 명씩 순차적으로 처리' },
+      { label: '대기자 우선 입반', action: '접수생 탭이 아닌 대기번호 관리에서 입반 전환으로 처리. 대기 순번 순서 준수.', note: '빠른 대기번호 우선' },
+    ],
+    cautions: [
+      '입반 처리 후 반드시 청구 생성까지 완료 — 미완료 시 회원에게 수강료 청구 불가',
+      '입반일은 수정이 어려우므로 신중하게 설정',
+      '동일 강좌에 이미 입반된 회원은 중복 입반 불가',
+    ],
+    troubleTable: [
+      { issue: '"이미 입반된 회원입니다"', cause: '동일 강좌에 이미 활성 입반 상태', solution: '입반생 목록에서 현황 확인 후 필요시 퇴반 후 재입반', severity: 'medium' },
+      { issue: '입반 처리 후 출석부에 회원이 표시 안됨', cause: '청구 생성 미완료로 출결박스 미생성', solution: '청구 생성 절차 진행 후 새로고침', severity: 'high' },
+    ],
+    responses: null, decisionTable: null, referenceData: null, policyDiff: null,
+  },
+
+  'attendance-process': {
+    type: 'SOP', module: '수업운영관리', title: '출결 처리 가이드',
+    updated: '2026-04-13', confluenceId: '1921345678',
+    author: '이준호', version: 'v2.3', views: 512, helpful: 42, helpfulRate: 93,
+    targets: ['운영자'],
+    tldr: "AMS에서 수업 출결을 처리하는 방법입니다.\nQR 출석, 수동 출석, 보강 처리 등 상황별 출결 처리를 안내합니다.",
+    path: 'AMS 어드민 > 수업운영관리 > 출결 관리',
+    amsUrl: `${AMS}/operation/attendance`,
+    confluenceUrl: `${CONFLUENCE}/1921345678`,
+    steps: [
+      { title: '출결 관리 메뉴 진입', desc: '수업운영관리 > 출결 관리에서 해당 수업일의 강좌를 선택합니다.', image: null },
+      { title: '출결 현황 확인', desc: '수업상세 출석부에서 해당 회차의 출결박스 현황을 확인합니다. 출석예정/출석/결석/보강 상태를 확인할 수 있습니다.', image: null },
+      { title: '출결 상태 변경', desc: '출결박스를 클릭하여 출석/결석/보강 상태로 변경합니다. QR 출석의 경우 자동 처리됩니다.', image: null },
+      { title: '보강 처리 (선택)', desc: '결석한 회원에게 보강이 필요한 경우 [보강 부여] 버튼으로 보강 회차를 생성합니다.', image: null },
+    ],
+    mainItemsTable: [
+      { field: '출석예정', desc: '출결박스가 생성되었으나 아직 출석처리가 되지 않은 상태', required: false },
+      { field: '출석', desc: '해당 회차에 출석 처리된 상태 (현장출석/QR/타반보강/VOD 포함)', required: false },
+      { field: '결석', desc: '출석 처리 없이 해당 수업일이 경과한 상태', required: false },
+      { field: '보강', desc: '결석 회원에게 별도로 수업 기회를 제공하는 추가 회차', required: false },
+    ],
+    cases: [
+      { label: 'QR 인식 실패 시', action: '수동 출석 모드로 전환하여 직접 출석 처리. QR 인식 실패 원인은 별도 트러블슈팅 가이드 참고', note: '전체 기기 불가 시 플랫폼서비스실 긴급 연락' },
+      { label: '타반에서 보강 수업을 받은 경우', action: '타반보강으로 자동 집계됨. 보강 코드가 동일한 반에서 출석처리된 경우만 인정', note: '보강 코드 확인 필수' },
+      { label: 'VOD 보강 처리', action: '마이클래스 앱에서 동영상보강으로 출석한 경우 VOD 보강으로 자동 반영. AMS 별도 처리 불필요', note: '' },
+    ],
+    cautions: [
+      '출석/결석 상태 변경 후 해당 회차의 이용가능금액이 즉시 반영됨',
+      '이미 확정된 과거 출결 수정은 실장 승인이 필요할 수 있음',
+      '보강 회차 부여 시 만료일을 반드시 설정 — 미설정 시 영구 보강으로 처리될 수 있음',
+    ],
+    troubleTable: [
+      { issue: '출결박스가 생성되지 않음', cause: '해당 회차에 청구 미생성 또는 입반 상태 아님', solution: '입반 및 청구생성 상태 확인 후 청구 생성 진행', severity: 'high' },
+      { issue: 'QR 출석이 반영되지 않음', cause: 'AMS 서버 지연 또는 오프라인 상태', solution: '새로고침 후 확인. 미반영 시 수동 출석으로 보완 처리', severity: 'medium' },
+      { issue: '결석 처리된 회원의 이용가능금액이 줄지 않음', cause: '납부대기 상태에서 결석 발생 → 미납 상태로 변경됨', solution: '청구 상태 확인 후 미납 처리가 맞는지 검토', severity: 'medium' },
+    ],
+    responses: null, decisionTable: null, referenceData: null, policyDiff: null,
+  },
+
+  'payment-request-sms': {
+    type: 'SOP', module: '메시지발송 관리', title: '결제 요청 문자 발송 가이드',
+    updated: '2026-04-03', confluenceId: '1921456789',
+    author: '박소연', version: 'v1.0', views: 95, helpful: 8, helpfulRate: 81,
+    targets: ['운영자'],
+    tldr: "온라인 결제를 유도하기 위해 결제 요청 URL을 포함한 문자를 발송하는 방법입니다.\n전환결제 시 온라인 결제수단 선택 후 학부모에게 결제 URL을 발송할 수 있습니다.",
+    path: 'AMS 어드민 > 메시지발송 관리 > 결제 요청',
+    amsUrl: `${AMS}/message`,
+    confluenceUrl: `${CONFLUENCE}/1921456789`,
+    steps: [
+      { title: '결제 요청 메뉴 진입', desc: '메시지발송 관리 > 결제 요청 메뉴로 이동합니다.', image: null },
+      { title: '결제 요청 대상 선택', desc: '청구는 생성되었으나 미결제 상태인 회원을 필터링합니다.', image: null },
+      { title: '결제 수단 선택', desc: '온라인 카드(PG) 결제를 선택합니다. 발송되는 URL에 결제 정보가 포함됩니다.', image: null },
+      { title: '문자 발송', desc: '[결제 요청 문자 발송] 버튼을 클릭하면 학부모에게 고유 결제 URL이 포함된 문자가 발송됩니다.', image: null },
+      { title: '결제 완료 확인', desc: '발송 후 결제 현황에서 결제 완료 여부를 확인합니다. 미결제 시 재발송 가능합니다.', image: null },
+    ],
+    mainItemsTable: [
+      { field: '결제 요청 URL', desc: '회원별 고유 URL. 클릭 시 바로 결제 화면으로 연결', required: true },
+      { field: '결제 기한', desc: '결제 요청 유효 기간. 기한 내 미결제 시 URL 만료', required: false },
+    ],
+    cases: [
+      { label: '전환결제 시 온라인 URL 발송', action: '전환결제 팝업에서 온라인(PG) 선택 후 [결제요청 URL 발송] 선택 → 자동으로 문자 발송', note: '전환결제 완료 후 기존 결제 환불 절차 필수' },
+      { label: 'URL 만료 후 재발송', action: '결제 요청 메뉴에서 해당 회원을 다시 선택하여 새 URL 발송', note: '이전 URL은 자동 무효화됨' },
+    ],
+    cautions: [
+      '결제 요청 URL은 회원별 고유값 — 타인과 공유 금지',
+      '결제 기한(보통 7일) 경과 시 URL 만료 — 재발송 필요',
+    ],
+    troubleTable: [
+      { issue: '결제 완료 후에도 미결제 상태로 표시', cause: 'PG사 결제 승인 지연', solution: '5분 후 재조회. 미반영 시 PG사 승인 번호로 수동 확인', severity: 'medium' },
+    ],
+    responses: null, decisionTable: null, referenceData: null, policyDiff: null,
+  },
 };
 
 // AMS 실제 메뉴 구조 (https://ams.sdij.com 기준)
@@ -382,68 +695,87 @@ export const MODULE_TREE = [
   {
     id: 'recruit', label: '모집/접수 관리', icon: 'ClipboardList',
     amsPath: '/recruit',
-    guides: [],
+    guides: [
+      { id: 'recruit-application', label: '모집 신청 접수 처리 가이드' },
+      { id: 'waitlist-manage',     label: '대기번호 관리 및 입반 전환 가이드' },
+    ],
   },
   {
     id: 'course', label: '강좌/교재 관리', icon: 'BookOpen',
     amsPath: '/course',
-    guides: [],
+    guides: [
+      { id: 'course-create',      label: '강좌 생성 가이드' },
+      { id: 'textbook-register',  label: '교재 등록 및 강좌 연결 가이드' },
+      { id: 'class-schedule',     label: '강좌 스케줄 관리 가이드' },
+    ],
   },
   {
     id: 'operation', label: '수업운영관리', icon: 'Calendar',
     amsPath: '/operation/class/manage',
     guides: [
-      { id: 'class-manage',   label: '수업관리 화면 가이드' },
-      { id: 'class-transfer', label: '전반 처리 가이드' },
-      { id: 'unpaid-withdraw',label: '미납자 퇴반처리' },
-      { id: 'qr-trouble',     label: 'QR 출석 인식 실패 트러블슈팅' },
+      { id: 'enrollment-process', label: '입반 처리 가이드' },
+      { id: 'attendance-process', label: '출결 처리 가이드' },
+      { id: 'class-manage',       label: '수업관리 화면 가이드' },
+      { id: 'class-transfer',     label: '전반 처리 가이드' },
+      { id: 'unpaid-withdraw',    label: '미납자 퇴반처리' },
+      { id: 'qr-trouble',         label: 'QR 출석 인식 실패 트러블슈팅' },
     ],
   },
   {
     id: 'billing', label: '청구/수납/결제/환불', icon: 'CreditCard',
     amsPath: '/billing',
     guides: [
-      { id: 'billing-guide',  label: '청구 생성 가이드' },
-      { id: 'payment-switch', label: '전환결제 처리 가이드' },
-      { id: 'refund-policy',  label: '환불 승인 기준 판단 가이드' },
+      { id: 'billing-guide',   label: '청구 생성 가이드' },
+      { id: 'payment-switch',  label: '전환결제 처리 가이드' },
+      { id: 'refund-policy',   label: '환불 승인 기준 판단 가이드' },
+      { id: 'payment-method',  label: '결제 수단 등록 가이드' },
     ],
   },
   {
     id: 'customer', label: '고객(원생) 관리', icon: 'Users',
     amsPath: '/customer/member/detail',
     guides: [
-      { id: 'member-merge',      label: 'AMS 회원 병합 가이드' },
-      { id: 'duplicate-account', label: '중복 계정 통합 프로세스' },
-      { id: 'student-suspension', label: '휴강 처리 절차' },
+      { id: 'member-merge',        label: 'AMS 회원 병합 가이드' },
+      { id: 'duplicate-account',   label: '중복 계정 통합 프로세스' },
+      { id: 'student-suspension',  label: '휴강 처리 절차' },
     ],
   },
   {
     id: 'message', label: '메시지발송 관리', icon: 'MessageSquare',
     amsPath: '/message',
-    guides: [],
+    guides: [
+      { id: 'sms-send',              label: '문자 발송 가이드' },
+      { id: 'virtual-account-guide', label: '가상계좌 안내 문자 발송 가이드' },
+      { id: 'payment-request-sms',   label: '결제 요청 문자 발송 가이드' },
+    ],
   },
   {
     id: 'system', label: '공통/시스템', icon: 'Settings',
     amsPath: AMS,
     guides: [
-      { id: 'ams-glossary',   label: 'AMS 주요 용어 사전' },
-      { id: 'response-manual',label: '상황별 CS 대응 매뉴얼' },
-      { id: 'policy-2026',    label: '2026 수강료 정책 변경 공지' },
+      { id: 'ams-glossary',    label: 'AMS 주요 용어 사전' },
+      { id: 'response-manual', label: '상황별 CS 대응 매뉴얼' },
+      { id: 'policy-2026',     label: '2026 수강료 정책 변경 공지' },
     ],
   },
 ];
 
 export const RECENT_GUIDES = [
-  { id:'member-merge',    module:'고객(원생) 관리',     title:'AMS 회원 병합 가이드',           updated_at:'2026-04-15', views: 342, helpful: 28, version: 'v2.1', author: '김명준', tags: ['회원관리', '필수'] },
-  { id:'billing-guide',   module:'청구/수납/결제/환불', title:'청구 생성 가이드',                updated_at:'2026-04-10', views: 215, helpful: 18, version: 'v1.8', author: '이준호', tags: ['청구', '필수'] },
-  { id:'payment-switch',  module:'청구/수납/결제/환불', title:'전환결제 처리 가이드',             updated_at:'2026-04-08', views: 187, helpful: 14, version: 'v2.0', author: '김명준', tags: ['결제', '자주묻는질문'] },
-  { id:'class-transfer',  module:'수업운영관리',         title:'전반 처리 가이드',                updated_at:'2026-04-05', views: 156, helpful: 11, version: 'v1.5', author: '박소연', tags: ['입반', '필수'] },
-  { id:'qr-trouble',      module:'수업운영관리',         title:'QR 출석 인식 실패 트러블슈팅',    updated_at:'2026-04-03', views: 423, helpful: 35, version: 'v3.2', author: '이준호', tags: ['출석', '트러블슈팅'] },
-  { id:'duplicate-account', module:'고객(원생) 관리', title:'중복 계정 통합 프로세스',      updated_at:'2026-04-01', views: 98, helpful: 7, version: 'v1.2', author: '박소연', tags: ['회원관리', '실장'] },
-  { id:'refund-policy', module:'청구/수납/결제/환불', title:'환불 승인 기준 판단 가이드',    updated_at:'2026-03-28', views: 567, helpful: 45, version: 'v2.5', author: '이준호', tags: ['환불', '필수', '실장'] },
-  { id:'ams-glossary', module:'공통/시스템', title:'AMS 주요 용어 사전', updated_at:'2026-03-25', views: 234, helpful: 18, version: 'v1.9', author: '김명준', tags: ['용어', '공통'] },
-  { id:'unpaid-withdraw', module:'수업운영관리', title:'미납자 퇴반처리 가이드', updated_at:'2026-03-20', views: 145, helpful: 12, version: 'v1.4', author: '박소연', tags: ['퇴반', '청구'] },
-  { id:'student-suspension', module:'고객(원생) 관리', title:'휴강 처리 절차', updated_at:'2026-03-15', views: 89, helpful: 6, version: 'v1.1', author: '김명준', tags: ['휴강', 'SOP'] },
+  { id:'attendance-process',    module:'수업운영관리',         title:'출결 처리 가이드',                     updated_at:'2026-04-13', views: 512, helpful: 42, version: 'v2.3', author: '이준호', tags: ['출결', '필수'] },
+  { id:'enrollment-process',    module:'수업운영관리',         title:'입반 처리 가이드',                     updated_at:'2026-04-14', views: 389, helpful: 31, version: 'v1.6', author: '박소연', tags: ['입반', '필수'] },
+  { id:'course-create',         module:'강좌/교재 관리',       title:'강좌 생성 가이드',                     updated_at:'2026-04-12', views: 267, helpful: 22, version: 'v2.0', author: '박소연', tags: ['강좌', '필수'] },
+  { id:'recruit-application',   module:'모집/접수 관리',       title:'모집 신청 접수 처리 가이드',           updated_at:'2026-04-10', views: 198, helpful: 16, version: 'v1.3', author: '박소연', tags: ['접수', '필수'] },
+  { id:'member-merge',          module:'고객(원생) 관리',      title:'AMS 회원 병합 가이드',                 updated_at:'2026-04-08', views: 342, helpful: 28, version: 'v2.1', author: '김명준', tags: ['회원관리', '필수'] },
+  { id:'sms-send',              module:'메시지발송 관리',      title:'문자 발송 가이드',                     updated_at:'2026-04-06', views: 178, helpful: 15, version: 'v1.4', author: '김명준', tags: ['문자', '필수'] },
+  { id:'qr-trouble',            module:'수업운영관리',         title:'QR 출석 인식 실패 트러블슈팅',         updated_at:'2026-04-03', views: 423, helpful: 35, version: 'v3.2', author: '이준호', tags: ['출석', '트러블슈팅'] },
+  { id:'billing-guide',         module:'청구/수납/결제/환불',  title:'청구 생성 가이드',                     updated_at:'2026-04-01', views: 215, helpful: 18, version: 'v1.8', author: '이준호', tags: ['청구', '필수'] },
+  { id:'refund-policy',         module:'청구/수납/결제/환불',  title:'환불 승인 기준 판단 가이드',           updated_at:'2026-03-28', views: 567, helpful: 45, version: 'v2.5', author: '이준호', tags: ['환불', '필수', '실장'] },
+  { id:'payment-switch',        module:'청구/수납/결제/환불',  title:'전환결제 처리 가이드',                 updated_at:'2026-03-25', views: 187, helpful: 14, version: 'v2.0', author: '김명준', tags: ['결제', '자주묻는질문'] },
+  { id:'class-transfer',        module:'수업운영관리',         title:'전반 처리 가이드',                     updated_at:'2026-03-14', views: 156, helpful: 11, version: 'v1.5', author: '박소연', tags: ['입반', '필수'] },
+  { id:'textbook-register',     module:'강좌/교재 관리',       title:'교재 등록 및 강좌 연결 가이드',        updated_at:'2026-04-08', views: 143, helpful: 12, version: 'v1.5', author: '이준호', tags: ['교재', '청구'] },
+  { id:'ams-glossary',          module:'공통/시스템',           title:'AMS 주요 용어 사전',                   updated_at:'2026-03-25', views: 234, helpful: 18, version: 'v1.9', author: '김명준', tags: ['용어', '공통'] },
+  { id:'unpaid-withdraw',       module:'수업운영관리',         title:'미납자 퇴반처리 가이드',               updated_at:'2026-03-20', views: 145, helpful: 12, version: 'v1.4', author: '박소연', tags: ['퇴반', '청구'] },
+  { id:'student-suspension',    module:'고객(원생) 관리',      title:'휴강 처리 절차',                       updated_at:'2026-03-15', views: 89,  helpful: 6,  version: 'v1.1', author: '김명준', tags: ['휴강', 'SOP'] },
 ];
 
 // 인기 가이드 (조회수 기준)

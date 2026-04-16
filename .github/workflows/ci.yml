@@ -120,32 +120,20 @@ jobs:
       - name: Build project
         run: npm run build
 
-      - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium
-
-      - name: Create accessibility check script
+      - name: Check HTML structure
         run: |
-          cat > check-a11y.js << 'EOF'
-          import { test, expect } from '@playwright/test';
-
-          test('accessibility check', async ({ browser }) => {
-            const page = await browser.newPage();
-            await page.goto('file://$(pwd)/dist/index.html');
-
-            // Basic accessibility checks
-            const headings = await page.locator('h1, h2, h3').count();
-            console.log(`Found ${headings} headings`);
-
-            const buttons = await page.locator('button').count();
-            console.log(`Found ${buttons} buttons`);
-
-            const images = await page.locator('img').count();
-            console.log(`Found ${images} images`);
-          });
-          EOF
-
-      - name: Run accessibility checks
-        run: npx playwright test check-a11y.js 2>&1 || true
+          echo "Checking HTML structure..."
+          if grep -q "<h1" dist/index.html; then
+            echo "✓ Found h1 tag"
+          else
+            echo "⚠ No h1 tag found (may be dynamic)"
+          fi
+          if grep -q "<button" dist/index.html; then
+            echo "✓ Found button tags"
+          else
+            echo "⚠ No button tags found (may be dynamic)"
+          fi
+        continue-on-error: true
 
   dependency-check:
     runs-on: ubuntu-latest

@@ -2,6 +2,8 @@
 import { Outlet, useNavigate } from 'react-router-dom'
 import { Search, Bell, User } from 'lucide-react'
 import Sidebar from './Sidebar'
+import ThemeToggle from './ThemeToggle'
+import LanguageSelector from './LanguageSelector'
 import { useSearchStore } from '@/store/searchStore.jsx'
 
 const S = {
@@ -90,6 +92,8 @@ export default function Layout() {
 
         {/* 오른쪽 작업 */}
         <div style={S.rightActions}>
+          <LanguageSelector />
+          <ThemeToggle />
           <div style={S.bell}>
             <Bell size={18} color="#666666" />
             <span style={S.bellDot} />

@@ -1,249 +1,260 @@
-// src/pages/HomePage.jsx — shadcn/ui new-york 스타일 전면 재구성
-import { useMemo } from 'react'
+// src/pages/HomePage.jsx
+// 구조: PageHeader → StatCards(4) → 카테고리 그리드 → 최근 업데이트 + 빠른 링크 2열
+// 모든 카드 구조는 shadcn/ui 공식 Card primitive 준수 (!important 사용 금지)
 import { Link } from 'react-router-dom'
 import {
-  ClipboardList, BookOpen, Calendar, CreditCard, Gift,
-  MessageSquare, Users, Settings, HelpCircle, Bell, ArrowRight,
-  ChevronRight, TrendingUp, Clock, FileText, Shield,
-  ArrowUpRight
-} from 'lucide-react'
-import { useSearchStore } from '@/store/searchStore.jsx'
+  ClipboardText as ClipboardList,
+  BookOpen,
+  Calendar,
+  CreditCard,
+  Users,
+  ChatText as MessageSquare,
+  Gear as Settings,
+  ArrowRight,
+  TrendUp as TrendingUp,
+  Clock,
+  FileText,
+  Shield,
+  CaretRight as ChevronRight,
+  Sparkle as Sparkles,
+  Bell,
+  ChatCircle as MessageCircle,
+  Command
+} from '@phosphor-icons/react'
 import { MODULE_TREE, RECENT_GUIDES, GUIDES } from '@/data/mockData'
+import { useSearchStore } from '@/store/searchStore.jsx'
+import {
+  Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter, CardAction,
+} from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Card } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Separator } from '@/components/ui/separator'
+import {
+  PageShell, PageHeader, SectionTitle, StatCard,
+} from '@/components/common/page-primitives'
 import { cn } from '@/lib/utils'
 
-const ICON_MAP = {
-  ClipboardList, BookOpen, Calendar, CreditCard, Gift,
-  MessageSquare, Users, Settings,
+const ICON_MAP = { ClipboardList, BookOpen, Calendar, CreditCard, Users, MessageSquare, Settings }
+
+// 모듈별 틴트 — 과장 없이 은은하게
+const MODULE_TINT = {
+  recruit:   'bg-blue-500/10 text-blue-600 dark:text-blue-400',
+  course:    'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400',
+  operation: 'bg-violet-500/10 text-violet-600 dark:text-violet-400',
+  billing:   'bg-amber-500/10 text-amber-600 dark:text-amber-400',
+  customer:  'bg-pink-500/10 text-pink-600 dark:text-pink-400',
+  message:   'bg-cyan-500/10 text-cyan-600 dark:text-cyan-400',
+  system:    'bg-slate-500/10 text-slate-600 dark:text-slate-400',
 }
-
-/* 다크/라이트 모두에서 자연스러운 틴티드 팔레트 */
-const MODULE_PALETTE = {
-  recruit:   { tint: 'bg-blue-500/10 dark:bg-blue-400/10',       ring: 'ring-blue-500/20',       icon: 'text-blue-600 dark:text-blue-400' },
-  course:    { tint: 'bg-emerald-500/10 dark:bg-emerald-400/10', ring: 'ring-emerald-500/20',    icon: 'text-emerald-600 dark:text-emerald-400' },
-  operation: { tint: 'bg-violet-500/10 dark:bg-violet-400/10',   ring: 'ring-violet-500/20',     icon: 'text-violet-600 dark:text-violet-400' },
-  billing:   { tint: 'bg-amber-500/10 dark:bg-amber-400/10',     ring: 'ring-amber-500/20',      icon: 'text-amber-600 dark:text-amber-400' },
-  customer:  { tint: 'bg-pink-500/10 dark:bg-pink-400/10',       ring: 'ring-pink-500/20',       icon: 'text-pink-600 dark:text-pink-400' },
-  message:   { tint: 'bg-cyan-500/10 dark:bg-cyan-400/10',       ring: 'ring-cyan-500/20',       icon: 'text-cyan-600 dark:text-cyan-400' },
-  system:    { tint: 'bg-slate-500/10 dark:bg-slate-400/10',     ring: 'ring-slate-500/20',      icon: 'text-slate-600 dark:text-slate-400' },
-}
-
-const MODULE_DESC = {
-  recruit:   '모집 신청, 접수 관리, 대기번호 처리',
-  course:    '강좌 생성, 교재 등록, 회차 관리',
-  operation: '입/퇴반, 전반, 출결 처리',
-  billing:   '청구 생성, 결제 처리, 환불 관리',
-  customer:  '회원 조회, 계정 통합, 휴강 처리',
-  message:   '문자 발송, 가상계좌 안내',
-  system:    '공통 용어, CS 대응, 정책 공지',
-}
-
-const STATS = [
-  { label: '총 가이드',       getValue: () => `${Object.keys(GUIDES).length}`,  unit: '개', icon: FileText,   accent: 'text-blue-600 dark:text-blue-400' },
-  { label: '월 조회수',       getValue: () => '12,487',                         unit: '',   icon: TrendingUp, accent: 'text-emerald-600 dark:text-emerald-400' },
-  { label: '만족도',          getValue: () => '92',                             unit: '%',  icon: Shield,     accent: 'text-violet-600 dark:text-violet-400' },
-  { label: '최근 업데이트',    getValue: () => '오늘',                            unit: '',   icon: Clock,      accent: 'text-amber-600 dark:text-amber-400' },
-]
-
-const QUICK_LINKS = [
-  { to: '/faq',      icon: HelpCircle,    label: 'FAQ',          desc: '반복 문의 해결'   },
-  { to: '/updates',  icon: Bell,          label: '업데이트 이력',  desc: '정책 및 기능 변경' },
-  { to: '/feedback', icon: MessageSquare, label: '오류 제보',      desc: '개선 요청 제출'   },
-]
 
 export default function HomePage() {
-  const { open } = useSearchStore()
-
-  const mods = MODULE_TREE.map(m => ({
-    ...m,
-    description: MODULE_DESC[m.id] || '',
-    guide_count: m.guides.length,
-    palette: MODULE_PALETTE[m.id] || MODULE_PALETTE.system,
-  }))
-
-  const recents = RECENT_GUIDES.slice(0, 6)
-  const sevenDaysAgo = useMemo(() => {
-    const d = new Date(); d.setDate(d.getDate() - 7); return d.getTime()
-  }, [])
+  const open = useSearchStore(s => s.open)
+  const totalGuides = Object.keys(GUIDES).length
+  const recent5 = RECENT_GUIDES.slice(0, 5)
 
   return (
-    <div className="flex flex-1 flex-col gap-6 p-4 md:p-6 lg:p-8">
+    <PageShell>
+      <PageHeader
+        title="대시보드"
+        description={`AMS 운영 가이드 · 최신 업데이트 ${recent5[0]?.updated_at ?? ''}`}
+        actions={
+          <>
+            <Button variant="outline" size="sm" onClick={open}>
+              <Command size={14} />
+              검색
+              <kbd className="ml-1 hidden rounded border bg-muted px-1.5 py-0.5 font-mono text-[10px] sm:inline-flex">
+                ⌘K
+              </kbd>
+            </Button>
+            <Button size="sm" asChild>
+              <Link to="/guides">
+                전체 가이드 <ArrowRight size={14} />
+              </Link>
+            </Button>
+          </>
+        }
+      />
 
-      {/* ── 페이지 타이틀 ────────────────────────────────────────────────────── */}
-      <div className="flex flex-col gap-1 md:flex-row md:items-end md:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight md:text-3xl">대시보드</h1>
-          <p className="text-sm text-muted-foreground">AMS 운영 가이드 · 최신 업데이트 2026.04</p>
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
-          {['계정이관', '환불 처리', 'QR 출석', '전반', '청구생성'].map(q => (
-            <button
-              key={q}
-              onClick={open}
-              className="rounded-full border border-border bg-background px-3 py-1 text-xs font-medium text-foreground transition-all hover:border-ring/50 hover:bg-accent"
-            >
-              {q}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* ── 통계 카드 (dashboard-01 스타일 그라디언트) ──────────────────────── */}
-      <section className="grid grid-cols-2 gap-4 @xl/main:grid-cols-4">
-        {STATS.map(stat => {
-          const StatIcon = stat.icon
-          return (
-            <Card key={stat.label} className="group relative gap-2 overflow-hidden bg-gradient-to-t from-primary/5 to-card p-5 !py-5 shadow-xs transition-all hover:shadow-md dark:from-card dark:to-card">
-              <div className="flex items-start justify-between">
-                <p className="text-sm font-medium text-muted-foreground">{stat.label}</p>
-                <StatIcon size={16} className={stat.accent} />
-              </div>
-              <p className="text-3xl font-bold tracking-tight tabular-nums">
-                {stat.getValue()}
-                {stat.unit && <span className="ml-1 text-xl font-semibold text-muted-foreground">{stat.unit}</span>}
-              </p>
-            </Card>
-          )
-        })}
+      {/* ─── Stat Cards ──────────────────────────────────────────── */}
+      <section className="mb-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <StatCard
+          label="총 가이드"
+          value={`${totalGuides}개`}
+          delta={{ value: '+3', trend: 'up' }}
+          footerTitle="이번 달 3건 신규 추가"
+          footerDesc="지난 30일 기준"
+        />
+        <StatCard
+          label="월 조회수"
+          value="12,487"
+          delta={{ value: '+12.3%', trend: 'up' }}
+          footerTitle="전월 대비 증가"
+          footerDesc="실장/상담실 합산"
+        />
+        <StatCard
+          label="가이드 만족도"
+          value="92%"
+          delta={{ value: '+2.1%', trend: 'up' }}
+          footerTitle="유용함 투표 비율"
+          footerDesc="최근 100건 기준"
+        />
+        <StatCard
+          label="최근 업데이트"
+          value="오늘"
+          footerTitle={recent5[0]?.title ?? '—'}
+          footerDesc={`${recent5[0]?.module ?? ''} · ${recent5[0]?.version ?? ''}`}
+        />
       </section>
 
-      {/* ── 카테고리 그리드 ─────────────────────────────────────────────────── */}
-      <section>
-        <div className="mb-4 flex items-end justify-between">
-          <div>
-            <h2 className="text-lg font-semibold tracking-tight">카테고리 탐색</h2>
-            <p className="text-xs text-muted-foreground">업무 영역별로 분류된 운영 가이드.</p>
-          </div>
-          <Link to="/guides" className="inline-flex shrink-0 items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
-            전체 보기 <ArrowRight size={14} />
-          </Link>
-        </div>
-
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7">
-            {mods.map(m => {
-              const Icon = ICON_MAP[m.icon] || BookOpen
-              const p = m.palette
-              return (
-                <Link
-                  key={m.id}
-                  to={`/modules/${m.id}`}
-                  className={cn(
-                    'group relative flex flex-col gap-4 overflow-hidden rounded-xl border border-border bg-card p-5 transition-all',
-                    'hover:-translate-y-0.5 hover:border-ring/40 hover:shadow-lg'
-                  )}
-                >
-                  <div className="flex items-start justify-between">
-                    <div className={cn('flex h-11 w-11 items-center justify-center rounded-lg ring-1', p.tint, p.ring)}>
-                      <Icon size={20} className={p.icon} />
+      {/* ─── 카테고리 ─────────────────────────────────────────────── */}
+      <section className="mb-10">
+        <SectionTitle
+          title="카테고리"
+          description="AMS 메뉴 구조 기준 모듈별 가이드"
+          link="/guides"
+        />
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {MODULE_TREE.map(mod => {
+            const Icon = ICON_MAP[mod.icon] ?? FileText
+            const tint = MODULE_TINT[mod.id] ?? 'bg-muted text-muted-foreground'
+            return (
+              <Link
+                key={mod.id}
+                to={`/modules/${mod.id}`}
+                className="group"
+              >
+                <Card className="h-full gap-0 py-5 transition-all hover:shadow-md hover:-translate-y-px">
+                  <CardHeader className="px-5">
+                    <div className="flex items-center gap-3">
+                      <div className={cn('flex h-9 w-9 shrink-0 items-center justify-center rounded-md', tint)}>
+                        <Icon size={16} />
+                      </div>
+                      <CardTitle className="flex-1 text-sm">{mod.label}</CardTitle>
+                      <Badge variant="outline" size="sm">{mod.guides.length}</Badge>
                     </div>
-                    <Badge variant="secondary" size="sm" className="font-mono">{m.guide_count}</Badge>
-                  </div>
-                  <div>
-                    <p className="text-base font-semibold leading-tight">{m.label}</p>
-                    <p className="mt-1.5 line-clamp-2 text-sm leading-relaxed text-muted-foreground">{m.description}</p>
-                  </div>
-                  <div className="mt-auto flex items-center gap-1 text-xs font-medium text-muted-foreground transition-colors group-hover:text-foreground">
-                    자세히 보기
-                    <ArrowRight size={11} className="transition-transform group-hover:translate-x-0.5" />
-                  </div>
+                  </CardHeader>
+                  <CardContent className="px-5 pt-3">
+                    <p className="line-clamp-2 text-xs text-muted-foreground">
+                      {mod.guides.slice(0, 3).map(g => g.label).join(' · ')}
+                    </p>
+                    <div className="mt-3 inline-flex items-center gap-1 text-xs font-medium text-muted-foreground transition-colors group-hover:text-foreground">
+                      가이드 열기 <ChevronRight size={12} />
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
+            )
+          })}
+        </div>
+      </section>
+
+      {/* ─── 최근 업데이트 + 빠른 링크 2-col ─────────────────────── */}
+      <section className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        {/* 최근 업데이트 — 2col */}
+        <Card className="lg:col-span-2 gap-0 py-0">
+          <CardHeader className="px-6 pt-5 pb-4 border-b">
+            <div className="flex items-end justify-between gap-2">
+              <div>
+                <CardTitle>최근 업데이트</CardTitle>
+                <CardDescription className="mt-1">새로 추가되거나 수정된 가이드</CardDescription>
+              </div>
+              <CardAction>
+                <Link
+                  to="/updates"
+                  className="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground hover:text-foreground"
+                >
+                  전체 보기 <ArrowRight size={12} />
                 </Link>
-              )
-            })}
-          </div>
-        </section>
-
-      {/* ── 하단 3 컬럼: 최근 업데이트(2) + 빠른 링크 + 모듈 현황 ────────── */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 xl:grid-cols-4">
-
-        {/* 최근 업데이트 */}
-        <section className="lg:col-span-2 xl:col-span-3">
-          <div className="mb-4 flex items-end justify-between">
-            <div>
-              <h2 className="text-lg font-semibold tracking-tight">최근 업데이트</h2>
-              <p className="text-xs text-muted-foreground">새로 추가되거나 수정된 가이드.</p>
+              </CardAction>
             </div>
-            <Link to="/updates" className="inline-flex shrink-0 items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
-              전체 보기 <ArrowRight size={14} />
-            </Link>
-          </div>
-
-          <Card className="overflow-hidden !py-0 gap-0">
-            <ul className="divide-y divide-border">
-              {recents.map((g) => {
-                const isNew = g.updated_at && new Date(g.updated_at).getTime() > sevenDaysAgo
+          </CardHeader>
+          <CardContent className="px-0 py-0">
+            <ul className="divide-y">
+              {recent5.map((g, idx) => {
+                const isNew = idx < 3 // 최근순 정렬 기준 상위 3개만 NEW
                 return (
                   <li key={g.id}>
                     <Link
                       to={`/guides/${g.id}`}
-                      className="flex items-center gap-4 px-5 py-3 transition-colors hover:bg-accent/50"
+                      className="group flex items-center gap-3 px-6 py-3 transition-colors hover:bg-accent/50"
                     >
-                      <Badge variant="outline" size="sm" className="shrink-0 font-medium">
-                        {g.module?.split('/')[0]}
+                      <Badge variant="outline" size="sm" className="shrink-0 font-normal">
+                        {g.module}
                       </Badge>
-                      <span className="flex-1 truncate text-sm font-medium">{g.title}</span>
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-medium text-foreground group-hover:underline">
+                          {g.title}
+                        </p>
+                      </div>
                       {isNew && <Badge variant="new" size="sm">NEW</Badge>}
-                      <span className="shrink-0 font-mono text-xs text-muted-foreground">
-                        {g.updated_at?.slice(0, 10)}
+                      <span className="shrink-0 text-xs tabular-nums text-muted-foreground">
+                        {g.updated_at}
                       </span>
-                      <ArrowUpRight size={15} className="shrink-0 text-muted-foreground/40" />
+                      <ChevronRight size={14} className="shrink-0 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
                     </Link>
                   </li>
                 )
               })}
             </ul>
-          </Card>
-        </section>
+          </CardContent>
+        </Card>
 
         {/* 빠른 링크 + 모듈 현황 */}
-        <section className="flex flex-col gap-4">
-          <div>
-            <h2 className="mb-4 text-lg font-semibold tracking-tight">빠른 링크</h2>
-            <div className="flex flex-col gap-2">
-              {QUICK_LINKS.map(link => {
-                const LinkIcon = link.icon
+        <div className="space-y-6">
+          {/* 빠른 링크 */}
+          <Card className="gap-0 py-0">
+            <CardHeader className="px-6 pt-5 pb-4 border-b">
+              <CardTitle className="text-base">빠른 링크</CardTitle>
+            </CardHeader>
+            <CardContent className="p-2">
+              {[
+                { to: '/faq',      Icon: MessageCircle, label: 'FAQ',          desc: '반복 문의 해결' },
+                { to: '/updates',  Icon: Bell,          label: '업데이트 이력',  desc: '정책 및 기능 변경' },
+                { to: '/feedback', Icon: MessageSquare, label: '오류 제보',     desc: '개선 요청 제출' },
+              ].map(item => (
+                <Link
+                  key={item.to}
+                  to={item.to}
+                  className="flex items-center gap-3 rounded-md px-3 py-2.5 transition-colors hover:bg-accent"
+                >
+                  <item.Icon size={16} className="shrink-0 text-muted-foreground" />
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-medium text-foreground">{item.label}</p>
+                    <p className="text-xs text-muted-foreground">{item.desc}</p>
+                  </div>
+                  <ChevronRight size={14} className="shrink-0 text-muted-foreground" />
+                </Link>
+              ))}
+            </CardContent>
+          </Card>
+
+          {/* 모듈 현황 — 공식 bar chart 대신 가독성 좋은 리스트 */}
+          <Card className="gap-0 py-0">
+            <CardHeader className="px-6 pt-5 pb-4 border-b">
+              <CardTitle className="text-base">모듈별 가이드 수</CardTitle>
+            </CardHeader>
+            <CardContent className="px-6 py-4 space-y-3">
+              {MODULE_TREE.slice(0, 5).map(mod => {
+                const pct = (mod.guides.length / 6) * 100
                 return (
-                  <Link
-                    key={link.to}
-                    to={link.to}
-                    className="group flex items-center gap-3 rounded-lg border border-border bg-card p-3 transition-all hover:border-ring/40 hover:bg-accent/50"
-                  >
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-muted">
-                      <LinkIcon size={15} className="text-muted-foreground" />
+                  <div key={mod.id}>
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="truncate text-muted-foreground">{mod.label}</span>
+                      <span className="tabular-nums font-medium text-foreground">{mod.guides.length}</span>
                     </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-sm font-semibold leading-tight">{link.label}</p>
-                      <p className="truncate text-xs text-muted-foreground">{link.desc}</p>
+                    <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-muted">
+                      <div
+                        className="h-full rounded-full bg-foreground/70 transition-all"
+                        style={{ width: `${Math.min(pct, 100)}%` }}
+                      />
                     </div>
-                    <ChevronRight size={14} className="shrink-0 text-muted-foreground/40 transition-transform group-hover:translate-x-0.5" />
-                  </Link>
+                  </div>
                 )
               })}
-            </div>
-          </div>
-
-          <Card className="p-4 !py-4 gap-3">
-            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              모듈 현황
-            </p>
-            <div className="space-y-2.5">
-              {mods.slice(0, 5).map(m => (
-                <div key={m.id} className="flex items-center gap-3">
-                  <span className="w-16 truncate text-xs font-medium text-foreground">{m.label.split('/')[0]}</span>
-                  <div className="h-2 flex-1 overflow-hidden rounded-full bg-muted">
-                    <div
-                      className="h-full rounded-full bg-primary transition-all"
-                      style={{ width: `${Math.min(100, (m.guide_count / 8) * 100)}%` }}
-                    />
-                  </div>
-                  <span className="w-4 text-right font-mono text-xs font-semibold tabular-nums">{m.guide_count}</span>
-                </div>
-              ))}
-            </div>
+            </CardContent>
           </Card>
-        </section>
-
-      </div>
-    </div>
+        </div>
+      </section>
+    </PageShell>
   )
 }

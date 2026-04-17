@@ -1,6 +1,12 @@
 // src/components/common/UserMenu.jsx — shadcn/ui 스타일 유저 메뉴 + 로그인 다이얼로그
 import { useState } from 'react'
-import { User, LogOut, Settings, LogIn, ChevronDown } from 'lucide-react'
+import {
+  User,
+  SignOut as LogOut,
+  Gear as Settings,
+  SignIn as LogIn,
+  CaretDown as ChevronDown
+} from '@phosphor-icons/react'
 import { useAuth } from '@/store/authStore'
 import { useToast } from '@/components/ui/toast'
 import { cn } from '@/lib/utils'

@@ -1,5 +1,8 @@
 // src/components/common/ThemeToggle.jsx — shadcn/ui 표준
-import { Moon, Sun } from 'lucide-react'
+import {
+  Moon,
+  Sun
+} from '@phosphor-icons/react'
 import { useDarkMode } from '@/hooks/useDarkMode'
 
 export default function ThemeToggle() {

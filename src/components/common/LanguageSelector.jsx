@@ -1,5 +1,7 @@
 // src/components/common/LanguageSelector.jsx — 언어 선택 컴포넌트
-import { Globe } from 'lucide-react';
+import {
+  Globe
+} from '@phosphor-icons/react'
 import { useI18n } from '@/hooks/useI18n';
 
 export default function LanguageSelector() {

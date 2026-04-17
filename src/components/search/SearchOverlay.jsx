@@ -1,7 +1,19 @@
 // src/components/search/SearchOverlay.jsx — shadcn/ui Command 팔레트
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Search, ArrowRight, FileText, BookOpen, AlertTriangle, GitBranch, MessageSquare, FileCheck, Clock, TrendingUp, Loader2 } from 'lucide-react'
+import {
+  MagnifyingGlass as Search,
+  ArrowRight,
+  FileText,
+  BookOpen,
+  Warning as AlertTriangle,
+  GitBranch,
+  ChatText as MessageSquare,
+  SealCheck as FileCheck,
+  Clock,
+  TrendUp as TrendingUp,
+  CircleNotch as Loader2
+} from '@phosphor-icons/react'
 import { useSearchStore } from '@/store/searchStore.jsx'
 import { GUIDES, RECENT_GUIDES, SEARCH_SYNONYMS } from '@/data/mockData'
 import { cn } from '@/lib/utils'

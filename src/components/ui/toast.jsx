@@ -1,6 +1,12 @@
 // src/components/ui/toast.jsx — shadcn/ui 표준 Toast + Toaster
 import { useState, useCallback, createContext, useContext } from 'react'
-import { X, CheckCircle2, AlertCircle, Info, AlertTriangle } from 'lucide-react'
+import {
+  X,
+  CheckCircle as CheckCircle2,
+  WarningCircle as AlertCircle,
+  Info,
+  Warning as AlertTriangle
+} from '@phosphor-icons/react'
 import { cn } from '@/lib/utils'
 
 const ToastContext = createContext(null)

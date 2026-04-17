@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Tailwind v4: dark:* 유틸리티를 html.dark 클래스 기반으로 전환 */
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* ─── FONT ─────────────────────────────────────────────────────────────────── */
 @font-face {
   font-family: 'Pretendard';

@@ -103,9 +103,9 @@ export function AppSidebar({ ...props }) {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild className="hover:bg-transparent">
-              <Link to="/" aria-label="AMS Wiki 홈" className="text-foreground">
-                <BrandSymbol className="size-7 shrink-0 group-data-[collapsible=icon]:size-6" />
-                <BrandWordmark className="h-5 w-auto group-data-[collapsible=icon]:hidden" />
+              <Link to="/" aria-label="시대인재 홈" className="flex items-center justify-center text-foreground">
+                <BrandWordmark className="h-6 w-auto group-data-[collapsible=icon]:hidden" />
+                <BrandSymbol className="hidden size-6 shrink-0 group-data-[collapsible=icon]:block" />
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>

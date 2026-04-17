@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import { Search, Bell, BookOpen } from 'lucide-react'
 import { useSearchStore } from '@/store/searchStore.jsx'
 import ThemeToggle from './ThemeToggle'
+import LanguageSelector from './LanguageSelector'
 import UserMenu from './UserMenu'
 import { cn } from '@/lib/utils'
 
@@ -53,6 +54,7 @@ export default function GlobalHeader() {
 
         {/* 오른쪽 액션 */}
         <div className="ml-auto flex items-center gap-1 shrink-0">
+          <LanguageSelector />
           <ThemeToggle />
           <NotificationBell />
           <UserMenu />

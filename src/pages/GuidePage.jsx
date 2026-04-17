@@ -195,6 +195,12 @@ function GuidePageInner({ id }) {
                           alt={s.image.name}
                           className="w-full"
                           loading="lazy"
+                          onError={(e) => {
+                            if (!e.currentTarget.dataset.fallback) {
+                              e.currentTarget.dataset.fallback = '1'
+                              e.currentTarget.src = '/placeholder-screenshot.svg'
+                            }
+                          }}
                         />
                         {s.image.name && (
                           <figcaption className="border-t bg-muted/50 px-4 py-2 text-xs text-muted-foreground">
@@ -276,6 +282,12 @@ function GuidePageInner({ id }) {
                               alt={img.name || `Case ${i + 1} image ${j + 1}`}
                               className="w-full"
                               loading="lazy"
+                              onError={(e) => {
+                                if (!e.currentTarget.dataset.fallback) {
+                                  e.currentTarget.dataset.fallback = '1'
+                                  e.currentTarget.src = '/placeholder-screenshot.svg'
+                                }
+                              }}
                             />
                             {img.name && (
                               <figcaption className="border-t bg-muted/50 px-4 py-2 text-xs text-muted-foreground">

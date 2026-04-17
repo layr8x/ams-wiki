@@ -101,17 +101,23 @@ export function AppSidebar({ ...props }) {
 
   return (
     <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild className="h-20 hover:bg-transparent group-data-[collapsible=icon]:!h-14">
-              <Link to="/" aria-label="시대인재 홈" className="flex items-center justify-center text-foreground">
-                <BrandWordmark className="h-14 w-auto group-data-[collapsible=icon]:hidden" />
-                <BrandSymbol className="hidden size-9 shrink-0 group-data-[collapsible=icon]:block" />
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
+      {/*
+        브랜드 헤더는 SidebarMenuButton 래핑을 사용하지 않습니다.
+        SidebarMenuButton은 [&_svg]:size-4 로 모든 자손 SVG를 16×16으로 강제하기 때문에
+        가로형 워드마크가 아이콘 사이즈로 줄어드는 문제가 발생합니다.
+        대신 SidebarHeader 안에 직접 Link를 두어 워드마크 본연 비율을 유지합니다.
+      */}
+      <SidebarHeader className="px-3 py-3 group-data-[collapsible=icon]:px-1.5 group-data-[collapsible=icon]:py-2">
+        <Link
+          to="/"
+          aria-label="시대인재 홈"
+          className="flex items-center justify-start text-foreground transition-opacity hover:opacity-80 group-data-[collapsible=icon]:justify-center"
+        >
+          {/* 가로형 워드마크 — viewBox 101×32 원본 비율, 높이 24px */}
+          <BrandWordmark className="block h-6 w-auto group-data-[collapsible=icon]:hidden" />
+          {/* collapsed: 정사각 심볼 */}
+          <BrandSymbol className="hidden size-6 shrink-0 group-data-[collapsible=icon]:block" />
+        </Link>
       </SidebarHeader>
 
       <SidebarContent>

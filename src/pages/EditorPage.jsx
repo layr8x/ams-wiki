@@ -186,10 +186,19 @@ export default function EditorPage() {
             >
               <p className="mb-1 line-clamp-2 text-sm font-medium">{g.title}</p>
               <div className="flex items-center gap-1.5">
-                <Badge variant="outline" size="sm">{g.type}</Badge>
+                <Badge
+                  variant="outline"
+                  size="sm"
+                  className={cn(
+                    selectedId === g.id &&
+                      'border-accent-foreground/30 bg-accent-foreground/10 text-accent-foreground',
+                  )}
+                >
+                  {g.type}
+                </Badge>
                 <span className={cn(
                   'text-[11px] truncate',
-                  selectedId === g.id ? 'text-accent-foreground/70' : 'text-muted-foreground',
+                  selectedId === g.id ? 'text-accent-foreground/80' : 'text-muted-foreground',
                 )}>{g.module}</span>
               </div>
             </button>

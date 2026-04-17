@@ -161,6 +161,7 @@ supabase/
 
 ## 도움말
 
+- **shadcn/ui 완전 학습 가이드**: [docs/shadcn-ui/README.md](./docs/shadcn-ui/README.md) — 철학·CLI·테마·컴포넌트·레지스트리·MCP·v4 마이그레이션 등 17개 주제
 - **배포 이슈**: [DEPLOYMENT.md](./DEPLOYMENT.md)
 - **기여 가이드**: [CONTRIBUTING.md](./CONTRIBUTING.md)
 - **린팅 규칙**: [ESLint 문서](https://eslint.org)

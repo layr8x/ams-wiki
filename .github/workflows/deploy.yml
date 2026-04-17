@@ -46,20 +46,5 @@ jobs:
           path: dist/
           retention-days: 7
 
-  deploy-to-vercel:
-    runs-on: ubuntu-latest
-    name: Deploy to Vercel
-    needs: build-and-verify
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Deploy to Vercel
-        uses: vercel/action@main
-        with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          production: true
+  # Vercel 배포는 Vercel Git Integration(layr8xs-projects/ams-wiki)이 자동으로 처리하므로
+  # 중복 deploy job 은 제거 (vercel/action@main 리포지토리 미존재로 항상 실패)

@@ -104,10 +104,10 @@ export function AppSidebar({ ...props }) {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild className="h-14 hover:bg-transparent group-data-[collapsible=icon]:!h-12">
+            <SidebarMenuButton size="lg" asChild className="h-20 hover:bg-transparent group-data-[collapsible=icon]:!h-14">
               <Link to="/" aria-label="시대인재 홈" className="flex items-center justify-center text-foreground">
-                <BrandWordmark className="h-9 w-auto group-data-[collapsible=icon]:hidden" />
-                <BrandSymbol className="hidden size-7 shrink-0 group-data-[collapsible=icon]:block" />
+                <BrandWordmark className="h-14 w-auto group-data-[collapsible=icon]:hidden" />
+                <BrandSymbol className="hidden size-9 shrink-0 group-data-[collapsible=icon]:block" />
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>

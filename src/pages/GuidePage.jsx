@@ -119,11 +119,11 @@ function GuidePageInner({ id }) {
               <ShieldCheck size={12} /> {guide.targets.join(', ')}
             </span>
           )}
-          {guide.confluenceId && guide.confluenceUrl && (
+          {guide.confluenceUrl && (
             <a
-              href={guide.confluenceUrl}
+              href={`${guide.confluenceUrl}/${encodeURIComponent(guide.title.replace(/\s+/g, '+'))}`}
               target="_blank"
-              rel="noreferrer"
+              rel="noopener noreferrer"
               className="ml-auto inline-flex items-center gap-1 font-medium text-foreground transition-colors hover:underline"
             >
               <ExternalLink size={12} /> Confluence 원본

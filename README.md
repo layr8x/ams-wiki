@@ -5,8 +5,8 @@
 ## 기술 스택
 
 - **프레임워크**: React 19 + Vite 8
-- **UI/디자인**: Tailwind CSS 4 + shadcn/ui 표준
-- **컴포넌트**: Radix UI primitives (25개+)
+- **UI/디자인**: Tailwind CSS 4 (CSS-first `@theme`) + shadcn/ui 표준
+- **컴포넌트**: 실사용 9개 (Badge, Button, Card, Input, Separator, Skeleton, Table, Textarea, Toast)
 - **라우팅**: React Router v7
 - **상태 관리**: React Query (TanStack Query)
 - **데이터베이스**: Supabase (PostgreSQL + Auth + Realtime)
@@ -87,11 +87,11 @@ npm run db:seed
 - 최근 조회 / 인기 가이드
 
 ### 🎨 UI/UX
-- **shadcn/ui 표준** 컴포넌트 25개+
-- 다크모드 (CSS 변수 기반)
+- **shadcn/ui 표준** 컴포넌트 9개 (실사용 기반 최소 세트; 확장은 `npx shadcn@latest add <name>`)
+- 다크모드 (CSS 변수 기반, `@theme` + `html.dark`)
 - Pretendard 한글 최적화 폰트
 - 반응형 디자인 (모바일·태블릿·데스크톱)
-- Toast 알림, Sheet 드로어, Dialog 모달
+- Toast 알림
 
 ### 📊 통계 & 피드백
 - 조회수 자동 추적 (Supabase RPC)
@@ -112,20 +112,23 @@ npm run db:seed
 
 ## 컴포넌트 라이브러리
 
-25개+ shadcn/ui 표준 컴포넌트:
+현재 9개의 shadcn/ui 컴포넌트를 실사용 중. 필요 시 공식 CLI로 즉시 확장:
 
 ```jsx
 import {
-  Button, Badge, Card, Input, Textarea, Label, Separator,
-  Dialog, Tabs, Tooltip, Alert, ScrollArea, Checkbox, Select,
-  Toast, Toaster, useToast,
-  Command, CommandInput, CommandList, CommandItem,
-  Sheet, SheetContent, SheetHeader,
-  Skeleton, Progress, Avatar, Collapsible,
-  Table, TableHeader, TableBody, TableCell, TableRow,
-  DropdownMenu, DropdownMenuContent, DropdownMenuItem,
+  Badge, Button, Card, CardHeader, CardContent, CardTitle,
+  Input, Separator, Skeleton,
+  Table, TableHeader, TableBody, TableRow, TableCell,
+  Textarea, Toast, Toaster, useToast,
 } from '@/components/ui'
 ```
+
+```bash
+# 새 컴포넌트 추가 (예: dialog, dropdown-menu, tabs)
+npx shadcn@latest add dialog dropdown-menu tabs
+```
+
+shadcn/ui 전반(철학·CLI·테마·레지스트리·MCP·Tailwind v4)은 [`docs/shadcn-ui/`](./docs/shadcn-ui/README.md) 참조.
 
 ## 프로젝트 구조
 
@@ -134,7 +137,7 @@ src/
 ├── components/
 │   ├── common/      # Layout, Header, Sidebar, UserMenu 등
 │   ├── search/      # SearchOverlay (⌘K 팔레트)
-│   └── ui/          # shadcn/ui 25개+ 컴포넌트
+│   └── ui/          # shadcn/ui 9개 컴포넌트 (실사용 기반)
 ├── pages/           # 8개 페이지 (Home, Guide, List, FAQ, etc.)
 ├── hooks/           # useGuides (React Query 훅)
 ├── lib/

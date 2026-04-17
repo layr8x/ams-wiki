@@ -14,7 +14,12 @@ import {
   User,
   ClockCounterClockwise as History,
   Hash,
-  MagnifyingGlass as Search,
+  ListChecks,
+  GitFork,
+  BookOpen,
+  Wrench,
+  ChatCircle,
+  Megaphone,
 } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -31,15 +36,16 @@ import {
 import { Checkbox } from '@/components/ui/checkbox'
 import { cn } from '@/lib/utils'
 
-const GUIDES_LIST = [
-  { id: 'member-merge',    title: 'AMS 회원 병합 가이드',          module: '고객(원생) 관리',       type: 'SOP'      },
-  { id: 'refund-policy',   title: '환불 승인 기준 판단 가이드',     module: '청구/수납/결제/환불',    type: 'DECISION' },
-  { id: 'ams-glossary',    title: 'AMS 주요 용어 사전',             module: '공통/시스템',            type: 'REFERENCE'},
-  { id: 'qr-trouble',      title: 'QR 출석 인식 실패 트러블슈팅',   module: '수업운영 관리',          type: 'TROUBLE'  },
-  { id: 'response-manual', title: '상황별 대응 매뉴얼 (CS)',         module: '공통/시스템',            type: 'RESPONSE' },
-  { id: 'policy-2026',     title: '2026 수강료 정책 변경 공지',      module: '공통/시스템',            type: 'POLICY'   },
-  { id: 'billing-calc',    title: '수강료 일할 계산 처리 가이드',    module: '청구/수납/결제/환불',    type: 'SOP'      },
-  { id: 'enrollment-sop',  title: '중도 입반 처리 SOP',              module: '입반/퇴반 관리',         type: 'SOP'      },
+// 좌측 사이드바 — 새 가이드 작성 시작점.
+// 발행된 가이드 목록이 아니라 "어떤 타입으로 만들 것인가" 템플릿 picker.
+// 선택 시 우측 본문 탭이 해당 type의 빈 섹션 구조로 자동 구성됩니다.
+const TEMPLATES = [
+  { type: 'SOP',       fullName: '절차형',     desc: '단계별 작업 절차 정리',         icon: ListChecks },
+  { type: 'DECISION',  fullName: '판단분기',   desc: '조건/상황별 판단 기준 매트릭스', icon: GitFork    },
+  { type: 'REFERENCE', fullName: '참조형',     desc: '용어 사전, 코드값, 표준 데이터',  icon: BookOpen   },
+  { type: 'TROUBLE',   fullName: '트러블슈팅', desc: '오류·증상별 해결 방법 정리',     icon: Wrench     },
+  { type: 'RESPONSE',  fullName: '대응매뉴얼', desc: '시나리오별 고객 응대 스크립트',   icon: ChatCircle },
+  { type: 'POLICY',    fullName: '정책공지',   desc: '정책 변경, 전/후 비교, 영향 범위', icon: Megaphone  },
 ]
 
 const MODULES = ['고객(원생) 관리','상품 관리','강좌 관리','수업운영 관리','입반/퇴반 관리','청구/수납/결제/환불','메시지 관리','공통/시스템','전략/운영']
@@ -110,12 +116,11 @@ const EMPTY_CONTENT = {
 export default function EditorPage() {
   const navigate = useNavigate()
 
-  const [selectedId, setSelectedId] = useState(GUIDES_LIST[0].id)
-  const [search, setSearch]         = useState('')
+  const [selectedType, setSelectedType] = useState('SOP')
   const [meta, setMeta] = useState({
-    title:   GUIDES_LIST[0].title,
-    module:  GUIDES_LIST[0].module,
-    type:    GUIDES_LIST[0].type,
+    title:   '',
+    module:  '고객(원생) 관리',
+    type:    'SOP',
     status:  '작성중',
     targets: '운영자, 실장',
     tldr:    '',
@@ -126,20 +131,17 @@ export default function EditorPage() {
   const [preview, setPreview] = useState(false)
   const [saving, setSaving]   = useState(false)
 
-  const filteredList = GUIDES_LIST.filter(g =>
-    !search.trim() || g.title.toLowerCase().includes(search.toLowerCase())
-  )
-
   const sections = useMemo(
     () => SECTIONS_BY_TYPE[meta.type] ?? SECTIONS_BY_TYPE.SOP,
     [meta.type],
   )
 
-  const handleSelect = (id) => {
-    const g = GUIDES_LIST.find(x => x.id === id)
-    if (!g) return
-    setSelectedId(id)
-    setMeta(m => ({ ...m, title: g.title, module: g.module, type: g.type }))
+  // 템플릿 변경 = 본문 sections 구조가 달라지므로 content를 초기화.
+  // title/module/tldr/targets 등 메타 입력값은 보존(사용자가 이미 입력했을 수 있음).
+  const handleSelectTemplate = (type) => {
+    setSelectedType(type)
+    setMeta(m => ({ ...m, type }))
+    setContent(EMPTY_CONTENT)
   }
 
   const updateContent = (key, value) => {
@@ -154,55 +156,64 @@ export default function EditorPage() {
 
   return (
     <div className="flex h-dvh bg-background">
-      {/* ─── 좌측 사이드바: 가이드 리스트 ─── */}
+      {/* ─── 좌측 사이드바: 가이드 타입 템플릿 picker ─── */}
       <aside className="hidden w-72 shrink-0 border-r bg-sidebar lg:flex lg:flex-col">
         <header className="flex h-14 shrink-0 items-center gap-2 border-b px-4">
           <Button variant="ghost" size="sm" onClick={() => navigate('/')}>
             <ArrowLeft size={14} /> 나가기
           </Button>
         </header>
-        <div className="border-b p-3">
-          <div className="relative">
-            <Search size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              placeholder="가이드 검색..."
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-              className="h-8 pl-8 text-xs"
-            />
-          </div>
+        <div className="border-b px-4 py-3">
+          <p className="text-sm font-semibold">가이드 타입 선택</p>
+          <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
+            선택한 타입에 맞는 섹션이<br />본문에 자동 구성됩니다
+          </p>
         </div>
         <div className="flex-1 overflow-y-auto p-2">
-          {filteredList.map(g => (
-            <button
-              key={g.id}
-              onClick={() => handleSelect(g.id)}
-              className={cn(
-                'mb-1 w-full rounded-md border p-3 text-left transition-colors',
-                selectedId === g.id
-                  ? 'border-foreground bg-accent text-accent-foreground'
-                  : 'border-transparent hover:bg-accent/50',
-              )}
-            >
-              <p className="mb-1 line-clamp-2 text-sm font-medium">{g.title}</p>
-              <div className="flex items-center gap-1.5">
-                <Badge
-                  variant="outline"
-                  size="sm"
-                  className={cn(
-                    selectedId === g.id &&
-                      'border-accent-foreground/30 bg-accent-foreground/10 text-accent-foreground',
-                  )}
-                >
-                  {g.type}
-                </Badge>
-                <span className={cn(
-                  'text-[11px] truncate',
-                  selectedId === g.id ? 'text-accent-foreground/80' : 'text-muted-foreground',
-                )}>{g.module}</span>
-              </div>
-            </button>
-          ))}
+          {TEMPLATES.map(t => {
+            const Icon = t.icon
+            const isSelected = selectedType === t.type
+            return (
+              <button
+                key={t.type}
+                onClick={() => handleSelectTemplate(t.type)}
+                className={cn(
+                  'mb-1 w-full rounded-md border p-3 text-left transition-colors',
+                  isSelected
+                    ? 'border-foreground bg-accent text-accent-foreground'
+                    : 'border-transparent hover:bg-accent/50',
+                )}
+              >
+                <div className="flex items-center gap-2">
+                  <Icon
+                    size={16}
+                    weight={isSelected ? 'fill' : 'regular'}
+                    className={cn(
+                      'shrink-0',
+                      isSelected ? 'text-accent-foreground' : 'text-muted-foreground',
+                    )}
+                  />
+                  <Badge
+                    variant="outline"
+                    size="sm"
+                    className={cn(
+                      'font-mono text-[10px]',
+                      isSelected && 'border-accent-foreground/30 bg-accent-foreground/10 text-accent-foreground',
+                    )}
+                  >
+                    {t.type}
+                  </Badge>
+                  <span className="text-sm font-medium">{t.fullName}</span>
+                </div>
+                <p className={cn(
+                  'mt-1.5 text-[11px] leading-relaxed',
+                  isSelected ? 'text-accent-foreground/80' : 'text-muted-foreground',
+                )}>
+                  {t.desc}
+                </p>
+              </button>
+            )
+          })}
         </div>
       </aside>
 
@@ -215,7 +226,10 @@ export default function EditorPage() {
               <ArrowLeft size={14} />
             </Button>
             <Hash size={14} className="text-muted-foreground" />
-            <span className="truncate text-sm font-medium">{meta.title}</span>
+            <span className={cn(
+              'truncate text-sm font-medium',
+              !meta.title && 'text-muted-foreground italic',
+            )}>{meta.title || '제목 없음 (새 가이드)'}</span>
             <Badge variant="outline" size="sm" className="ml-1">{meta.status}</Badge>
             <Badge variant="outline" size="sm" className="font-mono text-[10px]">{meta.type}</Badge>
           </div>

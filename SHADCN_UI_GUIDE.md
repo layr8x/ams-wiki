@@ -1,5 +1,7 @@
 # shadcn/ui 핵심 개념 및 구현 가이드
 
+> ℹ️ **업데이트 안내**: 본 문서는 AMS Wiki 내부 적용 관점에서 작성된 초기 가이드입니다. shadcn/ui 전반(철학·CLI·테마·컴포넌트·블록·레지스트리·MCP·Tailwind v4 마이그레이션 등)을 체계적으로 학습하려면 **종합 레퍼런스** [`docs/shadcn-ui/`](./docs/shadcn-ui/README.md) 를 참고하세요. 본 프로젝트 특화 운영 규칙은 [`docs/shadcn-ui/16-ams-wiki-integration.md`](./docs/shadcn-ui/16-ams-wiki-integration.md) 에 정리되어 있습니다.
+
 ## 1. shadcn/ui의 정의와 특징
 
 ### 1.1 shadcn/ui란?

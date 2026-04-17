@@ -13,9 +13,10 @@
 }
 
 /* ─── shadcn/ui new-york — 공식 토큰 (OKLCH) ─────────────────────────────── */
+/* 카드-바디 대비를 위해 background만 살짝 틴트, card는 순백 유지 */
 @theme {
   /* Light */
-  --color-background:             oklch(1 0 0);
+  --color-background:             oklch(0.985 0 0);
   --color-foreground:              oklch(0.145 0 0);
   --color-card:                    oklch(1 0 0);
   --color-card-foreground:         oklch(0.145 0 0);
@@ -31,17 +32,21 @@
   --color-accent-foreground:       oklch(0.205 0 0);
   --color-destructive:             oklch(0.577 0.245 27.325);
   --color-destructive-foreground:  oklch(0.985 0 0);
-  --color-border:                  oklch(0.922 0 0);
+  --color-border:                  oklch(0.9 0 0);
   --color-input:                   oklch(0.922 0 0);
   --color-ring:                    oklch(0.708 0 0);
   --radius:                        0.625rem;
+  --radius-sm:                     calc(var(--radius) - 4px);
+  --radius-md:                     calc(var(--radius) - 2px);
+  --radius-lg:                     var(--radius);
+  --radius-xl:                     calc(var(--radius) + 4px);
 
   /* Sidebar */
-  --color-sidebar:                  oklch(0.985 0 0);
+  --color-sidebar:                  oklch(1 0 0);
   --color-sidebar-foreground:       oklch(0.145 0 0);
   --color-sidebar-accent:           oklch(0.97 0 0);
   --color-sidebar-accent-foreground:oklch(0.205 0 0);
-  --color-sidebar-border:           oklch(0.922 0 0);
+  --color-sidebar-border:           oklch(0.9 0 0);
   --color-sidebar-ring:             oklch(0.708 0 0);
 
   /* Brand / Chart */

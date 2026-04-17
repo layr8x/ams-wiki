@@ -1,11 +1,25 @@
+// src/components/app-sidebar.jsx
+// AMS Wiki 사이드바 — shadcn sidebar-07 + dashboard-01 패턴 기반
 import * as React from "react"
-import { NavLink, useLocation } from "react-router-dom"
+import { NavLink, Link, useLocation } from "react-router-dom"
 import {
-  BookOpen, ClipboardList, Calendar, CreditCard, Users,
-  MessageSquare, Settings, HelpCircle, Bell, MessageCircle,
-  LayoutGrid, FileText, Clock, ChevronRight,
+  BookOpen,
+  Calendar,
+  ChevronRight,
+  ClipboardList,
+  Command,
+  CreditCard,
+  FileText,
+  Home,
+  LifeBuoy,
+  MessageSquare,
+  Send,
+  Settings,
+  Sparkles,
+  Users,
 } from "lucide-react"
 
+import { MODULE_TREE, RECENT_GUIDES } from "@/data/mockData"
 import {
   Collapsible,
   CollapsibleContent,
@@ -16,6 +30,7 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarGroup,
+  SidebarGroupContent,
   SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
@@ -26,17 +41,41 @@ import {
   SidebarMenuSubItem,
   SidebarRail,
 } from "@/components/ui/sidebar"
+import { NavUser } from "@/components/nav-user"
 
-import { MODULE_TREE, RECENT_GUIDES } from "@/data/mockData"
-
-const MODULE_ICONS = {
-  ClipboardList, BookOpen, Calendar, CreditCard, Users,
-  MessageSquare, Settings,
+const ICON_MAP = {
+  ClipboardList,
+  BookOpen,
+  Calendar,
+  CreditCard,
+  Users,
+  MessageSquare,
+  Settings,
 }
 
-export function AppSidebar(props) {
+const PRIMARY_NAV = [
+  { title: "홈", to: "/", icon: Home, end: true },
+  { title: "전체 가이드", to: "/guides", icon: FileText },
+  { title: "업데이트", to: "/updates", icon: Sparkles },
+  { title: "FAQ", to: "/faq", icon: LifeBuoy },
+]
+
+const SECONDARY_NAV = [
+  { title: "피드백", to: "/feedback", icon: Send },
+  { title: "설정", to: "/settings", icon: Settings },
+]
+
+const USER = {
+  name: "AMS 운영팀",
+  email: "ops@sdij.com",
+  avatar: "",
+}
+
+export function AppSidebar({ ...props }) {
   const location = useLocation()
-  const pathname = location.pathname
+  const currentPath = location.pathname
+
+  const recents = RECENT_GUIDES.slice(0, 5)
 
   return (
     <Sidebar collapsible="icon" {...props}>
@@ -44,136 +83,126 @@ export function AppSidebar(props) {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
-              <NavLink to="/">
+              <Link to="/">
                 <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                  <BookOpen className="size-4" />
+                  <Command className="size-4" />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-semibold">AMS Wiki</span>
-                  <span className="truncate text-xs text-muted-foreground">운영 가이드 센터</span>
+                  <span className="truncate text-xs text-muted-foreground">
+                    운영 가이드
+                  </span>
                 </div>
-              </NavLink>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
 
       <SidebarContent>
-        {/* ─── 메인 네비 ─── */}
         <SidebarGroup>
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <SidebarMenuButton asChild isActive={pathname === "/"} tooltip="대시보드">
-                <NavLink to="/" end>
-                  <LayoutGrid />
-                  <span>대시보드</span>
-                </NavLink>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            <SidebarMenuItem>
-              <SidebarMenuButton asChild isActive={pathname === "/guides"} tooltip="전체 가이드">
-                <NavLink to="/guides">
-                  <FileText />
-                  <span>전체 가이드</span>
-                </NavLink>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          </SidebarMenu>
-        </SidebarGroup>
-
-        {/* ─── 최근 조회 ─── */}
-        {RECENT_GUIDES.length > 0 && (
-          <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-            <SidebarGroupLabel>최근 조회</SidebarGroupLabel>
+          <SidebarGroupLabel>메뉴</SidebarGroupLabel>
+          <SidebarGroupContent>
             <SidebarMenu>
-              {RECENT_GUIDES.slice(0, 3).map((r) => (
-                <SidebarMenuItem key={r.id}>
-                  <SidebarMenuButton asChild size="sm" isActive={pathname === `/guides/${r.id}`}>
-                    <NavLink to={`/guides/${r.id}`}>
-                      <Clock className="opacity-60" />
-                      <span>{r.title}</span>
+              {PRIMARY_NAV.map((item) => (
+                <SidebarMenuItem key={item.to}>
+                  <SidebarMenuButton asChild tooltip={item.title} isActive={
+                    item.end ? currentPath === item.to : currentPath.startsWith(item.to)
+                  }>
+                    <NavLink to={item.to} end={item.end}>
+                      <item.icon />
+                      <span>{item.title}</span>
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>
-          </SidebarGroup>
-        )}
+          </SidebarGroupContent>
+        </SidebarGroup>
 
-        {/* ─── 카테고리 트리 ─── */}
         <SidebarGroup>
-          <SidebarGroupLabel>카테고리</SidebarGroupLabel>
-          <SidebarMenu>
-            {MODULE_TREE.map((m) => {
-              const Icon = MODULE_ICONS[m.icon] || BookOpen
-              const hasActive = m.guides.some((g) => pathname === `/guides/${g.id}`)
-              return (
-                <Collapsible
-                  key={m.id}
-                  asChild
-                  defaultOpen={hasActive || m.guides.length > 0}
-                  className="group/collapsible"
-                >
-                  <SidebarMenuItem>
-                    <CollapsibleTrigger asChild>
-                      <SidebarMenuButton tooltip={m.label}>
-                        <Icon />
-                        <span>{m.label}</span>
-                        <span className="ml-auto mr-1 font-mono text-[11px] text-muted-foreground tabular-nums">
-                          {m.guides.length}
-                        </span>
-                        <ChevronRight className="transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-                      </SidebarMenuButton>
-                    </CollapsibleTrigger>
-                    <CollapsibleContent>
-                      <SidebarMenuSub>
-                        {m.guides.map((g) => (
-                          <SidebarMenuSubItem key={g.id}>
-                            <SidebarMenuSubButton asChild isActive={pathname === `/guides/${g.id}`}>
-                              <NavLink to={`/guides/${g.id}`}>
-                                <span>{g.label}</span>
-                              </NavLink>
-                            </SidebarMenuSubButton>
-                          </SidebarMenuSubItem>
-                        ))}
-                      </SidebarMenuSub>
-                    </CollapsibleContent>
-                  </SidebarMenuItem>
-                </Collapsible>
-              )
-            })}
-          </SidebarMenu>
+          <SidebarGroupLabel>모듈</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {MODULE_TREE.map((mod) => {
+                const Icon = ICON_MAP[mod.icon] ?? FileText
+                const modPath = `/guides?module=${mod.id}`
+                const isActiveModule = currentPath.startsWith("/guides") &&
+                  location.search.includes(`module=${mod.id}`)
+                return (
+                  <Collapsible
+                    key={mod.id}
+                    defaultOpen={isActiveModule}
+                    className="group/collapsible"
+                  >
+                    <SidebarMenuItem>
+                      <CollapsibleTrigger asChild>
+                        <SidebarMenuButton tooltip={mod.label}>
+                          <Icon />
+                          <span>{mod.label}</span>
+                          <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                        </SidebarMenuButton>
+                      </CollapsibleTrigger>
+                      <CollapsibleContent>
+                        <SidebarMenuSub>
+                          {mod.guides.map((g) => (
+                            <SidebarMenuSubItem key={g.id}>
+                              <SidebarMenuSubButton asChild isActive={currentPath === `/guides/${g.id}`}>
+                                <NavLink to={`/guides/${g.id}`}>
+                                  <span className="truncate">{g.label}</span>
+                                </NavLink>
+                              </SidebarMenuSubButton>
+                            </SidebarMenuSubItem>
+                          ))}
+                        </SidebarMenuSub>
+                      </CollapsibleContent>
+                    </SidebarMenuItem>
+                  </Collapsible>
+                )
+              })}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarGroup className="group-data-[collapsible=icon]:hidden">
+          <SidebarGroupLabel>최근 업데이트</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {recents.map((g) => (
+                <SidebarMenuItem key={g.id}>
+                  <SidebarMenuButton asChild className="text-sidebar-foreground/80" isActive={currentPath === `/guides/${g.id}`}>
+                    <NavLink to={`/guides/${g.id}`}>
+                      <span className="truncate">{g.title}</span>
+                    </NavLink>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarGroup className="mt-auto">
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {SECONDARY_NAV.map((item) => (
+                <SidebarMenuItem key={item.to}>
+                  <SidebarMenuButton asChild size="sm" tooltip={item.title}>
+                    <NavLink to={item.to}>
+                      <item.icon />
+                      <span>{item.title}</span>
+                    </NavLink>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
 
       <SidebarFooter>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton asChild isActive={pathname === "/faq"} tooltip="FAQ">
-              <NavLink to="/faq">
-                <HelpCircle />
-                <span>FAQ</span>
-              </NavLink>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuButton asChild isActive={pathname === "/updates"} tooltip="업데이트 이력">
-              <NavLink to="/updates">
-                <Bell />
-                <span>업데이트 이력</span>
-              </NavLink>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuButton asChild isActive={pathname === "/feedback"} tooltip="오류 제보">
-              <NavLink to="/feedback">
-                <MessageCircle />
-                <span>오류 제보</span>
-              </NavLink>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
+        <NavUser user={USER} />
       </SidebarFooter>
+
       <SidebarRail />
     </Sidebar>
   )

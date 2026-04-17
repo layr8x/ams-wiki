@@ -2,15 +2,14 @@
 import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import {
-  Search, ClipboardList, BookOpen, Calendar, CreditCard, Gift,
+  ClipboardList, BookOpen, Calendar, CreditCard, Gift,
   MessageSquare, Users, Settings, HelpCircle, Bell, ArrowRight,
-  ChevronRight, TrendingUp, Clock, FileText, Shield, Sparkles,
-  ArrowUpRight, Command
+  ChevronRight, TrendingUp, Clock, FileText, Shield,
+  ArrowUpRight
 } from 'lucide-react'
 import { useSearchStore } from '@/store/searchStore.jsx'
 import { MODULE_TREE, RECENT_GUIDES, GUIDES } from '@/data/mockData'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 
@@ -69,100 +68,59 @@ export default function HomePage() {
   }, [])
 
   return (
-    <div className="relative">
+    <div className="flex flex-1 flex-col gap-6 p-4 md:p-6 lg:p-8">
 
-      {/* ── 히어로 섹션 ──────────────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden border-b border-border">
-        <div className="absolute inset-0 hero-grid" aria-hidden />
-        <div className="absolute inset-0 hero-glow" aria-hidden />
-
-        <div className="relative mx-auto w-full max-w-5xl px-6 pt-20 pb-16 text-center">
-          <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-border bg-background/80 px-4 py-1.5 text-xs font-medium text-muted-foreground shadow-sm backdrop-blur">
-            <Sparkles size={12} className="text-amber-500" />
-            AMS 운영 위키 · 최신 업데이트 2026.04
-            <ChevronRight size={12} className="text-muted-foreground/60" />
-          </div>
-
-          <h1 className="mb-5 text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
-            어떤 가이드를
-            <br className="sm:hidden" />
-            <span className="bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent dark:from-blue-400 dark:to-violet-400"> 찾으시나요?</span>
-          </h1>
-          <p className="mx-auto mb-10 max-w-xl text-base text-muted-foreground sm:text-lg">
-            AMS 기능 사용법, 운영 케이스, 정책 기준을
-            <br className="hidden sm:block" />
-            한 곳에서 빠르게 검색하세요.
-          </p>
-
-          {/* 검색 버튼 */}
-          <button
-            onClick={open}
-            className={cn(
-              'mx-auto inline-flex w-full max-w-xl items-center gap-3 rounded-xl border border-input bg-background/80 px-5 py-3.5 shadow-sm backdrop-blur transition-all',
-              'hover:border-ring hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring'
-            )}
-          >
-            <Search size={18} className="shrink-0 text-muted-foreground" />
-            <span className="flex-1 text-left text-sm text-muted-foreground">가이드 검색 (⌘K 또는 /)</span>
-            <div className="flex items-center gap-1">
-              <kbd className="flex h-6 items-center rounded-md border border-border bg-muted px-2 font-mono text-[11px] font-medium text-muted-foreground">⌘</kbd>
-              <kbd className="flex h-6 items-center rounded-md border border-border bg-muted px-2 font-mono text-[11px] font-medium text-muted-foreground">K</kbd>
-            </div>
-          </button>
-
-          {/* 인기 검색어 */}
-          <div className="mt-6 flex flex-wrap items-center justify-center gap-2">
-            <span className="text-xs text-muted-foreground">인기 검색어</span>
-            {['계정이관', '환불 처리', 'QR 출석', '전반', '청구생성'].map(q => (
-              <button
-                key={q}
-                onClick={open}
-                className="rounded-full border border-border bg-background/80 px-3 py-1 text-xs font-medium text-foreground backdrop-blur transition-all hover:border-ring/50 hover:shadow-sm"
-              >
-                {q}
-              </button>
-            ))}
-          </div>
+      {/* ── 페이지 타이틀 ────────────────────────────────────────────────────── */}
+      <div className="flex flex-col gap-1 md:flex-row md:items-end md:justify-between">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight md:text-3xl">대시보드</h1>
+          <p className="text-sm text-muted-foreground">AMS 운영 가이드 · 최신 업데이트 2026.04</p>
         </div>
+        <div className="flex flex-wrap items-center gap-2">
+          {['계정이관', '환불 처리', 'QR 출석', '전반', '청구생성'].map(q => (
+            <button
+              key={q}
+              onClick={open}
+              className="rounded-full border border-border bg-background px-3 py-1 text-xs font-medium text-foreground transition-all hover:border-ring/50 hover:bg-accent"
+            >
+              {q}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* ── 통계 카드 (dashboard-01 스타일 그라디언트) ──────────────────────── */}
+      <section className="grid grid-cols-2 gap-4 @xl/main:grid-cols-4">
+        {STATS.map(stat => {
+          const StatIcon = stat.icon
+          return (
+            <Card key={stat.label} className="group relative gap-2 overflow-hidden bg-gradient-to-t from-primary/5 to-card p-5 !py-5 shadow-xs transition-all hover:shadow-md dark:from-card dark:to-card">
+              <div className="flex items-start justify-between">
+                <p className="text-sm font-medium text-muted-foreground">{stat.label}</p>
+                <StatIcon size={16} className={stat.accent} />
+              </div>
+              <p className="text-3xl font-bold tracking-tight tabular-nums">
+                {stat.getValue()}
+                {stat.unit && <span className="ml-1 text-xl font-semibold text-muted-foreground">{stat.unit}</span>}
+              </p>
+            </Card>
+          )
+        })}
       </section>
 
-      {/* ── 메인 콘텐츠 ──────────────────────────────────────────────────────── */}
-      <div className="mx-auto w-full max-w-6xl px-6 py-14">
-
-        {/* ── 통계 카드 ─────────────────────────────────────────────────────── */}
-        <section className="mb-14 grid grid-cols-2 gap-4 md:grid-cols-4">
-          {STATS.map(stat => {
-            const StatIcon = stat.icon
-            return (
-              <Card key={stat.label} className="group relative gap-3 overflow-hidden !py-0 p-5 transition-all hover:shadow-lg hover:-translate-y-0.5">
-                <div className="flex items-start justify-between">
-                  <p className="text-sm font-medium text-muted-foreground">{stat.label}</p>
-                  <div className="rounded-md bg-muted p-1.5 transition-colors group-hover:bg-accent">
-                    <StatIcon size={14} className={stat.accent} />
-                  </div>
-                </div>
-                <p className="text-3xl font-bold tracking-tight">
-                  {stat.getValue()}
-                  {stat.unit && <span className="ml-1 text-xl font-semibold text-muted-foreground">{stat.unit}</span>}
-                </p>
-              </Card>
-            )
-          })}
-        </section>
-
-        {/* ── 카테고리 그리드 ───────────────────────────────────────────────── */}
-        <section className="mb-14">
-          <div className="mb-6 flex items-end justify-between">
-            <div>
-              <h2 className="text-2xl font-bold tracking-tight">카테고리 탐색</h2>
-              <p className="mt-1 text-sm text-muted-foreground">업무 영역별로 분류된 운영 가이드를 확인하세요.</p>
-            </div>
-            <Link to="/guides" className="inline-flex shrink-0 items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
-              전체 보기 <ArrowRight size={14} />
-            </Link>
+      {/* ── 카테고리 그리드 ─────────────────────────────────────────────────── */}
+      <section>
+        <div className="mb-4 flex items-end justify-between">
+          <div>
+            <h2 className="text-lg font-semibold tracking-tight">카테고리 탐색</h2>
+            <p className="text-xs text-muted-foreground">업무 영역별로 분류된 운영 가이드.</p>
           </div>
+          <Link to="/guides" className="inline-flex shrink-0 items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+            전체 보기 <ArrowRight size={14} />
+          </Link>
+        </div>
 
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7">
             {mods.map(m => {
               const Icon = ICON_MAP[m.icon] || BookOpen
               const p = m.palette
@@ -195,100 +153,96 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* ── 하단 2 컬럼: 최근 업데이트 + 빠른 링크 ──────────────────────── */}
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+      {/* ── 하단 3 컬럼: 최근 업데이트(2) + 빠른 링크 + 모듈 현황 ────────── */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 xl:grid-cols-4">
 
-          {/* 최근 업데이트 (2/3) */}
-          <section className="lg:col-span-2">
-            <div className="mb-5 flex items-end justify-between">
-              <div>
-                <h2 className="text-xl font-bold tracking-tight">최근 업데이트</h2>
-                <p className="mt-0.5 text-sm text-muted-foreground">새로 추가되거나 수정된 가이드입니다.</p>
-              </div>
-              <Link to="/updates" className="inline-flex shrink-0 items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
-                전체 보기 <ArrowRight size={14} />
-              </Link>
+        {/* 최근 업데이트 */}
+        <section className="lg:col-span-2 xl:col-span-3">
+          <div className="mb-4 flex items-end justify-between">
+            <div>
+              <h2 className="text-lg font-semibold tracking-tight">최근 업데이트</h2>
+              <p className="text-xs text-muted-foreground">새로 추가되거나 수정된 가이드.</p>
             </div>
+            <Link to="/updates" className="inline-flex shrink-0 items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+              전체 보기 <ArrowRight size={14} />
+            </Link>
+          </div>
 
-            <Card className="overflow-hidden !py-0 gap-0">
-              <ul className="divide-y divide-border">
-                {recents.map((g) => {
-                  const isNew = g.updated_at && new Date(g.updated_at).getTime() > sevenDaysAgo
-                  return (
-                    <li key={g.id}>
-                      <Link
-                        to={`/guides/${g.id}`}
-                        className="flex items-center gap-4 px-5 py-3.5 transition-colors hover:bg-accent/50"
-                      >
-                        <Badge variant="outline" size="sm" className="shrink-0 font-medium">
-                          {g.module?.split('/')[0]}
-                        </Badge>
-                        <span className="flex-1 truncate text-sm font-medium">{g.title}</span>
-                        {isNew && <Badge variant="new" size="sm">NEW</Badge>}
-                        <span className="shrink-0 font-mono text-xs text-muted-foreground">
-                          {g.updated_at?.slice(0, 10)}
-                        </span>
-                        <ArrowUpRight size={15} className="shrink-0 text-muted-foreground/40" />
-                      </Link>
-                    </li>
-                  )
-                })}
-              </ul>
-            </Card>
-          </section>
+          <Card className="overflow-hidden !py-0 gap-0">
+            <ul className="divide-y divide-border">
+              {recents.map((g) => {
+                const isNew = g.updated_at && new Date(g.updated_at).getTime() > sevenDaysAgo
+                return (
+                  <li key={g.id}>
+                    <Link
+                      to={`/guides/${g.id}`}
+                      className="flex items-center gap-4 px-5 py-3 transition-colors hover:bg-accent/50"
+                    >
+                      <Badge variant="outline" size="sm" className="shrink-0 font-medium">
+                        {g.module?.split('/')[0]}
+                      </Badge>
+                      <span className="flex-1 truncate text-sm font-medium">{g.title}</span>
+                      {isNew && <Badge variant="new" size="sm">NEW</Badge>}
+                      <span className="shrink-0 font-mono text-xs text-muted-foreground">
+                        {g.updated_at?.slice(0, 10)}
+                      </span>
+                      <ArrowUpRight size={15} className="shrink-0 text-muted-foreground/40" />
+                    </Link>
+                  </li>
+                )
+              })}
+            </ul>
+          </Card>
+        </section>
 
-          {/* 빠른 링크 (1/3) */}
-          <section>
-            <div className="mb-5">
-              <h2 className="text-xl font-bold tracking-tight">빠른 링크</h2>
-              <p className="mt-0.5 text-sm text-muted-foreground">자주 찾는 페이지 바로가기.</p>
-            </div>
-
-            <div className="flex flex-col gap-3">
+        {/* 빠른 링크 + 모듈 현황 */}
+        <section className="flex flex-col gap-4">
+          <div>
+            <h2 className="mb-4 text-lg font-semibold tracking-tight">빠른 링크</h2>
+            <div className="flex flex-col gap-2">
               {QUICK_LINKS.map(link => {
                 const LinkIcon = link.icon
                 return (
                   <Link
                     key={link.to}
                     to={link.to}
-                    className="group flex items-center gap-3 rounded-xl border border-border bg-card p-4 transition-all hover:-translate-y-0.5 hover:border-ring/40 hover:shadow-md"
+                    className="group flex items-center gap-3 rounded-lg border border-border bg-card p-3 transition-all hover:border-ring/40 hover:bg-accent/50"
                   >
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-muted transition-colors group-hover:bg-accent">
-                      <LinkIcon size={16} className="text-muted-foreground" />
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-muted">
+                      <LinkIcon size={15} className="text-muted-foreground" />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="text-sm font-semibold">{link.label}</p>
+                      <p className="text-sm font-semibold leading-tight">{link.label}</p>
                       <p className="truncate text-xs text-muted-foreground">{link.desc}</p>
                     </div>
-                    <ChevronRight size={16} className="shrink-0 text-muted-foreground/40 transition-transform group-hover:translate-x-0.5" />
+                    <ChevronRight size={14} className="shrink-0 text-muted-foreground/40 transition-transform group-hover:translate-x-0.5" />
                   </Link>
                 )
               })}
-
-              {/* 모듈 현황 */}
-              <Card className="p-4 !py-4 gap-3">
-                <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  모듈 현황
-                </p>
-                <div className="space-y-2.5">
-                  {mods.slice(0, 4).map(m => (
-                    <div key={m.id} className="flex items-center gap-3">
-                      <span className="w-20 truncate text-xs font-medium text-foreground">{m.label.split('/')[0]}</span>
-                      <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-muted">
-                        <div
-                          className="h-full rounded-full bg-foreground/70 transition-all"
-                          style={{ width: `${Math.min(100, (m.guide_count / 8) * 100)}%` }}
-                        />
-                      </div>
-                      <span className="w-4 text-right font-mono text-xs font-semibold">{m.guide_count}</span>
-                    </div>
-                  ))}
-                </div>
-              </Card>
             </div>
-          </section>
+          </div>
 
-        </div>
+          <Card className="p-4 !py-4 gap-3">
+            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              모듈 현황
+            </p>
+            <div className="space-y-2.5">
+              {mods.slice(0, 5).map(m => (
+                <div key={m.id} className="flex items-center gap-3">
+                  <span className="w-16 truncate text-xs font-medium text-foreground">{m.label.split('/')[0]}</span>
+                  <div className="h-2 flex-1 overflow-hidden rounded-full bg-muted">
+                    <div
+                      className="h-full rounded-full bg-primary transition-all"
+                      style={{ width: `${Math.min(100, (m.guide_count / 8) * 100)}%` }}
+                    />
+                  </div>
+                  <span className="w-4 text-right font-mono text-xs font-semibold tabular-nums">{m.guide_count}</span>
+                </div>
+              ))}
+            </div>
+          </Card>
+        </section>
+
       </div>
     </div>
   )

@@ -19,10 +19,9 @@ import {
   Sparkle as Sparkles,
   Bell,
   ChatCircle as MessageCircle,
-  Command
+  PencilSimple as PencilLine
 } from '@phosphor-icons/react'
 import { MODULE_TREE, RECENT_GUIDES, GUIDES } from '@/data/mockData'
-import { useSearchStore } from '@/store/searchStore.jsx'
 import {
   Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter, CardAction,
 } from '@/components/ui/card'
@@ -48,7 +47,6 @@ const MODULE_TINT = {
 }
 
 export default function HomePage() {
-  const open = useSearchStore(s => s.open)
   const totalGuides = Object.keys(GUIDES).length
   const recent5 = RECENT_GUIDES.slice(0, 5)
 
@@ -59,12 +57,11 @@ export default function HomePage() {
         description={`AMS 운영 가이드 · 최신 업데이트 ${recent5[0]?.updated_at ?? ''}`}
         actions={
           <>
-            <Button variant="outline" size="sm" onClick={open}>
-              <Command size={14} />
-              검색
-              <kbd className="ml-1 hidden rounded border bg-muted px-1.5 py-0.5 font-mono text-[10px] sm:inline-flex">
-                ⌘K
-              </kbd>
+            <Button variant="outline" size="sm" asChild>
+              <Link to="/editor">
+                <PencilLine size={14} />
+                새 가이드 작성
+              </Link>
             </Button>
             <Button size="sm" asChild>
               <Link to="/guides">

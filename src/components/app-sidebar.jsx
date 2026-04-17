@@ -126,7 +126,6 @@ export function AppSidebar({ ...props }) {
             <SidebarMenu>
               {MODULE_TREE.map((mod) => {
                 const Icon = ICON_MAP[mod.icon] ?? FileText
-                const modPath = `/guides?module=${mod.id}`
                 const isActiveModule = currentPath.startsWith("/guides") &&
                   location.search.includes(`module=${mod.id}`)
                 return (

@@ -8,6 +8,7 @@ import { SearchProvider } from './store/searchStore'
 import { I18nProvider } from './store/i18nStore'
 import { AuthProvider } from './store/authStore'
 import { ToastProvider } from './components/ui/toast'
+import { TooltipProvider } from './components/ui/tooltip'
 import { Skeleton } from './components/ui/skeleton'
 
 // 코드 스플리팅 (lazy loading)
@@ -51,11 +52,12 @@ function PageSkeleton() {
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <I18nProvider>
-        <AuthProvider>
-          <ToastProvider>
-            <SearchProvider>
-              <BrowserRouter>
+      <TooltipProvider delayDuration={200}>
+        <I18nProvider>
+          <AuthProvider>
+            <ToastProvider>
+              <SearchProvider>
+                <BrowserRouter>
                 <Routes>
                   {/* 에디터는 레이아웃 없이 전체 화면 */}
                   <Route path="/editor" element={
@@ -100,11 +102,12 @@ export default function App() {
                   </Route>
                 </Routes>
                 <SearchOverlay />
-              </BrowserRouter>
-            </SearchProvider>
-          </ToastProvider>
-        </AuthProvider>
-      </I18nProvider>
+                </BrowserRouter>
+              </SearchProvider>
+            </ToastProvider>
+          </AuthProvider>
+        </I18nProvider>
+      </TooltipProvider>
     </QueryClientProvider>
   )
 }

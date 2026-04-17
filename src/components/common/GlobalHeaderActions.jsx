@@ -3,10 +3,8 @@
 import { useEffect } from 'react'
 import {
   MagnifyingGlass as Search,
-  Bell
 } from '@phosphor-icons/react'
 import { useSearchStore } from '@/store/searchStore.jsx'
-import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import ThemeToggle from './ThemeToggle'
 import UserMenu from './UserMenu'
@@ -45,7 +43,6 @@ export default function GlobalHeaderActions() {
 
       <div className="ml-auto flex items-center gap-1">
         <ThemeToggle />
-        <NotificationBell />
         <Separator />
         <UserMenu />
       </div>
@@ -55,13 +52,4 @@ export default function GlobalHeaderActions() {
 
 function Separator() {
   return <div className="mx-1 h-5 w-px bg-border" />
-}
-
-function NotificationBell() {
-  return (
-    <Button variant="ghost" size="icon" className="relative size-8" aria-label="알림">
-      <Bell className="size-4" />
-      <span className="absolute right-1.5 top-1.5 size-2 rounded-full bg-destructive ring-2 ring-background" />
-    </Button>
-  )
 }

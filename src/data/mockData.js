@@ -4,9 +4,12 @@
 
 const CONFLUENCE = 'https://hiconsy.atlassian.net/wiki/spaces/FVSOL/pages';
 const AMS = 'https://ams.sdij.com';
-// Confluence 첨부 이미지 — 개발: /confluence-img 프록시 경유, 프로덕션: 직접 URL
+// Confluence 첨부 이미지 — 개발: /confluence-img 프록시 경유, 프로덕션: placeholder
+// (Vercel 배포 환경에는 Atlassian 인증을 위한 백엔드 proxy가 없어 placeholder로 fallback)
 const IMG = (pageId, file) =>
-  `/confluence-img/wiki/download/attachments/${pageId}/${file}?version=1&api=v2`;
+  import.meta.env.DEV
+    ? `/confluence-img/wiki/download/attachments/${pageId}/${file}?version=1&api=v2`
+    : '/placeholder-screenshot.svg';
 
 export const GUIDES = {
 

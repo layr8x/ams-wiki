@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" role="img" aria-label="스크린샷 준비 중">
+  <defs>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#E5E7EB" stroke-width="1"/>
+    </pattern>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FAFAFA"/>
+      <stop offset="100%" stop-color="#F3F4F6"/>
+    </linearGradient>
+  </defs>
+  <rect width="960" height="540" fill="url(#bg)"/>
+  <rect width="960" height="540" fill="url(#grid)"/>
+  <rect x="40" y="40" width="880" height="60" rx="6" fill="#FFFFFF" stroke="#E5E7EB"/>
+  <circle cx="72" cy="70" r="6" fill="#EF4444"/>
+  <circle cx="96" cy="70" r="6" fill="#F59E0B"/>
+  <circle cx="120" cy="70" r="6" fill="#10B981"/>
+  <rect x="160" y="58" width="480" height="24" rx="4" fill="#F3F4F6"/>
+  <rect x="40" y="140" width="240" height="360" rx="6" fill="#FFFFFF" stroke="#E5E7EB"/>
+  <rect x="64" y="164" width="192" height="14" rx="3" fill="#E5E7EB"/>
+  <rect x="64" y="192" width="144" height="10" rx="3" fill="#F3F4F6"/>
+  <rect x="64" y="212" width="176" height="10" rx="3" fill="#F3F4F6"/>
+  <rect x="64" y="232" width="120" height="10" rx="3" fill="#F3F4F6"/>
+  <rect x="64" y="268" width="192" height="14" rx="3" fill="#E5E7EB"/>
+  <rect x="64" y="296" width="144" height="10" rx="3" fill="#F3F4F6"/>
+  <rect x="64" y="316" width="176" height="10" rx="3" fill="#F3F4F6"/>
+  <rect x="320" y="140" width="600" height="360" rx="6" fill="#FFFFFF" stroke="#E5E7EB"/>
+  <rect x="344" y="168" width="320" height="20" rx="3" fill="#E5E7EB"/>
+  <rect x="344" y="204" width="552" height="10" rx="3" fill="#F3F4F6"/>
+  <rect x="344" y="222" width="480" height="10" rx="3" fill="#F3F4F6"/>
+  <rect x="344" y="260" width="552" height="200" rx="6" fill="#F9FAFB" stroke="#E5E7EB" stroke-dasharray="4 4"/>
+  <g transform="translate(480 480)">
+    <rect x="0" y="0" width="240" height="36" rx="4" fill="#111827"/>
+    <text x="120" y="23" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="13" font-weight="600" fill="#FFFFFF">스크린샷 준비 중</text>
+  </g>
+  <text x="480" y="340" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="16" fill="#9CA3AF">AMS 가이드 이미지</text>
+</svg>

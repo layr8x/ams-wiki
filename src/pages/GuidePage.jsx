@@ -119,7 +119,7 @@ function GuidePageInner({ id }) {
               <ShieldCheck size={12} /> {guide.targets.join(', ')}
             </span>
           )}
-          {guide.confluenceUrl && (
+          {guide.confluenceId && guide.confluenceUrl && (
             <a
               href={guide.confluenceUrl}
               target="_blank"
@@ -132,12 +132,12 @@ function GuidePageInner({ id }) {
         </div>
       </PageHeader>
 
-      {/* TL;DR */}
+      {/* 핵심 요약 */}
       {guide.tldr && (
         <Card className="mb-6 border-l-4 border-l-primary gap-0 py-0">
           <CardContent className="px-6 py-5">
-            <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-              TL;DR
+            <p className="mb-1 text-xs font-semibold tracking-wide text-muted-foreground">
+              핵심 요약
             </p>
             <p className="whitespace-pre-line text-[15px] leading-relaxed text-foreground">
               {guide.tldr}

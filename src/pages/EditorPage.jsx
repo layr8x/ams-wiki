@@ -259,7 +259,7 @@ export default function EditorPage() {
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="editor-tldr">TL;DR</Label>
+                        <Label htmlFor="editor-tldr">핵심 요약</Label>
                         <Textarea
                           id="editor-tldr"
                           placeholder="한 문단 요약 — 이 가이드가 어떤 문제를 해결하는지"

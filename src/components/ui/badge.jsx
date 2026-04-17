@@ -1,37 +1,37 @@
-// src/components/ui/badge.jsx — shadcn/ui 표준
+// src/components/ui/badge.jsx — shadcn/ui new-york (다크모드 대응)
 import { cva } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
 
 export const badgeVariants = cva(
-  'inline-flex items-center gap-1 rounded-md border font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
+  'inline-flex items-center gap-1 rounded-md border font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
   {
     variants: {
       variant: {
-        default:     'border-transparent bg-primary text-primary-foreground hover:bg-primary/80',
+        default:     'border-transparent bg-primary text-primary-foreground hover:bg-primary/90',
         secondary:   'border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80',
-        destructive: 'border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80',
-        outline:     'text-foreground border-border',
-        // 가이드 유형 전용
-        sop:         'border-blue-200 bg-blue-50 text-blue-700',
-        decision:    'border-amber-200 bg-amber-50 text-amber-700',
-        reference:   'border-emerald-200 bg-emerald-50 text-emerald-700',
-        trouble:     'border-orange-200 bg-orange-50 text-orange-700',
-        response:    'border-purple-200 bg-purple-50 text-purple-700',
-        policy:      'border-red-200 bg-red-50 text-red-700',
-        // 심각도
-        critical:    'border-red-300 bg-red-100 text-red-800',
-        high:        'border-amber-300 bg-amber-100 text-amber-800',
-        medium:      'border-gray-200 bg-gray-100 text-gray-700',
-        low:         'border-green-200 bg-green-100 text-green-700',
-        // 상태
-        safe:        'border-emerald-200 bg-emerald-50 text-emerald-700',
-        warn:        'border-amber-200 bg-amber-50 text-amber-700',
-        danger:      'border-red-200 bg-red-50 text-red-700',
-        // 새 배지
-        new:         'border-blue-300 bg-blue-600 text-white',
+        destructive: 'border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/90',
+        outline:     'text-foreground border-border bg-transparent',
+        /* 가이드 유형 — 틴티드 팔레트 (라이트/다크 대응) */
+        sop:         'border-blue-500/20 bg-blue-500/10 text-blue-700 dark:text-blue-300',
+        decision:    'border-amber-500/20 bg-amber-500/10 text-amber-700 dark:text-amber-300',
+        reference:   'border-emerald-500/20 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300',
+        trouble:     'border-orange-500/20 bg-orange-500/10 text-orange-700 dark:text-orange-300',
+        response:    'border-purple-500/20 bg-purple-500/10 text-purple-700 dark:text-purple-300',
+        policy:      'border-red-500/20 bg-red-500/10 text-red-700 dark:text-red-300',
+        /* 심각도 */
+        critical:    'border-red-500/30 bg-red-500/15 text-red-700 dark:text-red-300',
+        high:        'border-amber-500/30 bg-amber-500/15 text-amber-700 dark:text-amber-300',
+        medium:      'border-border bg-muted text-muted-foreground',
+        low:         'border-emerald-500/20 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300',
+        /* 상태 */
+        safe:        'border-emerald-500/20 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300',
+        warn:        'border-amber-500/20 bg-amber-500/10 text-amber-700 dark:text-amber-300',
+        danger:      'border-red-500/20 bg-red-500/10 text-red-700 dark:text-red-300',
+        /* NEW 배지 */
+        new:         'border-transparent bg-blue-600 text-white dark:bg-blue-500',
       },
       size: {
-        sm: 'px-1.5 py-0 text-[10px]',
+        sm: 'px-1.5 py-0 text-[10px] leading-4',
         md: 'px-2 py-0.5 text-xs',
         lg: 'px-2.5 py-1 text-sm',
       },

@@ -7,12 +7,13 @@ export default function ThemeToggle() {
 
   return (
     <button
+      type="button"
       onClick={toggle}
-      className="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+      className="inline-flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
       title={isDark ? '라이트 모드' : '다크 모드'}
+      aria-label={isDark ? '라이트 모드 전환' : '다크 모드 전환'}
     >
-      {isDark ? <Sun size={15} /> : <Moon size={15} />}
-      <span className="sr-only">{isDark ? '라이트 모드' : '다크 모드'} 전환</span>
+      {isDark ? <Sun size={16} /> : <Moon size={16} />}
     </button>
   )
 }

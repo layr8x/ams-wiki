@@ -161,7 +161,7 @@ export default function GuideListPage() {
           <Search size={36} className="text-muted-foreground/40" />
           <p className="text-sm font-medium text-foreground">검색 결과가 없습니다</p>
           <p className="text-xs text-muted-foreground">필터를 변경하거나 다른 키워드로 검색해보세요</p>
-          <button onClick={() => { setSearch(''); setType('ALL'); setMod('ALL') }} className="mt-2 text-xs text-blue-600 hover:underline">
+          <button onClick={() => { setSearch(''); setType('ALL'); setMod('ALL') }} className="mt-2 text-xs text-blue-600 dark:text-blue-400 hover:underline">
             필터 초기화
           </button>
         </div>

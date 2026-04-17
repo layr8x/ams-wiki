@@ -37,8 +37,8 @@ export default function FaqPage() {
 
       {/* 헤더 */}
       <div className="mb-10 text-center">
-        <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50">
-          <HelpCircle size={24} className="text-blue-600" />
+        <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-blue-500/10 ring-1 ring-blue-500/20">
+          <HelpCircle size={24} className="text-blue-600 dark:text-blue-400" />
         </div>
         <h1 className="mb-2 text-2xl font-bold tracking-tight text-foreground">운영 FAQ</h1>
         <p className="text-sm text-muted-foreground">
@@ -82,7 +82,7 @@ export default function FaqPage() {
                 <Badge variant="outline" size="sm" className="shrink-0">{faq.category}</Badge>
                 <span className={cn(
                   'flex-1 text-sm transition-colors',
-                  isOpen ? 'font-semibold text-blue-700' : 'font-medium text-foreground'
+                  isOpen ? 'font-semibold text-blue-700 dark:text-blue-400' : 'font-medium text-foreground'
                 )}>
                   {faq.q}
                 </span>
@@ -100,7 +100,7 @@ export default function FaqPage() {
                       {faq.guideId && (
                         <Link
                           to={`/guides/${faq.guideId}`}
-                          className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 hover:underline"
+                          className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 dark:text-blue-400 hover:underline"
                         >
                           <ExternalLink size={12} /> 관련 가이드 보기
                         </Link>

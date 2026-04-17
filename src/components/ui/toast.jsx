@@ -53,9 +53,9 @@ function Toaster({ toasts, onDismiss }) {
             'transition-all duration-300',
             t.removing ? 'opacity-0 translate-y-2' : 'opacity-100 translate-y-0',
             {
-              'border-emerald-200 bg-emerald-50': t.variant === 'success',
+              'border-emerald-500/30 bg-emerald-500/10': t.variant === 'success',
               'border-destructive/30 bg-destructive/5': t.variant === 'error',
-              'border-amber-200 bg-amber-50': t.variant === 'warning',
+              'border-amber-500/30 bg-amber-500/10': t.variant === 'warning',
               'border-border': t.variant === 'info',
             }
           )}

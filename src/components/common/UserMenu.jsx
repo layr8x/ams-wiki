@@ -88,11 +88,12 @@ export default function UserMenu() {
         </div>
       ) : (
         <button
+          type="button"
           onClick={() => setLoginOpen(true)}
-          className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+          className="inline-flex h-9 items-center justify-center gap-1.5 rounded-md px-3 text-sm font-medium text-foreground transition-colors hover:bg-accent"
         >
-          <LogIn size={15} />
-          <span className="sr-only">로그인</span>
+          <LogIn size={14} />
+          <span className="hidden sm:inline">로그인</span>
         </button>
       )}
 

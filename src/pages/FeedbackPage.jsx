@@ -9,10 +9,10 @@ import { cn } from '@/lib/utils'
 import { submitFeedback } from '@/lib/db'
 
 const TYPES = [
-  { id: 'error',       Icon: AlertTriangle, label: '오류 제보',      desc: '가이드 내용이 실제와 다릅니다', color: 'text-red-600',    bg: 'bg-red-50',    border: 'border-red-200' },
-  { id: 'missing',     Icon: BookOpen,      label: '내용 추가 요청', desc: '필요한 가이드가 없습니다',       color: 'text-blue-600',   bg: 'bg-blue-50',   border: 'border-blue-200' },
-  { id: 'improvement', Icon: Lightbulb,     label: '개선 제안',      desc: '더 나은 방법이 있습니다',       color: 'text-violet-600', bg: 'bg-violet-50', border: 'border-violet-200' },
-  { id: 'other',       Icon: MessageCircle, label: '기타 문의',      desc: '위 항목에 해당되지 않습니다',   color: 'text-emerald-600',bg: 'bg-emerald-50',border: 'border-emerald-200' },
+  { id: 'error',       Icon: AlertTriangle, label: '오류 제보',      desc: '가이드 내용이 실제와 다릅니다', color: 'text-red-600 dark:text-red-400',        bg: 'bg-red-500/10',     border: 'border-red-500/30' },
+  { id: 'missing',     Icon: BookOpen,      label: '내용 추가 요청', desc: '필요한 가이드가 없습니다',       color: 'text-blue-600 dark:text-blue-400',      bg: 'bg-blue-500/10',    border: 'border-blue-500/30' },
+  { id: 'improvement', Icon: Lightbulb,     label: '개선 제안',      desc: '더 나은 방법이 있습니다',       color: 'text-violet-600 dark:text-violet-400',  bg: 'bg-violet-500/10',  border: 'border-violet-500/30' },
+  { id: 'other',       Icon: MessageCircle, label: '기타 문의',      desc: '위 항목에 해당되지 않습니다',   color: 'text-emerald-600 dark:text-emerald-400',bg: 'bg-emerald-500/10', border: 'border-emerald-500/30' },
 ]
 
 export default function FeedbackPage() {
@@ -45,8 +45,8 @@ export default function FeedbackPage() {
   if (submitted) {
     return (
       <div className="mx-auto flex max-w-md flex-col items-center gap-4 py-24 px-6 text-center">
-        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-50">
-          <CheckCircle2 size={28} className="text-emerald-600" />
+        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-500/15 ring-1 ring-emerald-500/25">
+          <CheckCircle2 size={28} className="text-emerald-600 dark:text-emerald-400" />
         </div>
         <h2 className="text-xl font-bold text-foreground">제출 완료</h2>
         <p className="text-sm text-muted-foreground leading-relaxed">
@@ -67,8 +67,8 @@ export default function FeedbackPage() {
     <div className="mx-auto w-full max-w-2xl px-6 py-10">
 
       <div className="mb-8">
-        <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-violet-50">
-          <MessageCircle size={20} className="text-violet-600" />
+        <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-violet-500/10 ring-1 ring-violet-500/20">
+          <MessageCircle size={20} className="text-violet-600 dark:text-violet-400" />
         </div>
         <h1 className="mb-2 text-2xl font-bold tracking-tight text-foreground">오류 제보 / 개선 제안</h1>
         <p className="text-sm text-muted-foreground">

@@ -42,12 +42,12 @@ const STATUS_META = {
 // ─── 유의사항 블록 ────────────────────────────────────────────────────────────
 function CautionBlock({ items }) {
   return (
-    <div className="overflow-hidden rounded-lg border border-amber-200 bg-amber-50">
-      <div className="flex items-center gap-2 border-b border-amber-200 bg-amber-100 px-4 py-2.5">
-        <AlertTriangle size={13} className="text-amber-600" />
-        <span className="text-xs font-bold uppercase tracking-wide text-amber-700">반드시 확인하세요</span>
+    <div className="overflow-hidden rounded-lg border border-amber-500/20 bg-amber-500/5">
+      <div className="flex items-center gap-2 border-b border-amber-500/20 bg-amber-500/10 px-4 py-2.5">
+        <AlertTriangle size={13} className="text-amber-600 dark:text-amber-400" />
+        <span className="text-xs font-bold uppercase tracking-wide text-amber-700 dark:text-amber-300">반드시 확인하세요</span>
       </div>
-      <ul className="divide-y divide-amber-100">
+      <ul className="divide-y divide-amber-500/10">
         {items.map((c, i) => (
           <li key={i} className="flex gap-3 px-4 py-3">
             <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-500" />
@@ -63,14 +63,14 @@ function CautionBlock({ items }) {
 function CaseItem({ item, index }) {
   const [open, setOpen] = useState(false)
   return (
-    <div className={cn('overflow-hidden rounded-lg border transition-all', open ? 'border-blue-200 bg-blue-50/30' : 'border-border bg-card')}>
+    <div className={cn('overflow-hidden rounded-lg border transition-all', open ? 'border-blue-500/30 bg-blue-500/5' : 'border-border bg-card')}>
       <button
         onClick={() => setOpen(o => !o)}
         className="flex w-full items-center gap-3 px-4 py-3.5 text-left"
       >
         <div className={cn(
           'flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold transition-colors',
-          open ? 'bg-blue-600 text-white' : 'bg-secondary text-muted-foreground'
+          open ? 'bg-blue-600 text-white dark:bg-blue-500' : 'bg-secondary text-muted-foreground'
         )}>
           {index + 1}
         </div>
@@ -81,9 +81,9 @@ function CaseItem({ item, index }) {
         <div className="px-4 pb-4 pl-14">
           <p className="text-sm leading-relaxed text-foreground whitespace-pre-wrap mb-2">{item.action}</p>
           {item.note && (
-            <div className="flex items-start gap-2 rounded-md bg-amber-50 border border-amber-200 px-3 py-2">
-              <AlertTriangle size={12} className="mt-0.5 shrink-0 text-amber-500" />
-              <p className="text-xs text-amber-700">{item.note}</p>
+            <div className="flex items-start gap-2 rounded-md bg-amber-500/10 border border-amber-500/20 px-3 py-2">
+              <AlertTriangle size={12} className="mt-0.5 shrink-0 text-amber-600 dark:text-amber-400" />
+              <p className="text-xs text-amber-700 dark:text-amber-300">{item.note}</p>
             </div>
           )}
         </div>
@@ -106,8 +106,8 @@ function FeedbackWidget({ guideId }) {
 
   if (done) return (
     <div className="flex flex-col items-center gap-3 py-8">
-      <div className="flex h-11 w-11 items-center justify-center rounded-full bg-emerald-100">
-        <CheckCircle2 size={22} className="text-emerald-600" />
+      <div className="flex h-11 w-11 items-center justify-center rounded-full bg-emerald-500/15 ring-1 ring-emerald-500/25">
+        <CheckCircle2 size={22} className="text-emerald-600 dark:text-emerald-400" />
       </div>
       <p className="text-sm font-semibold text-foreground">의견이 반영되었습니다. 감사합니다.</p>
     </div>
@@ -122,8 +122,8 @@ function FeedbackWidget({ guideId }) {
           className={cn(
             'inline-flex items-center gap-2 rounded-full border px-5 py-2 text-sm font-semibold transition-all',
             voted === 'helpful'
-              ? 'border-emerald-300 bg-emerald-50 text-emerald-700'
-              : 'border-border bg-background text-muted-foreground hover:border-emerald-200 hover:text-emerald-600'
+              ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300'
+              : 'border-border bg-background text-muted-foreground hover:border-emerald-500/30 hover:text-emerald-600 dark:hover:text-emerald-400'
           )}
         >
           <ThumbsUp size={14} /> 도움됨
@@ -133,8 +133,8 @@ function FeedbackWidget({ guideId }) {
           className={cn(
             'inline-flex items-center gap-2 rounded-full border px-5 py-2 text-sm font-semibold transition-all',
             voted === 'needs_improvement'
-              ? 'border-red-200 bg-red-50 text-red-600'
-              : 'border-border bg-background text-muted-foreground hover:border-red-200 hover:text-red-500'
+              ? 'border-red-500/30 bg-red-500/10 text-red-600 dark:text-red-400'
+              : 'border-border bg-background text-muted-foreground hover:border-red-500/30 hover:text-red-500 dark:hover:text-red-400'
           )}
         >
           <ThumbsDown size={14} /> 보완 필요
@@ -221,7 +221,7 @@ function OnThisPage({ sections }) {
             className={cn(
               'cursor-pointer border-l-2 py-1 pl-4 text-xs transition-all -ml-0.5 leading-relaxed',
               active === s.id
-                ? 'border-blue-600 font-semibold text-blue-600'
+                ? 'border-blue-600 dark:border-blue-400 font-semibold text-blue-600 dark:text-blue-400'
                 : 'border-transparent text-muted-foreground hover:text-foreground'
             )}
           >
@@ -322,8 +322,8 @@ export default function GuidePage() {
         </div>
 
         {/* 02 TL;DR */}
-        <div className="mb-10 rounded-lg border border-blue-200 bg-blue-50 px-5 py-4">
-          <p className="mb-1.5 text-[10px] font-bold uppercase tracking-widest text-blue-600">TL;DR</p>
+        <div className="mb-10 rounded-lg border border-blue-500/20 bg-blue-500/5 px-5 py-4">
+          <p className="mb-1.5 text-[10px] font-bold uppercase tracking-widest text-blue-700 dark:text-blue-400">TL;DR</p>
           <p className="text-sm leading-relaxed text-foreground whitespace-pre-wrap">{guide.tldr}</p>
         </div>
 
@@ -339,7 +339,7 @@ export default function GuidePage() {
           </div>
           {guide.amsUrl && (
             <a href={guide.amsUrl} target="_blank" rel="noopener noreferrer"
-              className="flex shrink-0 items-center gap-1 text-xs font-semibold text-blue-600 hover:underline">
+              className="flex shrink-0 items-center gap-1 text-xs font-semibold text-blue-600 dark:text-blue-400 hover:underline">
               AMS 바로가기 <ArrowUpRight size={12} />
             </a>
           )}
@@ -352,7 +352,7 @@ export default function GuidePage() {
             <ol className="relative space-y-10 pl-6 before:absolute before:left-[13px] before:top-4 before:h-[calc(100%-32px)] before:w-0.5 before:bg-gradient-to-b before:from-blue-200 before:to-border">
               {guide.steps.map((s, i) => (
                 <li key={i} className="relative flex gap-6">
-                  <div className="relative z-10 flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-2 border-blue-500 bg-background text-xs font-bold text-blue-600">
+                  <div className="relative z-10 flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-2 border-blue-500 bg-background text-xs font-bold text-blue-600 dark:text-blue-400">
                     {i + 1}
                   </div>
                   <div className="flex-1 min-w-0 pt-0.5">
@@ -513,12 +513,12 @@ export default function GuidePage() {
           <section className="mb-16">
             <SecHeading id="sec-policy">정책 변경 내용</SecHeading>
             <div className="grid gap-4 sm:grid-cols-2">
-              <div className="rounded-lg border border-red-200 bg-red-50 p-5">
-                <p className="mb-2 text-xs font-bold uppercase tracking-wide text-red-600">변경 전</p>
+              <div className="rounded-lg border border-red-500/20 bg-red-500/5 p-5">
+                <p className="mb-2 text-xs font-bold uppercase tracking-wide text-red-600 dark:text-red-400">변경 전</p>
                 <p className="text-sm font-medium text-foreground">{guide.policyDiff.before}</p>
               </div>
-              <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-5">
-                <p className="mb-2 text-xs font-bold uppercase tracking-wide text-emerald-600">변경 후</p>
+              <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/5 p-5">
+                <p className="mb-2 text-xs font-bold uppercase tracking-wide text-emerald-600 dark:text-emerald-400">변경 후</p>
                 <p className="text-sm font-medium text-foreground">{guide.policyDiff.after}</p>
               </div>
             </div>
@@ -609,7 +609,7 @@ export default function GuidePage() {
                 href={guide.confluenceUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-1.5 text-xs text-blue-600 hover:underline"
+                className="flex items-center gap-1.5 text-xs text-blue-600 dark:text-blue-400 hover:underline"
               >
                 <ExternalLink size={11} /> Confluence에서 보기
               </a>
@@ -626,7 +626,7 @@ export default function GuidePage() {
               href="https://slack.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 text-xs font-medium text-blue-600 hover:underline"
+              className="inline-flex items-center gap-1.5 text-xs font-medium text-blue-600 dark:text-blue-400 hover:underline"
             >
               Slack 문의 <ArrowUpRight size={11} />
             </a>

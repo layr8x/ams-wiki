@@ -28,8 +28,8 @@ export default function UpdatesPage() {
     <div className="mx-auto w-full max-w-3xl px-6 py-10">
 
       <div className="mb-10">
-        <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-red-50">
-          <Bell size={20} className="text-red-600" />
+        <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-red-500/10 ring-1 ring-red-500/20">
+          <Bell size={20} className="text-red-600 dark:text-red-400" />
         </div>
         <h1 className="mb-2 text-2xl font-bold tracking-tight text-foreground">업데이트 이력</h1>
         <p className="text-sm text-muted-foreground">
@@ -60,7 +60,7 @@ export default function UpdatesPage() {
                 {item.guideId && (
                   <Link
                     to={`/guides/${item.guideId}`}
-                    className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-blue-600 hover:underline"
+                    className="mt-3 inline-flex items-center gap-1 text-xs font-semibold text-blue-600 dark:text-blue-400 hover:underline"
                   >
                     <BookOpen size={12} /> 관련 가이드 보기
                   </Link>

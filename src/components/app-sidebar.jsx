@@ -13,6 +13,7 @@ import {
   Lifebuoy as LifeBuoy,
   ChatText as MessageSquare,
   PaperPlaneTilt as Send,
+  PencilSimple as PencilLine,
   Gear as Settings,
   Sparkle as Sparkles,
   Users
@@ -83,6 +84,7 @@ const PRIMARY_NAV = [
   { title: "전체 가이드", to: "/guides", icon: FileText },
   { title: "업데이트", to: "/updates", icon: Sparkles },
   { title: "FAQ", to: "/faq", icon: LifeBuoy },
+  { title: "새 가이드 작성", to: "/editor", icon: PencilLine },
 ]
 
 const SECONDARY_NAV = [
@@ -102,10 +104,10 @@ export function AppSidebar({ ...props }) {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild className="hover:bg-transparent">
+            <SidebarMenuButton size="lg" asChild className="h-14 hover:bg-transparent group-data-[collapsible=icon]:!h-12">
               <Link to="/" aria-label="시대인재 홈" className="flex items-center justify-center text-foreground">
-                <BrandWordmark className="h-6 w-auto group-data-[collapsible=icon]:hidden" />
-                <BrandSymbol className="hidden size-6 shrink-0 group-data-[collapsible=icon]:block" />
+                <BrandWordmark className="h-9 w-auto group-data-[collapsible=icon]:hidden" />
+                <BrandSymbol className="hidden size-7 shrink-0 group-data-[collapsible=icon]:block" />
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>

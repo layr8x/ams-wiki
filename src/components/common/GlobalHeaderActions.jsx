@@ -36,8 +36,8 @@ export default function GlobalHeaderActions() {
       >
         <Search className="size-3.5 shrink-0" />
         <span className="flex-1 text-left">가이드 검색...</span>
-        <kbd className="pointer-events-none hidden h-5 select-none items-center gap-0.5 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium sm:inline-flex">
-          <span>⌘</span>K
+        <kbd className="pointer-events-none hidden h-5 min-w-[20px] select-none items-center justify-center rounded border bg-muted px-1.5 font-mono text-[11px] font-semibold sm:inline-flex">
+          /
         </kbd>
       </button>
 

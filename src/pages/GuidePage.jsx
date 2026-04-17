@@ -249,21 +249,52 @@ function GuidePageInner({ id }) {
         <section className="mb-10">
           <h2 className="mb-4 text-lg font-semibold tracking-tight">케이스별 처리</h2>
           <div className="space-y-3">
-            {guide.cases.map((c, i) => (
-              <Card key={i} className="gap-0 py-0">
-                <CardContent className="px-6 py-4">
-                  <p className="mb-2 text-sm font-semibold text-foreground">
-                    Case {i + 1}. {c.label}
-                  </p>
-                  <p className="prose-ams mb-2 text-sm">{c.action}</p>
-                  {c.note && (
-                    <p className="rounded-md bg-muted px-3 py-2 text-xs text-muted-foreground">
-                      <span className="font-medium text-foreground">Note.</span> {c.note}
+            {guide.cases.map((c, i) => {
+              const images = c.images?.length ? c.images : (c.image ? [c.image] : [])
+              return (
+                <Card key={i} className="gap-0 py-0">
+                  <CardContent className="px-6 py-4">
+                    <p className="mb-2 text-sm font-semibold text-foreground">
+                      Case {i + 1}. {c.label}
                     </p>
-                  )}
-                </CardContent>
-              </Card>
-            ))}
+                    <p className="prose-ams mb-2 text-sm">{c.action}</p>
+                    {images.length > 0 && (
+                      <div
+                        className={
+                          images.length > 1
+                            ? "mt-3 mb-2 grid grid-cols-1 gap-3 sm:grid-cols-2"
+                            : "mt-3 mb-2"
+                        }
+                      >
+                        {images.map((img, j) => (
+                          <figure
+                            key={j}
+                            className="overflow-hidden rounded-md border bg-muted/30"
+                          >
+                            <img
+                              src={img.url}
+                              alt={img.name || `Case ${i + 1} image ${j + 1}`}
+                              className="w-full"
+                              loading="lazy"
+                            />
+                            {img.name && (
+                              <figcaption className="border-t bg-muted/50 px-4 py-2 text-xs text-muted-foreground">
+                                {img.name}
+                              </figcaption>
+                            )}
+                          </figure>
+                        ))}
+                      </div>
+                    )}
+                    {c.note && (
+                      <p className="rounded-md bg-muted px-3 py-2 text-xs text-muted-foreground">
+                        <span className="font-medium text-foreground">Note.</span> {c.note}
+                      </p>
+                    )}
+                  </CardContent>
+                </Card>
+              )
+            })}
           </div>
         </section>
       )}

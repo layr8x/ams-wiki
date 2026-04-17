@@ -1,15 +1,21 @@
-// src/components/common/UserMenu.jsx — shadcn/ui 스타일 유저 메뉴 + 로그인 다이얼로그
+// src/components/common/UserMenu.jsx — shadcn/ui Radix Dialog 기반 유저 메뉴 + 로그인
 import { useState } from 'react'
 import {
-  User,
   SignOut as LogOut,
   Gear as Settings,
   SignIn as LogIn,
-  CaretDown as ChevronDown
+  CaretDown as ChevronDown,
 } from '@phosphor-icons/react'
 import { useAuth } from '@/store/authStore'
 import { useToast } from '@/components/ui/toast'
 import { cn } from '@/lib/utils'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 
 export default function UserMenu() {
   const { user, isAuthenticated, loginWithEmail, loginWithGoogle, logout } = useAuth()
@@ -103,20 +109,22 @@ export default function UserMenu() {
         </button>
       )}
 
-      {/* 로그인 다이얼로그 */}
-      {loginOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setLoginOpen(false)} />
-          <div className="relative w-full max-w-sm rounded-lg border border-border bg-background p-6 shadow-xl">
-            <h2 className="text-base font-semibold mb-1">AMS Wiki 로그인</h2>
-            <p className="text-xs text-muted-foreground mb-4">계속하려면 로그인하세요.</p>
+      {/* 로그인 다이얼로그 — Radix Portal 기반 */}
+      <Dialog open={loginOpen} onOpenChange={setLoginOpen}>
+        <DialogContent className="rounded-lg p-6 sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="text-base font-semibold">AMS Wiki 로그인</DialogTitle>
+            <DialogDescription>계속하려면 로그인하세요.</DialogDescription>
+          </DialogHeader>
 
+          <div className="mt-2 flex flex-col gap-3">
             {/* 구글 로그인 */}
             <button
+              type="button"
               onClick={handleGoogleLogin}
               className={cn(
                 'flex w-full items-center justify-center gap-2 rounded-md border border-border',
-                'px-3 py-2 text-sm font-medium transition-colors hover:bg-accent mb-3'
+                'px-3 py-2 text-sm font-medium transition-colors hover:bg-accent'
               )}
             >
               <svg className="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
@@ -128,20 +136,21 @@ export default function UserMenu() {
               Google로 로그인
             </button>
 
-            <div className="relative flex items-center mb-3">
+            <div className="flex items-center gap-3">
               <div className="flex-1 border-t border-border" />
-              <span className="px-3 text-[11px] text-muted-foreground">또는</span>
+              <span className="text-[11px] text-muted-foreground">또는</span>
               <div className="flex-1 border-t border-border" />
             </div>
 
             {/* 이메일/비밀번호 로그인 */}
-            <form onSubmit={handleEmailLogin} className="space-y-3">
+            <form onSubmit={handleEmailLogin} className="flex flex-col gap-3">
               <input
                 type="email"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 placeholder="이메일"
                 required
+                autoComplete="email"
                 className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
               />
               <input
@@ -150,6 +159,7 @@ export default function UserMenu() {
                 onChange={e => setPassword(e.target.value)}
                 placeholder="비밀번호"
                 required
+                autoComplete="current-password"
                 className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
               />
               <button
@@ -160,16 +170,9 @@ export default function UserMenu() {
                 {loading ? '로그인 중...' : '로그인'}
               </button>
             </form>
-
-            <button
-              onClick={() => setLoginOpen(false)}
-              className="mt-4 text-xs text-muted-foreground hover:text-foreground w-full text-center transition-colors"
-            >
-              닫기
-            </button>
           </div>
-        </div>
-      )}
+        </DialogContent>
+      </Dialog>
     </>
   )
 }

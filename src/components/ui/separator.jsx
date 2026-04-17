@@ -1,17 +1,25 @@
-// src/components/ui/separator.jsx — shadcn/ui 표준
-import { cn } from '@/lib/utils'
+import * as React from "react"
+import { Separator as SeparatorPrimitive } from "radix-ui"
 
-export function Separator({ className, orientation = 'horizontal', decorative = true, ...props }) {
+import { cn } from "@/lib/utils"
+
+function Separator({
+  className,
+  orientation = "horizontal",
+  decorative = true,
+  ...props
+}) {
   return (
-    <div
-      role={decorative ? 'none' : 'separator'}
-      aria-orientation={orientation}
+    <SeparatorPrimitive.Root
+      data-slot="separator"
+      decorative={decorative}
+      orientation={orientation}
       className={cn(
-        'shrink-0 bg-border',
-        orientation === 'horizontal' ? 'h-px w-full' : 'h-full w-px',
+        "shrink-0 bg-border data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-px",
         className
       )}
-      {...props}
-    />
-  )
+      {...props} />
+  );
 }
+
+export { Separator }

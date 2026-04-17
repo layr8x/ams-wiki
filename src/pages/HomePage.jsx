@@ -134,14 +134,14 @@ export default function HomePage() {
           {STATS.map(stat => {
             const StatIcon = stat.icon
             return (
-              <Card key={stat.label} className="group relative overflow-hidden p-5 transition-all hover:shadow-lg hover:-translate-y-0.5">
+              <Card key={stat.label} className="group relative gap-3 overflow-hidden !py-0 p-5 transition-all hover:shadow-lg hover:-translate-y-0.5">
                 <div className="flex items-start justify-between">
                   <p className="text-sm font-medium text-muted-foreground">{stat.label}</p>
                   <div className="rounded-md bg-muted p-1.5 transition-colors group-hover:bg-accent">
                     <StatIcon size={14} className={stat.accent} />
                   </div>
                 </div>
-                <p className="mt-3 text-3xl font-bold tracking-tight">
+                <p className="text-3xl font-bold tracking-tight">
                   {stat.getValue()}
                   {stat.unit && <span className="ml-1 text-xl font-semibold text-muted-foreground">{stat.unit}</span>}
                 </p>
@@ -210,7 +210,7 @@ export default function HomePage() {
               </Link>
             </div>
 
-            <Card className="overflow-hidden">
+            <Card className="overflow-hidden !py-0 gap-0">
               <ul className="divide-y divide-border">
                 {recents.map((g) => {
                   const isNew = g.updated_at && new Date(g.updated_at).getTime() > sevenDaysAgo
@@ -266,7 +266,7 @@ export default function HomePage() {
               })}
 
               {/* 모듈 현황 */}
-              <Card className="p-4">
+              <Card className="p-4 !py-4 gap-3">
                 <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   모듈 현황
                 </p>

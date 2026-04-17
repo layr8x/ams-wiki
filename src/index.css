@@ -87,6 +87,20 @@ html.dark {
   --color-sidebar-ring:             oklch(0.556 0 0);
 }
 
+/* ─── shadcn base layer — v4 기본 border 색을 토큰으로 고정 ────────────────── */
+@layer base {
+  *, ::before, ::after {
+    border-color: var(--color-border);
+  }
+  *:focus-visible {
+    outline-color: var(--color-ring);
+  }
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+  }
+}
+
 /* ─── 기본 리셋 ────────────────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 

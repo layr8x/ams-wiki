@@ -1,7 +1,7 @@
 // src/components/ui/index.js — shadcn/ui 컴포넌트 통합 익스포트
 export { Badge, badgeVariants } from './badge'
 export { Button, buttonVariants } from './button'
-export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent } from './card'
+export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent, CardAction } from './card'
 export { Input } from './input'
 export { Separator } from './separator'
 export { Skeleton } from './skeleton'

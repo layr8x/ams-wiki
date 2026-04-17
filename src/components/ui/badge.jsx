@@ -1,49 +1,63 @@
-// src/components/ui/badge.jsx — shadcn/ui new-york (다크모드 대응)
-import { cva } from 'class-variance-authority'
-import { cn } from '@/lib/utils'
+import * as React from "react"
+import { cva } from "class-variance-authority";
+import { Slot } from "radix-ui"
 
-export const badgeVariants = cva(
-  'inline-flex items-center gap-1 rounded-md border font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+import { cn } from "@/lib/utils"
+
+const badgeVariants = cva(
+  "inline-flex w-fit shrink-0 items-center justify-center gap-1 overflow-hidden rounded-full border px-2 py-0.5 text-xs font-medium whitespace-nowrap transition-[color,box-shadow] focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&>svg]:pointer-events-none [&>svg]:size-3",
   {
     variants: {
       variant: {
-        default:     'border-transparent bg-primary text-primary-foreground hover:bg-primary/90',
-        secondary:   'border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80',
-        destructive: 'border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/90',
-        outline:     'text-foreground border-border bg-transparent',
-        /* 가이드 유형 — 틴티드 팔레트 (라이트/다크 대응) */
-        sop:         'border-blue-500/20 bg-blue-500/10 text-blue-700 dark:text-blue-300',
-        decision:    'border-amber-500/20 bg-amber-500/10 text-amber-700 dark:text-amber-300',
-        reference:   'border-emerald-500/20 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300',
-        trouble:     'border-orange-500/20 bg-orange-500/10 text-orange-700 dark:text-orange-300',
-        response:    'border-purple-500/20 bg-purple-500/10 text-purple-700 dark:text-purple-300',
-        policy:      'border-red-500/20 bg-red-500/10 text-red-700 dark:text-red-300',
-        /* 심각도 */
-        critical:    'border-red-500/30 bg-red-500/15 text-red-700 dark:text-red-300',
-        high:        'border-amber-500/30 bg-amber-500/15 text-amber-700 dark:text-amber-300',
-        medium:      'border-border bg-muted text-muted-foreground',
-        low:         'border-emerald-500/20 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300',
-        /* 상태 */
-        safe:        'border-emerald-500/20 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300',
-        warn:        'border-amber-500/20 bg-amber-500/10 text-amber-700 dark:text-amber-300',
-        danger:      'border-red-500/20 bg-red-500/10 text-red-700 dark:text-red-300',
-        /* NEW 배지 */
-        new:         'border-transparent bg-blue-600 text-white dark:bg-blue-500',
+        default: "border-transparent bg-primary text-primary-foreground [a&]:hover:bg-primary/90",
+        secondary:
+          "border-transparent bg-secondary text-secondary-foreground [a&]:hover:bg-secondary/90",
+        destructive:
+          "border-transparent bg-destructive text-white focus-visible:ring-destructive/20 dark:bg-destructive/60 dark:focus-visible:ring-destructive/40 [a&]:hover:bg-destructive/90",
+        outline:
+          "border-border text-foreground [a&]:hover:bg-accent [a&]:hover:text-accent-foreground",
+        ghost: "border-transparent [a&]:hover:bg-accent [a&]:hover:text-accent-foreground",
+        link: "border-transparent text-primary underline-offset-4 [a&]:hover:underline",
+        /* ─── 가이드 유형별 컬러 뱃지 ─── */
+        sop:       "border-blue-500/20 bg-blue-500/10 text-blue-700 dark:text-blue-300",
+        decision:  "border-amber-500/20 bg-amber-500/10 text-amber-700 dark:text-amber-300",
+        reference: "border-slate-500/20 bg-slate-500/10 text-slate-700 dark:text-slate-300",
+        trouble:   "border-red-500/20 bg-red-500/10 text-red-700 dark:text-red-300",
+        response:  "border-emerald-500/20 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300",
+        policy:    "border-violet-500/20 bg-violet-500/10 text-violet-700 dark:text-violet-300",
+        warning:   "border-amber-500/20 bg-amber-500/10 text-amber-700 dark:text-amber-300",
+        success:   "border-emerald-500/20 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300",
+        new:       "border-transparent bg-blue-600 text-white dark:bg-blue-500",
       },
       size: {
-        sm: 'px-1.5 py-0 text-[10px] leading-4',
-        md: 'px-2 py-0.5 text-xs',
-        lg: 'px-2.5 py-1 text-sm',
+        default: "px-2 py-0.5 text-xs",
+        sm:      "px-1.5 py-0 text-[10px]",
+        lg:      "px-2.5 py-1 text-[13px]",
       },
     },
-    defaultVariants: { variant: 'secondary', size: 'md' },
+    defaultVariants: {
+      variant: "default",
+      size: "default",
+    },
   }
 )
 
-export function Badge({ variant, size, className, children, ...props }) {
+function Badge({
+  className,
+  variant = "default",
+  size = "default",
+  asChild = false,
+  ...props
+}) {
+  const Comp = asChild ? Slot.Root : "span"
+
   return (
-    <span className={cn(badgeVariants({ variant, size }), className)} {...props}>
-      {children}
-    </span>
-  )
+    <Comp
+      data-slot="badge"
+      data-variant={variant}
+      className={cn(badgeVariants({ variant, size }), className)}
+      {...props} />
+  );
 }
+
+export { Badge, badgeVariants }

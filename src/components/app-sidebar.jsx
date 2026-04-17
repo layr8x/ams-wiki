@@ -5,20 +5,19 @@ import { NavLink, Link, useLocation } from "react-router-dom"
 import {
   BookOpen,
   Calendar,
-  ChevronRight,
-  ClipboardList,
+  CaretRight as ChevronRight,
+  ClipboardText as ClipboardList,
   Command,
   CreditCard,
   FileText,
-  Home,
-  LifeBuoy,
-  MessageSquare,
-  Send,
-  Settings,
-  Sparkles,
-  Users,
-} from "lucide-react"
-
+  House as Home,
+  Lifebuoy as LifeBuoy,
+  ChatText as MessageSquare,
+  PaperPlaneTilt as Send,
+  Gear as Settings,
+  Sparkle as Sparkles,
+  Users
+} from '@phosphor-icons/react'
 import { MODULE_TREE, RECENT_GUIDES } from "@/data/mockData"
 import {
   Collapsible,

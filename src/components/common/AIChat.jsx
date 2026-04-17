@@ -1,6 +1,11 @@
 // src/components/common/AIChat.jsx — AI 챗봇 컴포넌트
 import { useState, useRef, useEffect } from 'react';
-import { Send, X, Loader, MessageCircle } from 'lucide-react';
+import {
+  PaperPlaneTilt as Send,
+  X,
+  CircleNotch as Loader,
+  ChatCircle as MessageCircle
+} from '@phosphor-icons/react'
 
 export default function AIChat() {
   const [isOpen, setIsOpen] = useState(false);

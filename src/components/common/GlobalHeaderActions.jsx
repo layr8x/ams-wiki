@@ -1,7 +1,10 @@
 // src/components/common/GlobalHeaderActions.jsx
 // Layout 상단 헤더의 검색 + 액션 영역 (로고/제목은 AppSidebar 헤더로 이동)
 import { useEffect } from 'react'
-import { Search, Bell } from 'lucide-react'
+import {
+  MagnifyingGlass as Search,
+  Bell
+} from '@phosphor-icons/react'
 import { useSearchStore } from '@/store/searchStore.jsx'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'

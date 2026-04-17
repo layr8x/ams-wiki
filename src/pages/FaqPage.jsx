@@ -1,8 +1,17 @@
-// src/pages/FaqPage.jsx — shadcn/ui 표준
-import { useState } from 'react'
-import { HelpCircle, ChevronDown, ChevronUp, MessageSquare, ExternalLink, ChevronRight } from 'lucide-react'
+// src/pages/FaqPage.jsx
+// 구조: PageHeader → 카테고리 pill → Accordion (shadcn 공식)
+import { useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
+import {
+  Question as HelpCircle,
+  ArrowSquareOut as ExternalLink,
+  CaretRight as ChevronRight
+} from '@phosphor-icons/react'
 import { Badge } from '@/components/ui/badge'
+import {
+  Accordion, AccordionItem, AccordionTrigger, AccordionContent,
+} from '@/components/ui/accordion'
+import { PageShell, PageHeader } from '@/components/common/page-primitives'
 import { cn } from '@/lib/utils'
 
 const FAQ_DATA = [
@@ -26,93 +35,81 @@ const FAQ_DATA = [
 ]
 
 export default function FaqPage() {
-  const [openIndex, setOpenIndex] = useState(null)
-  const [category, setCategory]   = useState('전체')
+  const [category, setCategory] = useState('전체')
 
-  const categories = ['전체', ...new Set(FAQ_DATA.map(f => f.category))]
-  const filtered = category === '전체' ? FAQ_DATA : FAQ_DATA.filter(f => f.category === category)
+  const categories = useMemo(
+    () => ['전체', ...new Set(FAQ_DATA.map(f => f.category))],
+    []
+  )
+
+  const filtered = useMemo(
+    () => category === '전체' ? FAQ_DATA : FAQ_DATA.filter(f => f.category === category),
+    [category]
+  )
 
   return (
-    <div className="mx-auto w-full max-w-3xl px-6 py-10">
+    <PageShell maxWidth="3xl">
+      <PageHeader
+        breadcrumbs={[{ label: '홈', to: '/' }, { label: 'FAQ' }]}
+        title="운영 FAQ"
+        description={`상담실장님들이 가장 자주 묻는 반복 문의 ${FAQ_DATA.length}개 문항`}
+      />
 
-      {/* 헤더 */}
-      <div className="mb-10 text-center">
-        <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-blue-500/10 ring-1 ring-blue-500/20">
-          <HelpCircle size={24} className="text-blue-600 dark:text-blue-400" />
-        </div>
-        <h1 className="mb-2 text-2xl font-bold tracking-tight text-foreground">운영 FAQ</h1>
-        <p className="text-sm text-muted-foreground">
-          상담실장님들이 가장 자주 묻는 반복 문의 {FAQ_DATA.length}개 문항
-        </p>
-      </div>
-
-      {/* 카테고리 */}
-      <div className="mb-6 flex flex-wrap justify-center gap-2">
-        {categories.map(cat => (
-          <button
-            key={cat}
-            onClick={() => { setCategory(cat); setOpenIndex(null) }}
-            className={cn(
-              'rounded-full px-4 py-1.5 text-xs font-medium transition-colors',
-              category === cat
-                ? 'bg-primary text-primary-foreground'
-                : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
-            )}
-          >
-            {cat}
-            {cat !== '전체' && (
-              <span className="ml-1 opacity-60">
-                {FAQ_DATA.filter(f => f.category === cat).length}
-              </span>
-            )}
-          </button>
-        ))}
-      </div>
-
-      {/* 목록 */}
-      <div className="divide-y divide-border rounded-lg border border-border">
-        {filtered.map((faq, idx) => {
-          const isOpen = openIndex === idx
+      {/* 카테고리 pill */}
+      <div className="mb-6 flex flex-wrap gap-1.5">
+        {categories.map(cat => {
+          const count = cat === '전체' ? FAQ_DATA.length : FAQ_DATA.filter(f => f.category === cat).length
           return (
-            <div key={idx} className="transition-colors hover:bg-accent/30">
-              <button
-                onClick={() => setOpenIndex(isOpen ? null : idx)}
-                className="flex w-full items-center gap-3 px-4 py-4 text-left"
-              >
-                <Badge variant="outline" size="sm" className="shrink-0">{faq.category}</Badge>
-                <span className={cn(
-                  'flex-1 text-sm transition-colors',
-                  isOpen ? 'font-semibold text-blue-700 dark:text-blue-400' : 'font-medium text-foreground'
-                )}>
-                  {faq.q}
-                </span>
-                {isOpen
-                  ? <ChevronUp size={16} className="shrink-0 text-muted-foreground" />
-                  : <ChevronDown size={16} className="shrink-0 text-muted-foreground" />
-                }
-              </button>
-              {isOpen && (
-                <div className="px-4 pb-4">
-                  <div className="flex gap-3 rounded-lg border border-border bg-muted/30 p-4">
-                    <MessageSquare size={15} className="mt-0.5 shrink-0 text-muted-foreground" />
-                    <div className="flex-1 min-w-0">
-                      <p className="mb-3 text-sm leading-relaxed text-foreground">{faq.a}</p>
-                      {faq.guideId && (
-                        <Link
-                          to={`/guides/${faq.guideId}`}
-                          className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 dark:text-blue-400 hover:underline"
-                        >
-                          <ExternalLink size={12} /> 관련 가이드 보기
-                        </Link>
-                      )}
-                    </div>
-                  </div>
-                </div>
+            <button
+              key={cat}
+              onClick={() => setCategory(cat)}
+              className={cn(
+                'inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition-colors',
+                category === cat
+                  ? 'border-foreground bg-foreground text-background'
+                  : 'border-border bg-card text-muted-foreground hover:border-foreground/40 hover:text-foreground',
               )}
-            </div>
+            >
+              {cat}
+              <span className={cn(
+                'tabular-nums',
+                category === cat ? 'text-background/70' : 'text-muted-foreground/70'
+              )}>
+                {count}
+              </span>
+            </button>
           )
         })}
       </div>
-    </div>
+
+      {/* Accordion */}
+      <div className="rounded-lg border bg-card px-4 sm:px-6">
+        <Accordion type="single" collapsible className="w-full">
+          {filtered.map((item, i) => (
+            <AccordionItem key={`${category}-${i}`} value={`item-${i}`}>
+              <AccordionTrigger className="py-4">
+                <div className="flex flex-1 items-start gap-3 text-left">
+                  <Badge variant="outline" size="sm" className="mt-0.5 shrink-0 font-normal">
+                    {item.category}
+                  </Badge>
+                  <span className="flex-1 text-sm font-medium">{item.q}</span>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="pl-[72px] pr-8 pb-5">
+                <p className="prose-ams text-sm">{item.a}</p>
+                {item.guideId && (
+                  <Link
+                    to={`/guides/${item.guideId}`}
+                    className="mt-3 inline-flex items-center gap-1 text-xs font-medium text-foreground transition-colors hover:underline"
+                  >
+                    관련 가이드 보기 <ChevronRight size={12} />
+                  </Link>
+                )}
+              </AccordionContent>
+            </AccordionItem>
+          ))}
+        </Accordion>
+      </div>
+    </PageShell>
   )
 }

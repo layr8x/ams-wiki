@@ -1,5 +1,8 @@
 // src/components/common/Pagination.jsx — 페이지네이션 컴포넌트
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import {
+  CaretLeft as ChevronLeft,
+  CaretRight as ChevronRight
+} from '@phosphor-icons/react'
 
 export default function Pagination({ pagination }) {
   const {

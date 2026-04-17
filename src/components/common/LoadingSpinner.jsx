@@ -1,5 +1,7 @@
 // src/components/common/LoadingSpinner.jsx — 로딩 스피너 컴포넌트
-import { Loader } from 'lucide-react';
+import {
+  CircleNotch as Loader
+} from '@phosphor-icons/react'
 
 export default function LoadingSpinner({ message = '로딩 중...' }) {
   return (

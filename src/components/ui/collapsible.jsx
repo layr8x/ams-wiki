@@ -1,5 +1,6 @@
 // src/components/ui/collapsible.jsx — shadcn/ui 표준
 import { useState } from 'react'
+import { cn } from '@/lib/utils'
 
 export function Collapsible({ open: controlledOpen, onOpenChange, defaultOpen = false, className, children, ...props }) {
   const [internalOpen, setInternalOpen] = useState(defaultOpen)
@@ -23,7 +24,7 @@ export function CollapsibleTrigger({ onClick, children, ...props }) {
 
 export function CollapsibleContent({ className, children, ...props }) {
   return (
-    <div className={['overflow-hidden', className].filter(Boolean).join(' ')} {...props}>
+    <div className={cn('overflow-hidden', className)} {...props}>
       {children}
     </div>
   )

@@ -1,4 +1,4 @@
-// src/components/common/UserMenu.jsx — shadcn/ui Radix Dialog 기반 유저 메뉴 + 로그인
+// src/components/common/UserMenu.jsx — shadcn DropdownMenu + Dialog 기반 유저 메뉴
 import { useState } from 'react'
 import {
   SignOut as LogOut,
@@ -6,7 +6,7 @@ import {
   SignIn as LogIn,
   CaretDown as ChevronDown,
 } from '@phosphor-icons/react'
-import { useAuth } from '@/store/authStore'
+import { useAuth, ROLE_LABELS } from '@/store/authStore'
 import { useToast } from '@/components/ui/toast'
 import {
   Dialog,
@@ -15,11 +15,20 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
 
 export default function UserMenu() {
   const { user, isAuthenticated, loginWithEmail, logout } = useAuth()
   const { toast } = useToast()
-  const [menuOpen, setMenuOpen] = useState(false)
   const [loginOpen, setLoginOpen] = useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -41,66 +50,56 @@ export default function UserMenu() {
 
   const handleLogout = async () => {
     await logout()
-    setMenuOpen(false)
     toast({ title: '로그아웃 완료', variant: 'info' })
   }
 
-  const initials = user?.name
-    ? user.name.slice(0, 2).toUpperCase()
-    : 'AMS'
+  const initials = user?.name ? user.name.slice(0, 2).toUpperCase() : 'AMS'
+  const roleLabel = user?.role ? ROLE_LABELS[user.role] : null
 
   return (
     <>
       {isAuthenticated ? (
-        <div className="relative">
-          <button
-            onClick={() => setMenuOpen(o => !o)}
-            className="flex items-center gap-1.5 rounded-md px-2 py-1 text-sm font-medium text-foreground transition-colors hover:bg-accent"
-          >
-            {user?.avatar ? (
-              <img src={user.avatar} alt={user.name} className="h-6 w-6 rounded-full object-cover" />
-            ) : (
-              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-[11px] font-bold text-primary-foreground">
-                {initials}
-              </span>
-            )}
-            <span className="hidden sm:block text-xs">{user?.name}</span>
-            <ChevronDown size={12} className="text-muted-foreground" />
-          </button>
-
-          {menuOpen && (
-            <>
-              <div className="fixed inset-0 z-50" onClick={() => setMenuOpen(false)} />
-              <div className="absolute right-0 top-full z-50 mt-1 w-48 rounded-md border border-border bg-popover p-1 shadow-md">
-                <div className="px-3 py-2 border-b border-border mb-1">
-                  <p className="text-xs font-medium text-foreground truncate">{user?.name}</p>
-                  <p className="text-[12px] text-muted-foreground truncate">{user?.email}</p>
-                </div>
-                <button className="flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-xs text-foreground hover:bg-accent transition-colors">
-                  <Settings size={13} /> 설정
-                </button>
-                <button
-                  onClick={handleLogout}
-                  className="flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-xs text-destructive hover:bg-destructive/10 transition-colors"
-                >
-                  <LogOut size={13} /> 로그아웃
-                </button>
-              </div>
-            </>
-          )}
-        </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="sm" className="gap-1.5 px-2">
+              {user?.avatar ? (
+                <img src={user.avatar} alt={user.name} className="h-6 w-6 rounded-full object-cover" />
+              ) : (
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
+                  {initials}
+                </span>
+              )}
+              <span className="hidden sm:block">{user?.name}</span>
+              <ChevronDown size={12} className="text-muted-foreground" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-56">
+            <DropdownMenuLabel className="flex flex-col gap-0.5 px-3 py-2.5">
+              <span className="text-xs font-medium text-foreground truncate">{user?.name}</span>
+              <span className="text-xs text-muted-foreground truncate">{user?.email}</span>
+              {roleLabel && (
+                <span className="mt-1 inline-flex w-fit rounded-none border border-border bg-muted px-1.5 py-0.5 text-xs text-muted-foreground">
+                  {roleLabel}
+                </span>
+              )}
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>
+              <Settings size={13} /> 설정
+            </DropdownMenuItem>
+            <DropdownMenuItem variant="destructive" onSelect={handleLogout}>
+              <LogOut size={13} /> 로그아웃
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       ) : (
-        <button
-          type="button"
-          onClick={() => setLoginOpen(true)}
-          className="inline-flex h-9 items-center justify-center gap-1.5 rounded-md px-3 text-sm font-medium text-foreground transition-colors hover:bg-accent"
-        >
+        <Button variant="ghost" size="sm" onClick={() => setLoginOpen(true)} className="gap-1.5">
           <LogIn size={14} />
           <span className="hidden sm:inline">로그인</span>
-        </button>
+        </Button>
       )}
 
-      {/* 로그인 다이얼로그 — Radix Portal 기반 */}
+      {/* 로그인 다이얼로그 */}
       <Dialog open={loginOpen} onOpenChange={setLoginOpen}>
         <DialogContent className="rounded-lg p-6 sm:max-w-sm">
           <DialogHeader>
@@ -108,36 +107,29 @@ export default function UserMenu() {
             <DialogDescription>계속하려면 로그인하세요.</DialogDescription>
           </DialogHeader>
 
-          <div className="mt-2 flex flex-col gap-3">
-            {/* 이메일/비밀번호 로그인 */}
-            <form onSubmit={handleEmailLogin} className="flex flex-col gap-3">
-              <input
-                type="email"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                placeholder="이메일"
-                required
-                autoComplete="email"
-                className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-              />
-              <input
-                type="password"
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-                placeholder="비밀번호"
-                required
-                autoComplete="current-password"
-                className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-              />
-              <button
-                type="submit"
-                disabled={loading}
-                className="inline-flex w-full items-center justify-center rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50"
-              >
-                {loading ? '로그인 중...' : '로그인'}
-              </button>
-            </form>
-          </div>
+          <form onSubmit={handleEmailLogin} className="mt-2 flex flex-col gap-3">
+            <Input
+              type="email"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              placeholder="이메일"
+              required
+              autoComplete="email"
+              className="h-9 text-sm"
+            />
+            <Input
+              type="password"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              placeholder="비밀번호"
+              required
+              autoComplete="current-password"
+              className="h-9 text-sm"
+            />
+            <Button type="submit" size="lg" disabled={loading}>
+              {loading ? '로그인 중...' : '로그인'}
+            </Button>
+          </form>
         </DialogContent>
       </Dialog>
     </>

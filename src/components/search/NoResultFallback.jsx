@@ -16,7 +16,8 @@ import {
   FileText,
 } from '@phosphor-icons/react'
 import { GUIDES } from '@/data/mockData'
-import { cn } from '@/lib/utils'
+import { Textarea } from '@/components/ui/textarea'
+import { Button } from '@/components/ui/button'
 
 const FEEDBACK_QUEUE_KEY = 'ams-wiki:feedback:queue:v1'
 
@@ -79,7 +80,6 @@ export default function NoResultFallback({ query, onGoTo, onNavigateFeedback }) 
       note: note.trim(),
       createdAt: new Date().toISOString(),
     })
-    // 의도적으로 살짝 지연을 줘서 "전송됨" 인지 전환이 자연스럽게 보이게
     setTimeout(() => {
       setSubmitting(false)
       if (ok) setSubmitted(true)
@@ -98,7 +98,7 @@ export default function NoResultFallback({ query, onGoTo, onNavigateFeedback }) 
 
       {related.length > 0 && (
         <div>
-          <p className="mb-1.5 px-1 text-[12px] font-medium uppercase tracking-wide text-muted-foreground">이런 가이드는 어떠세요?</p>
+          <p className="mb-1.5 px-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">이런 가이드는 어떠세요?</p>
           <ul className="space-y-1">
             {related.map(({ id, guide, score }) => (
               <li key={id}>
@@ -109,9 +109,9 @@ export default function NoResultFallback({ query, onGoTo, onNavigateFeedback }) 
                   <FileText size={13} className="mt-0.5 shrink-0 text-muted-foreground" />
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-medium">{guide.title}</p>
-                    <p className="truncate text-[12px] text-muted-foreground">{guide.module} · {guide.tldr?.split('\n')[0]?.slice(0, 56)}</p>
+                    <p className="truncate text-xs text-muted-foreground">{guide.module} · {guide.tldr?.split('\n')[0]?.slice(0, 56)}</p>
                   </div>
-                  <span className="shrink-0 self-center text-[11px] text-muted-foreground/60">{Math.round(score * 100)}%</span>
+                  <span className="shrink-0 self-center text-xs text-muted-foreground/60">{Math.round(score * 100)}%</span>
                 </button>
               </li>
             ))}
@@ -121,49 +121,39 @@ export default function NoResultFallback({ query, onGoTo, onNavigateFeedback }) 
 
       <form onSubmit={handleSubmit} className="rounded-lg border border-border bg-muted/30 p-3">
         <div className="flex items-center justify-between">
-          <p className="text-[12px] font-medium uppercase tracking-wide text-muted-foreground">가이드 추가 요청</p>
+          <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">가이드 추가 요청</p>
           {submitted && (
-            <span className="inline-flex items-center gap-1 text-[11.5px] text-emerald-600 dark:text-emerald-400">
+            <span className="inline-flex items-center gap-1 text-xs text-emerald-600 dark:text-emerald-400">
               <SealCheck size={11} weight="fill" />
               접수 완료
             </span>
           )}
         </div>
-        <p className="mt-1 text-[12.5px] text-muted-foreground">
+        <p className="mt-1 text-xs text-muted-foreground">
           검색한 키워드 <span className="font-medium text-foreground">&ldquo;{query}&rdquo;</span>{' '}
           관련 가이드가 필요하신가요? 어떤 내용이 필요한지 알려주시면 우선 검토합니다.
         </p>
-        <textarea
+        <Textarea
           value={note}
           onChange={e => setNote(e.target.value)}
           disabled={submitted}
           placeholder="예: 신규 강사 첫 출근일 OT 절차가 필요합니다"
           rows={2}
-          className={cn(
-            'mt-2 w-full resize-none rounded-md border border-border bg-background px-2.5 py-2 text-[13.5px] placeholder:text-muted-foreground/70 focus:outline-none focus:ring-2 focus:ring-primary/40',
-            submitted && 'opacity-60',
-          )}
           maxLength={500}
+          className="mt-2 resize-none text-sm"
         />
         <div className="mt-2 flex items-center justify-between">
           <button
             type="button"
             onClick={() => onNavigateFeedback(query)}
-            className="text-[12px] text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
+            className="text-xs text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
           >
             상세 요청 작성 →
           </button>
-          <button
-            type="submit"
-            disabled={submitting || submitted}
-            className={cn(
-              'inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-[13px] font-medium text-primary-foreground transition-colors',
-              'hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed',
-            )}
-          >
+          <Button type="submit" size="sm" disabled={submitting || submitted}>
             <PaperPlaneTilt size={12} weight="fill" />
             {submitted ? '제출됨' : submitting ? '전송 중...' : '요청 보내기'}
-          </button>
+          </Button>
         </div>
       </form>
     </div>

@@ -37,9 +37,9 @@ export default function GlobalHeaderActions() {
         <Search className="size-3.5 shrink-0" />
         <span className="flex-1 truncate text-left">가이드 검색<span className="hidden sm:inline">...</span></span>
         <span className="pointer-events-none hidden items-center gap-1 sm:inline-flex">
-          <kbd className="h-5 min-w-[20px] select-none rounded border bg-muted px-1.5 font-mono text-[12px] font-semibold">/</kbd>
-          <span className="text-[11px] text-muted-foreground">또는</span>
-          <kbd className="h-5 min-w-[20px] select-none rounded border bg-muted px-1.5 font-mono text-[12px] font-semibold">⌘K</kbd>
+          <kbd className="h-5 min-w-[20px] select-none rounded border bg-muted px-1.5 font-mono text-xs font-semibold">/</kbd>
+          <span className="text-xs text-muted-foreground">또는</span>
+          <kbd className="h-5 min-w-[20px] select-none rounded border bg-muted px-1.5 font-mono text-xs font-semibold">⌘K</kbd>
         </span>
       </button>
 

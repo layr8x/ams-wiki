@@ -150,7 +150,7 @@ export default function GuideListPage() {
                   <CardHeader className="px-5 pt-5 pb-3">
                     <div className="mb-3 flex items-center justify-between gap-2">
                       <Badge variant={typeMeta.variant} size="sm">{typeMeta.shortLabel}</Badge>
-                      <span className="text-[12px] tabular-nums text-muted-foreground">
+                      <span className="text-xs tabular-nums text-muted-foreground">
                         {g.module}
                       </span>
                     </div>
@@ -163,7 +163,7 @@ export default function GuideListPage() {
                       {g.tldr}
                     </p>
                   </CardContent>
-                  <CardFooter className="justify-between border-t px-5 py-3 text-[12px] text-muted-foreground">
+                  <CardFooter className="justify-between border-t px-5 py-3 text-xs text-muted-foreground">
                     <div className="flex items-center gap-3">
                       {g.views != null && (
                         <span className="inline-flex items-center gap-1 tabular-nums">

@@ -238,7 +238,7 @@ export default function EditorPage() {
             variant="outline"
             size="sm"
             className={cn(
-              'font-mono text-[11px]',
+              'font-mono text-xs',
               isSelected && 'border-accent-foreground/30 bg-accent-foreground/10 text-accent-foreground',
             )}
           >
@@ -247,7 +247,7 @@ export default function EditorPage() {
           <span className="text-sm font-medium">{t.fullName}</span>
         </div>
         <p className={cn(
-          'mt-1.5 text-[12px] leading-relaxed',
+          'mt-1.5 text-xs leading-relaxed',
           isSelected ? 'text-accent-foreground/80' : 'text-muted-foreground',
         )}>
           {t.desc}
@@ -267,7 +267,7 @@ export default function EditorPage() {
         </header>
         <div className="border-b px-4 py-3">
           <p className="text-sm font-semibold">가이드 타입 선택</p>
-          <p className="mt-1 text-[12px] leading-relaxed text-muted-foreground">
+          <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
             선택한 타입에 맞는 섹션이<br />본문에 자동 구성됩니다
           </p>
         </div>
@@ -306,7 +306,7 @@ export default function EditorPage() {
               <SheetContent side="left" className="w-[85vw] max-w-xs p-0">
                 <SheetHeader className="border-b p-4">
                   <SheetTitle className="text-sm">가이드 타입 선택</SheetTitle>
-                  <p className="text-[12px] leading-relaxed text-muted-foreground">
+                  <p className="text-xs leading-relaxed text-muted-foreground">
                     선택한 타입에 맞는 섹션이 본문에 자동 구성됩니다
                   </p>
                 </SheetHeader>
@@ -321,7 +321,7 @@ export default function EditorPage() {
               !meta.title && 'text-muted-foreground italic',
             )}>{meta.title || '제목 없음'}</span>
             <Badge variant="outline" size="sm" className="ml-1 hidden sm:inline-flex">{meta.status}</Badge>
-            <Badge variant="outline" size="sm" className="font-mono text-[11px]">{meta.type}</Badge>
+            <Badge variant="outline" size="sm" className="font-mono text-xs">{meta.type}</Badge>
           </div>
           <div className="flex shrink-0 items-center gap-1 sm:gap-1.5">
             <Sheet>
@@ -372,7 +372,7 @@ export default function EditorPage() {
               <span className="hidden sm:inline">
                 {autosave.status === 'saving' ? '저장 중' : '임시저장'}
               </span>
-              <kbd className="ml-1 hidden rounded border bg-muted px-1 font-mono text-[11px] text-muted-foreground md:inline-flex">⌘S</kbd>
+              <kbd className="ml-1 hidden rounded border bg-muted px-1 font-mono text-xs text-muted-foreground md:inline-flex">⌘S</kbd>
             </Button>
             <Button size="sm" className="px-2 sm:px-3">
               <Send size={14} />
@@ -489,7 +489,7 @@ export default function EditorPage() {
                           ))}
                         </SelectContent>
                       </Select>
-                      <p className="text-[12px] text-muted-foreground">
+                      <p className="text-xs text-muted-foreground">
                         유형 변경 시 본문 탭에 노출되는 섹션이 자동 변경됩니다.
                       </p>
                     </div>
@@ -562,7 +562,7 @@ function AutosaveIndicator({ status, savedAt }) {
     : 'text-muted-foreground'
 
   return (
-    <span className={cn('hidden px-1.5 text-[12px] tabular-nums lg:inline-block', tone)}>
+    <span className={cn('hidden px-1.5 text-xs tabular-nums lg:inline-block', tone)}>
       {label}
     </span>
   )

@@ -210,7 +210,7 @@
 /* ─── 프로세(산문) 스타일 — GuidePage 본문 가독성 ──────────────────────── */
 @layer components {
   .prose-ams {
-    @apply text-[16px] leading-[1.8] text-foreground;
+    @apply text-base leading-[1.8] text-foreground;
   }
   .prose-ams p { @apply mb-4; }
   .prose-ams strong { @apply font-semibold text-foreground; }

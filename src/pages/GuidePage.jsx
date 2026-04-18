@@ -126,7 +126,7 @@ function GuidePageInner({ id }) {
             <p className="mb-1 text-xs font-semibold tracking-wide text-muted-foreground">
               핵심 요약
             </p>
-            <p className="whitespace-pre-line text-[16px] leading-relaxed text-foreground">
+            <p className="whitespace-pre-line text-base leading-relaxed text-foreground">
               {guide.tldr}
             </p>
           </CardContent>

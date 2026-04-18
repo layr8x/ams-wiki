@@ -1,6 +1,9 @@
 // src/pages/HomePage.jsx
-// 구조: PageHeader → StatCards(4) → 카테고리 그리드 → 최근 업데이트 + 빠른 링크 2열
-// 모든 카드 구조는 shadcn/ui 공식 Card primitive 준수 (!important 사용 금지)
+// 독자 유용성 중심 대시보드.
+//   - 상단 통계 3종 (가이드 만족도는 독자에게 무의미하므로 제거)
+//   - 최근 본 가이드 (localStorage) — 재방문 중심 사용 패턴 지원
+//   - 카테고리 그리드
+//   - 하단 2열: 최근 업데이트 / 자주 찾는 가이드 Top (조회수 기반)
 import { Link } from 'react-router-dom'
 import {
   ClipboardText as ClipboardList,
@@ -11,26 +14,25 @@ import {
   ChatText as MessageSquare,
   Gear as Settings,
   ArrowRight,
-  TrendUp as TrendingUp,
   Clock,
   FileText,
-  Shield,
   CaretRight as ChevronRight,
-  Sparkle as Sparkles,
   Bell,
   ChatCircle as MessageCircle,
-  PencilSimple as PencilLine
+  PencilSimple as PencilLine,
+  Eye,
 } from '@phosphor-icons/react'
 import { MODULE_TREE, RECENT_GUIDES, GUIDES } from '@/data/mockData'
 import {
-  Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter, CardAction,
+  Card, CardContent, CardHeader, CardTitle, CardDescription, CardAction,
 } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Separator } from '@/components/ui/separator'
 import {
-  PageShell, PageHeader, SectionTitle, StatCard,
+  PageShell, PageHeader, SectionTitle, StatCard, EmptyState,
 } from '@/components/common/page-primitives'
+import { useRecentlyViewed } from '@/hooks/useRecentlyViewed'
+import { getGuideType } from '@/lib/guideTypes'
 import { cn } from '@/lib/utils'
 
 const ICON_MAP = { ClipboardList, BookOpen, Calendar, CreditCard, Users, MessageSquare, Settings }
@@ -49,12 +51,23 @@ const MODULE_TINT = {
 export default function HomePage() {
   const totalGuides = Object.keys(GUIDES).length
   const recent5 = RECENT_GUIDES.slice(0, 5)
+  const { entries: recentlyViewed } = useRecentlyViewed()
+
+  const recentlyViewedGuides = recentlyViewed
+    .map(e => (GUIDES[e.id] ? { id: e.id, ...GUIDES[e.id], viewedAt: e.viewedAt } : null))
+    .filter(Boolean)
+    .slice(0, 4)
+
+  const popularGuides = Object.entries(GUIDES)
+    .map(([id, g]) => ({ id, ...g }))
+    .sort((a, b) => (b.views ?? 0) - (a.views ?? 0))
+    .slice(0, 5)
 
   return (
     <PageShell>
       <PageHeader
         title="대시보드"
-        description={`AMS 운영 가이드 · 최신 업데이트 ${recent5[0]?.updated_at ?? ''}`}
+        description="AMS 운영 가이드 통합 위키"
         actions={
           <>
             <Button variant="outline" size="sm" asChild>
@@ -72,8 +85,8 @@ export default function HomePage() {
         }
       />
 
-      {/* ─── Stat Cards ──────────────────────────────────────────── */}
-      <section className="mb-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      {/* ─── Stat Cards (3) ─────────────────────────────────────── */}
+      <section className="mb-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <StatCard
           label="총 가이드"
           value={`${totalGuides}개`}
@@ -86,21 +99,57 @@ export default function HomePage() {
           value="12,487"
           delta={{ value: '+12.3%', trend: 'up' }}
           footerTitle="전월 대비 증가"
-          footerDesc="실장/상담실 합산"
-        />
-        <StatCard
-          label="가이드 만족도"
-          value="92%"
-          delta={{ value: '+2.1%', trend: 'up' }}
-          footerTitle="유용함 투표 비율"
-          footerDesc="최근 100건 기준"
+          footerDesc="실장·상담실 합산"
         />
         <StatCard
           label="최근 업데이트"
-          value="오늘"
+          value={recent5[0]?.updated_at ?? '—'}
           footerTitle={recent5[0]?.title ?? '—'}
-          footerDesc={`${recent5[0]?.module ?? ''} · ${recent5[0]?.version ?? ''}`}
+          footerDesc={`${recent5[0]?.module ?? ''}${recent5[0]?.version ? ' · ' + recent5[0].version : ''}`}
         />
+      </section>
+
+      {/* ─── 최근 본 가이드 (localStorage) ──────────────────────── */}
+      <section className="mb-10">
+        <SectionTitle
+          title="최근 본 가이드"
+          description="이어서 보거나 관련 가이드로 빠르게 이동하세요"
+        />
+        {recentlyViewedGuides.length === 0 ? (
+          <EmptyState
+            icon={Clock}
+            title="아직 열람한 가이드가 없습니다"
+            description="아래 카테고리에서 관심 있는 가이드를 열어보세요. 여기에 최근 본 항목이 쌓입니다."
+          />
+        ) : (
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {recentlyViewedGuides.map(g => {
+              const tm = getGuideType(g.type)
+              return (
+                <Link key={g.id} to={`/guides/${g.id}`} className="group">
+                  <Card className="h-full gap-0 py-0 transition-all hover:shadow-md hover:-translate-y-px">
+                    <CardHeader className="px-4 pt-4 pb-2">
+                      <div className="mb-2 flex items-center justify-between gap-2">
+                        <Badge variant={tm.variant} size="sm">{tm.shortLabel}</Badge>
+                        <span className="text-[11px] tabular-nums text-muted-foreground">
+                          {g.module}
+                        </span>
+                      </div>
+                      <CardTitle className="line-clamp-2 text-sm leading-snug group-hover:underline">
+                        {g.title}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="px-4 pb-4 pt-1">
+                      <p className="line-clamp-2 text-xs text-muted-foreground">
+                        {g.tldr}
+                      </p>
+                    </CardContent>
+                  </Card>
+                </Link>
+              )
+            })}
+          </div>
+        )}
       </section>
 
       {/* ─── 카테고리 ─────────────────────────────────────────────── */}
@@ -145,7 +194,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ─── 최근 업데이트 + 빠른 링크 2-col ─────────────────────── */}
+      {/* ─── 최근 업데이트 + 자주 찾는 가이드 2-col ─────────────── */}
       <section className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         {/* 최근 업데이트 — 2col */}
         <Card className="lg:col-span-2 gap-0 py-0">
@@ -168,7 +217,7 @@ export default function HomePage() {
           <CardContent className="px-0 py-0">
             <ul className="divide-y">
               {recent5.map((g, idx) => {
-                const isNew = idx < 3 // 최근순 정렬 기준 상위 3개만 NEW
+                const isNew = idx < 3
                 return (
                   <li key={g.id}>
                     <Link
@@ -196,8 +245,38 @@ export default function HomePage() {
           </CardContent>
         </Card>
 
-        {/* 빠른 링크 + 모듈 현황 */}
+        {/* 사이드: 자주 찾는 가이드 + 빠른 링크 */}
         <div className="space-y-6">
+          {/* 자주 찾는 가이드 (조회수 기준 Top 5) */}
+          <Card className="gap-0 py-0">
+            <CardHeader className="px-6 pt-5 pb-4 border-b">
+              <CardTitle className="text-base">자주 찾는 가이드</CardTitle>
+              <CardDescription className="mt-1">조회수 Top 5</CardDescription>
+            </CardHeader>
+            <CardContent className="px-0 py-0">
+              <ol className="divide-y">
+                {popularGuides.map((g, idx) => (
+                  <li key={g.id}>
+                    <Link
+                      to={`/guides/${g.id}`}
+                      className="group flex items-center gap-3 px-6 py-2.5 transition-colors hover:bg-accent/50"
+                    >
+                      <span className="w-4 shrink-0 text-center text-xs font-semibold tabular-nums text-muted-foreground">
+                        {idx + 1}
+                      </span>
+                      <p className="min-w-0 flex-1 truncate text-sm text-foreground group-hover:underline">
+                        {g.title}
+                      </p>
+                      <span className="inline-flex shrink-0 items-center gap-1 text-xs tabular-nums text-muted-foreground">
+                        <Eye size={11} />{g.views ?? 0}
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ol>
+            </CardContent>
+          </Card>
+
           {/* 빠른 링크 */}
           <Card className="gap-0 py-0">
             <CardHeader className="px-6 pt-5 pb-4 border-b">
@@ -222,32 +301,6 @@ export default function HomePage() {
                   <ChevronRight size={14} className="shrink-0 text-muted-foreground" />
                 </Link>
               ))}
-            </CardContent>
-          </Card>
-
-          {/* 모듈 현황 — 공식 bar chart 대신 가독성 좋은 리스트 */}
-          <Card className="gap-0 py-0">
-            <CardHeader className="px-6 pt-5 pb-4 border-b">
-              <CardTitle className="text-base">모듈별 가이드 수</CardTitle>
-            </CardHeader>
-            <CardContent className="px-6 py-4 space-y-3">
-              {MODULE_TREE.slice(0, 5).map(mod => {
-                const pct = (mod.guides.length / 6) * 100
-                return (
-                  <div key={mod.id}>
-                    <div className="flex items-center justify-between text-xs">
-                      <span className="truncate text-muted-foreground">{mod.label}</span>
-                      <span className="tabular-nums font-medium text-foreground">{mod.guides.length}</span>
-                    </div>
-                    <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-muted">
-                      <div
-                        className="h-full rounded-full bg-foreground/70 transition-all"
-                        style={{ width: `${Math.min(pct, 100)}%` }}
-                      />
-                    </div>
-                  </div>
-                )
-              })}
             </CardContent>
           </Card>
         </div>

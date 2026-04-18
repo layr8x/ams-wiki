@@ -19,25 +19,8 @@ import { Separator } from '@/components/ui/separator'
 import {
   PageShell, PageHeader, EmptyState,
 } from '@/components/common/page-primitives'
+import { getGuideType, GUIDE_TYPE_FILTER } from '@/lib/guideTypes'
 import { cn } from '@/lib/utils'
-
-const TYPE_META = {
-  SOP:       { label: '절차',       variant: 'sop' },
-  DECISION:  { label: '판단',       variant: 'decision' },
-  REFERENCE: { label: '참조',       variant: 'reference' },
-  TROUBLE:   { label: '트러블',      variant: 'trouble' },
-  RESPONSE:  { label: '대응',       variant: 'response' },
-  POLICY:    { label: '정책',       variant: 'policy' },
-}
-const TYPE_FILTER = [
-  { value: 'ALL', label: '전체' },
-  { value: 'SOP', label: '절차' },
-  { value: 'DECISION', label: '판단' },
-  { value: 'REFERENCE', label: '참조' },
-  { value: 'TROUBLE', label: '트러블' },
-  { value: 'RESPONSE', label: '대응' },
-  { value: 'POLICY', label: '정책' },
-]
 const SORT_OPTIONS = [
   { value: 'updated', label: '최신순' },
   { value: 'views',   label: '인기순' },
@@ -126,7 +109,7 @@ export default function GuideListPage() {
           </div>
         </div>
         <div className="flex flex-wrap gap-1.5">
-          {TYPE_FILTER.map(f => (
+          {GUIDE_TYPE_FILTER.map(f => (
             <button
               key={f.value}
               onClick={() => setType(f.value)}
@@ -160,13 +143,13 @@ export default function GuideListPage() {
       ) : (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
           {filtered.map(g => {
-            const typeMeta = TYPE_META[g.type] ?? TYPE_META.SOP
+            const typeMeta = getGuideType(g.type)
             return (
               <Link key={g.id} to={`/guides/${g.id}`} className="group">
                 <Card className="h-full gap-0 py-0 transition-all hover:shadow-md hover:-translate-y-px">
                   <CardHeader className="px-5 pt-5 pb-3">
                     <div className="mb-3 flex items-center justify-between gap-2">
-                      <Badge variant={typeMeta.variant} size="sm">{typeMeta.label}</Badge>
+                      <Badge variant={typeMeta.variant} size="sm">{typeMeta.shortLabel}</Badge>
                       <span className="text-[12px] tabular-nums text-muted-foreground">
                         {g.module}
                       </span>

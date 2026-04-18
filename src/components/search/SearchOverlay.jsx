@@ -4,12 +4,6 @@ import { useNavigate } from 'react-router-dom'
 import {
   MagnifyingGlass as Search,
   ArrowRight,
-  FileText,
-  BookOpen,
-  Warning as AlertTriangle,
-  GitBranch,
-  ChatText as MessageSquare,
-  SealCheck as FileCheck,
   Clock,
   TrendUp as TrendingUp,
   CircleNotch as Loader2,
@@ -19,16 +13,8 @@ import { useSearchStore } from '@/store/searchStore.jsx'
 import { GUIDES, RECENT_GUIDES, SEARCH_SYNONYMS } from '@/data/mockData'
 import { useSearchSummary } from '@/hooks/useSearchSummary'
 import NoResultFallback from '@/components/search/NoResultFallback'
+import { getGuideType } from '@/lib/guideTypes'
 import { cn } from '@/lib/utils'
-
-const TYPE_META = {
-  SOP:      { label: '절차형',    icon: BookOpen,      color: 'text-blue-600 dark:text-blue-400',       bg: 'bg-blue-500/10' },
-  DECISION: { label: '판단분기',  icon: GitBranch,     color: 'text-amber-600 dark:text-amber-400',     bg: 'bg-amber-500/10' },
-  REFERENCE:{ label: '참조형',    icon: FileText,      color: 'text-emerald-600 dark:text-emerald-400', bg: 'bg-emerald-500/10' },
-  TROUBLE:  { label: '트러블슈팅',icon: AlertTriangle, color: 'text-orange-600 dark:text-orange-400',   bg: 'bg-orange-500/10' },
-  RESPONSE: { label: '대응매뉴얼',icon: MessageSquare, color: 'text-purple-600 dark:text-purple-400',   bg: 'bg-purple-500/10' },
-  POLICY:   { label: '정책공지',  icon: FileCheck,     color: 'text-red-600 dark:text-red-400',         bg: 'bg-red-500/10' },
-}
 
 function searchGuides(query) {
   if (!query.trim()) return []
@@ -150,19 +136,19 @@ export default function SearchOverlay() {
                   <AiSummaryCard summary={summary} onSourceClick={goTo} />
                   <p className="px-3 py-1.5 text-xs font-medium text-muted-foreground">검색 결과 {results.length}건</p>
                   {results.map((g, i) => {
-                    const meta = TYPE_META[g.type] || TYPE_META.SOP
+                    const meta = getGuideType(g.type)
                     const Icon = meta.icon
                     return (
                       <button key={g.id} onClick={() => goTo(g.id)} onMouseEnter={() => setSelected(i)}
                         className={cn('flex w-full items-start gap-3 rounded-md px-3 py-2.5 text-left transition-colors', selected === i ? 'bg-accent' : 'hover:bg-accent/50')}
                       >
-                        <div className={cn('mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-md', meta.bg)}>
-                          <Icon size={13} className={meta.color} />
+                        <div className={cn('mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-md', meta.tone.bg)}>
+                          <Icon size={13} className={meta.tone.text} />
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2">
                             <span className="text-sm font-medium text-foreground truncate">{g.title}</span>
-                            <span className={cn('shrink-0 text-[11px] font-semibold px-1.5 py-0.5 rounded', meta.bg, meta.color)}>{meta.label}</span>
+                            <span className={cn('shrink-0 text-[11px] font-semibold px-1.5 py-0.5 rounded', meta.tone.bg, meta.tone.text)}>{meta.label}</span>
                           </div>
                           <p className="text-xs text-muted-foreground mt-0.5 truncate">{g.module} · {g.tldr?.split('\n')[0]?.slice(0, 60)}</p>
                         </div>
@@ -179,14 +165,14 @@ export default function SearchOverlay() {
                   <span className="text-xs font-medium text-muted-foreground">최근 업데이트</span>
                 </div>
                 {recent.map(g => {
-                  const meta = TYPE_META[GUIDES[g.id]?.type || 'SOP'] || TYPE_META.SOP
+                  const meta = getGuideType(GUIDES[g.id]?.type)
                   const Icon = meta.icon
                   return (
                     <button key={g.id} onClick={() => goTo(g.id)}
                       className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-left hover:bg-accent/50 transition-colors"
                     >
-                      <div className={cn('flex h-6 w-6 shrink-0 items-center justify-center rounded', meta.bg)}>
-                        <Icon size={11} className={meta.color} />
+                      <div className={cn('flex h-6 w-6 shrink-0 items-center justify-center rounded', meta.tone.bg)}>
+                        <Icon size={11} className={meta.tone.text} />
                       </div>
                       <span className="flex-1 text-sm text-foreground truncate">{g.title}</span>
                       <span className="shrink-0 text-[12px] text-muted-foreground">{g.module?.split('/')[0]}</span>

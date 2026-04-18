@@ -1,7 +1,7 @@
 // src/pages/GuidePage.jsx
 // 구조: PageHeader → Meta bar → TL;DR → Cautions → 본문 섹션(type별) → Feedback
 import { useParams, Link } from 'react-router-dom'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   ArrowSquareOut as ExternalLink,
   Clock,
@@ -9,11 +9,8 @@ import {
   ThumbsUp,
   ThumbsDown,
   User,
-  BookOpen,
-  GitBranch,
   FileText,
-  ChatText as MessageSquare,
-  SealCheck as FileCheck,
+  GitBranch,
   ShieldCheck,
   CheckCircle as CheckCircle2
 } from '@phosphor-icons/react'
@@ -27,23 +24,8 @@ import {
 } from '@/components/ui/table'
 import { PageShell, PageHeader, EmptyState } from '@/components/common/page-primitives'
 import { useSubmitFeedback } from '@/hooks/useGuides'
-
-const TYPE_META = {
-  SOP:       { label: '절차형',     variant: 'sop',       icon: BookOpen },
-  DECISION:  { label: '판단분기',   variant: 'decision',  icon: GitBranch },
-  REFERENCE: { label: '참조형',     variant: 'reference', icon: FileText },
-  TROUBLE:   { label: '트러블슈팅', variant: 'trouble',   icon: AlertTriangle },
-  RESPONSE:  { label: '대응매뉴얼', variant: 'response',  icon: MessageSquare },
-  POLICY:    { label: '정책공지',   variant: 'policy',    icon: FileCheck },
-}
-
-const SEV = {
-  critical: 'critical', high: 'high', medium: 'medium', low: 'low',
-}
-
-const STATUS = {
-  safe: 'safe', warn: 'warn', danger: 'danger',
-}
+import { useRecentlyViewed } from '@/hooks/useRecentlyViewed'
+import { getGuideType, SEVERITY, DECISION_STATUS } from '@/lib/guideTypes'
 
 export default function GuidePage() {
   const { id } = useParams()
@@ -56,6 +38,11 @@ function GuidePageInner({ id }) {
   const guide = GUIDES[id]
   const { submit, isSubmitting } = useSubmitFeedback()
   const [voted, setVoted] = useState(null)
+  const { track } = useRecentlyViewed()
+
+  useEffect(() => {
+    if (guide) track(id)
+  }, [id, guide, track])
 
   if (!guide) {
     return (
@@ -74,7 +61,7 @@ function GuidePageInner({ id }) {
     )
   }
 
-  const tm = TYPE_META[guide.type] ?? TYPE_META.SOP
+  const tm = getGuideType(guide.type)
   const TypeIcon = tm.icon
 
   const handleVote = async (vote) => {
@@ -332,9 +319,14 @@ function GuidePageInner({ id }) {
                     <TableCell className="text-sm">{r.action}</TableCell>
                     <TableCell className="text-xs text-muted-foreground">{r.note}</TableCell>
                     <TableCell className="text-center">
-                      <Badge variant={STATUS[r.status] ?? 'outline'} size="sm">
-                        {r.status === 'safe' ? '허용' : r.status === 'warn' ? '주의' : '불가'}
-                      </Badge>
+                      {(() => {
+                        const st = DECISION_STATUS[r.status]
+                        return (
+                          <Badge variant={st?.variant ?? 'outline'} size="sm">
+                            {st?.label ?? r.status}
+                          </Badge>
+                        )
+                      })()}
                     </TableCell>
                   </TableRow>
                 ))}
@@ -365,11 +357,14 @@ function GuidePageInner({ id }) {
                     <TableCell className="text-sm text-muted-foreground">{r.cause}</TableCell>
                     <TableCell className="text-sm">{r.solution}</TableCell>
                     <TableCell className="text-center">
-                      <Badge variant={SEV[r.severity] ?? 'outline'} size="sm">
-                        {r.severity === 'critical' ? '긴급'
-                        : r.severity === 'high'    ? '높음'
-                        : r.severity === 'medium'  ? '보통' : '낮음'}
-                      </Badge>
+                      {(() => {
+                        const sv = SEVERITY[r.severity]
+                        return (
+                          <Badge variant={sv?.variant ?? 'outline'} size="sm">
+                            {sv?.label ?? r.severity}
+                          </Badge>
+                        )
+                      })()}
                     </TableCell>
                   </TableRow>
                 ))}

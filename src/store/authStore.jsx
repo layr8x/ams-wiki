@@ -1,8 +1,9 @@
 // src/store/authStore.jsx — Supabase Auth 실제 연동
 import { createContext, useContext, useState, useEffect, useCallback } from 'react'
 import { supabase, isSupabaseEnabled } from '@/lib/supabase'
-import { ROLES, ROLE_PERMISSIONS } from './authConstants'
-export { ROLES, PERMISSIONS } from './authConstants'
+import { ROLES, ROLE_PERMISSIONS, canAccessModule } from './authConstants'
+// eslint-disable-next-line react-refresh/only-export-components
+export { ROLES, ROLE_LABELS, PERMISSIONS, MODULE_ACCESS, canAccessModule } from './authConstants'
 
 const AuthContext = createContext(null)
 
@@ -68,16 +69,6 @@ export function AuthProvider({ children }) {
     return mockUser
   }
 
-  // ─── 구글 OAuth 로그인 ───────────────────────────────────────────────────
-  const loginWithGoogle = useCallback(async () => {
-    if (!isSupabaseEnabled) return fallbackLogin('google@demo.com')
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: { redirectTo: window.location.origin },
-    })
-    if (error) throw error
-  }, [])
-
   // ─── 이메일/비밀번호 로그인 ──────────────────────────────────────────────
   const loginWithEmail = useCallback(async (email, password) => {
     if (!isSupabaseEnabled) return fallbackLogin(email)
@@ -115,11 +106,17 @@ export function AuthProvider({ children }) {
 
   const hasRole = useCallback((role) => user?.role === role, [user])
 
+  // 모듈 단위 접근 허용 여부 (네비·라우팅 노출 기준)
+  const canAccess = useCallback(
+    (moduleId) => canAccessModule(user?.role || ROLES.GUEST, moduleId),
+    [user]
+  )
+
   return (
     <AuthContext.Provider value={{
       user, isLoading,
-      loginWithGoogle, loginWithEmail, signUp, logout,
-      hasPermission, hasRole,
+      loginWithEmail, signUp, logout,
+      hasPermission, hasRole, canAccess,
       isAuthenticated: Boolean(user),
     }}>
       {children}

@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "test": "vitest",
     "test:e2e": "playwright test",
-    "db:seed": "node supabase/generate-seed.mjs"
+    "db:seed": "node supabase/generate-seed.mjs",
+    "sync:confluence": "node scripts/sync-confluence.mjs"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

@@ -126,7 +126,7 @@ function GuidePageInner({ id }) {
             <p className="mb-1 text-xs font-semibold tracking-wide text-muted-foreground">
               핵심 요약
             </p>
-            <p className="whitespace-pre-line text-[16px] leading-relaxed text-foreground">
+            <p className="whitespace-pre-line text-base leading-relaxed text-foreground">
               {guide.tldr}
             </p>
           </CardContent>
@@ -384,7 +384,7 @@ function GuidePageInner({ id }) {
                 <Badge variant="response" size="sm">시나리오 {i + 1}</Badge>
                 <p className="text-sm font-semibold">{r.scenario}</p>
                 <p className="rounded-md bg-muted px-3 py-2 text-sm italic text-foreground">
-                  "{r.script}"
+                  &ldquo;{r.script}&rdquo;
                 </p>
               </CardContent>
             </Card>

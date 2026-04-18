@@ -95,9 +95,10 @@ const SECONDARY_NAV = [
 export function AppSidebar({ ...props }) {
   const location = useLocation()
   const currentPath = location.pathname
-  const { user } = useAuth()
+  const { user, canAccess } = useAuth()
 
   const recents = RECENT_GUIDES.slice(0, 5)
+  const visibleModules = MODULE_TREE.filter(mod => canAccess(mod.id))
 
   return (
     <Sidebar collapsible="icon" {...props}>
@@ -145,7 +146,7 @@ export function AppSidebar({ ...props }) {
           <SidebarGroupLabel>모듈</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {MODULE_TREE.map((mod) => {
+              {visibleModules.map((mod) => {
                 const Icon = ICON_MAP[mod.icon] ?? FileText
                 const isActiveModule = currentPath.startsWith("/guides") &&
                   location.search.includes(`module=${mod.id}`)

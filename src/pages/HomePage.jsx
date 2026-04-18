@@ -131,7 +131,7 @@ export default function HomePage() {
                     <CardHeader className="px-4 pt-4 pb-2">
                       <div className="mb-2 flex items-center justify-between gap-2">
                         <Badge variant={tm.variant} size="sm">{tm.shortLabel}</Badge>
-                        <span className="text-[11px] tabular-nums text-muted-foreground">
+                        <span className="text-xs tabular-nums text-muted-foreground">
                           {g.module}
                         </span>
                       </div>

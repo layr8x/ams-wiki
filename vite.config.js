@@ -3,11 +3,13 @@ import { fileURLToPath, URL } from 'node:url'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 
+// dev 프록시 인증 — 서버 사이드 전용 env 만 사용 (VITE_ 접두사 금지).
+// vite.config.js 는 Node 에서만 실행되므로 클라이언트 번들에 유출되지 않는다.
 const getAuthHeaders = () => {
   // eslint-disable-next-line no-undef
-  const email = process.env.VITE_CONFLUENCE_EMAIL
+  const email = process.env.CONFLUENCE_EMAIL
   // eslint-disable-next-line no-undef
-  const token = process.env.VITE_CONFLUENCE_TOKEN
+  const token = process.env.CONFLUENCE_TOKEN
 
   if (!email || !token) {
     return {}

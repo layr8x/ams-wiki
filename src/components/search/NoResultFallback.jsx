@@ -1,0 +1,171 @@
+// src/components/search/NoResultFallback.jsx
+// 검색 결과가 0건일 때 노출되는 폴백 — 관련 가이드 제안 + 개선 요청 퀵 폼.
+//
+// 제안 로직: bigram 기반 단순 유사도(제목/tldr/module/targets 연결 텍스트 vs 질의어)
+//  - 외부 라이브러리 없이 동작 (검색 오버레이 번들에 부담 없음)
+//  - 점수 0 제외, 상위 5개까지 노출
+//
+// 개선 요청: localStorage 큐(`ams-wiki:feedback:queue:v1`)에 적재.
+//  - 백엔드 연결 전 임시 저장소. 제출 형식은 서버 API 와 동일 스키마로 맞춤.
+
+import { useMemo, useState } from 'react'
+import {
+  Compass,
+  PaperPlaneTilt,
+  SealCheck,
+  FileText,
+} from '@phosphor-icons/react'
+import { GUIDES } from '@/data/mockData'
+import { cn } from '@/lib/utils'
+
+const FEEDBACK_QUEUE_KEY = 'ams-wiki:feedback:queue:v1'
+
+function bigrams(str) {
+  const s = (str || '').toLowerCase().replace(/\s+/g, '')
+  if (s.length < 2) return new Set(s ? [s] : [])
+  const out = new Set()
+  for (let i = 0; i < s.length - 1; i++) out.add(s.slice(i, i + 2))
+  return out
+}
+
+function similarity(a, b) {
+  const A = bigrams(a)
+  const B = bigrams(b)
+  if (A.size === 0 || B.size === 0) return 0
+  let inter = 0
+  for (const x of A) if (B.has(x)) inter++
+  return (2 * inter) / (A.size + B.size) // Dice 계수
+}
+
+function suggestRelatedGuides(query, limit = 5) {
+  const q = (query || '').trim()
+  if (!q) return []
+  const scored = Object.entries(GUIDES).map(([id, g]) => {
+    const bag = [g.title, g.tldr, g.module, ...(g.targets || [])].filter(Boolean).join(' ')
+    return { id, guide: g, score: similarity(q, bag) }
+  })
+  return scored
+    .filter(s => s.score > 0.05)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, limit)
+}
+
+function queueFeedback(entry) {
+  try {
+    const raw = localStorage.getItem(FEEDBACK_QUEUE_KEY)
+    const arr = raw ? JSON.parse(raw) : []
+    const next = Array.isArray(arr) ? arr : []
+    next.push(entry)
+    localStorage.setItem(FEEDBACK_QUEUE_KEY, JSON.stringify(next.slice(-100)))
+    return true
+  } catch {
+    return false
+  }
+}
+
+export default function NoResultFallback({ query, onGoTo, onNavigateFeedback }) {
+  const related = useMemo(() => suggestRelatedGuides(query), [query])
+  const [note, setNote] = useState('')
+  const [submitted, setSubmitted] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    if (submitting || submitted) return
+    setSubmitting(true)
+    const ok = queueFeedback({
+      kind: 'missing-guide',
+      query,
+      note: note.trim(),
+      createdAt: new Date().toISOString(),
+    })
+    // 의도적으로 살짝 지연을 줘서 "전송됨" 인지 전환이 자연스럽게 보이게
+    setTimeout(() => {
+      setSubmitting(false)
+      if (ok) setSubmitted(true)
+    }, 250)
+  }
+
+  return (
+    <div className="px-3 py-4 space-y-4">
+      <div className="flex flex-col items-center gap-1 text-center">
+        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted">
+          <Compass size={20} className="text-muted-foreground" />
+        </div>
+        <p className="text-sm font-medium">&ldquo;{query}&rdquo; 에 정확히 일치하는 가이드가 없습니다</p>
+        <p className="text-xs text-muted-foreground">유사 주제 가이드를 대신 확인하거나, 필요한 가이드를 요청해 주세요</p>
+      </div>
+
+      {related.length > 0 && (
+        <div>
+          <p className="mb-1.5 px-1 text-[11px] font-medium uppercase tracking-wide text-muted-foreground">이런 가이드는 어떠세요?</p>
+          <ul className="space-y-1">
+            {related.map(({ id, guide, score }) => (
+              <li key={id}>
+                <button
+                  onClick={() => onGoTo(id)}
+                  className="flex w-full items-start gap-2 rounded-md border border-border/60 bg-background px-2.5 py-2 text-left hover:bg-accent transition-colors"
+                >
+                  <FileText size={13} className="mt-0.5 shrink-0 text-muted-foreground" />
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-medium">{guide.title}</p>
+                    <p className="truncate text-[11px] text-muted-foreground">{guide.module} · {guide.tldr?.split('\n')[0]?.slice(0, 56)}</p>
+                  </div>
+                  <span className="shrink-0 self-center text-[10px] text-muted-foreground/60">{Math.round(score * 100)}%</span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit} className="rounded-lg border border-border bg-muted/30 p-3">
+        <div className="flex items-center justify-between">
+          <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">가이드 추가 요청</p>
+          {submitted && (
+            <span className="inline-flex items-center gap-1 text-[10.5px] text-emerald-600 dark:text-emerald-400">
+              <SealCheck size={11} weight="fill" />
+              접수 완료
+            </span>
+          )}
+        </div>
+        <p className="mt-1 text-[11.5px] text-muted-foreground">
+          검색한 키워드 <span className="font-medium text-foreground">&ldquo;{query}&rdquo;</span>{' '}
+          관련 가이드가 필요하신가요? 어떤 내용이 필요한지 알려주시면 우선 검토합니다.
+        </p>
+        <textarea
+          value={note}
+          onChange={e => setNote(e.target.value)}
+          disabled={submitted}
+          placeholder="예: 신규 강사 첫 출근일 OT 절차가 필요합니다"
+          rows={2}
+          className={cn(
+            'mt-2 w-full resize-none rounded-md border border-border bg-background px-2.5 py-2 text-[12.5px] placeholder:text-muted-foreground/70 focus:outline-none focus:ring-2 focus:ring-primary/40',
+            submitted && 'opacity-60',
+          )}
+          maxLength={500}
+        />
+        <div className="mt-2 flex items-center justify-between">
+          <button
+            type="button"
+            onClick={() => onNavigateFeedback(query)}
+            className="text-[11px] text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
+          >
+            상세 요청 작성 →
+          </button>
+          <button
+            type="submit"
+            disabled={submitting || submitted}
+            className={cn(
+              'inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-[12px] font-medium text-primary-foreground transition-colors',
+              'hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed',
+            )}
+          >
+            <PaperPlaneTilt size={12} weight="fill" />
+            {submitted ? '제출됨' : submitting ? '전송 중...' : '요청 보내기'}
+          </button>
+        </div>
+      </form>
+    </div>
+  )
+}

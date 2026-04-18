@@ -1,7 +1,7 @@
 // src/pages/FeedbackPage.jsx
 // 구조: PageHeader → 타입 선택 카드 4개 → 제목/내용 입력 → 제출
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import {
   ChatCircle as MessageCircle,
   CheckCircle as CheckCircle2,
@@ -28,9 +28,11 @@ const TYPES = [
 ]
 
 export default function FeedbackPage() {
-  const [selectedType, setSelectedType] = useState(null)
-  const [title, setTitle]   = useState('')
-  const [body, setBody]     = useState('')
+  const [searchParams] = useSearchParams()
+  const prefillTopic = searchParams.get('topic')?.slice(0, 200) ?? ''
+  const [selectedType, setSelectedType] = useState(prefillTopic ? 'missing' : null)
+  const [title, setTitle]   = useState(prefillTopic ? `"${prefillTopic}" 관련 가이드 추가 요청` : '')
+  const [body, setBody]     = useState(prefillTopic ? `검색어 "${prefillTopic}" 에 대한 가이드가 필요합니다.\n\n어떤 상황/업무에서 필요한지 적어주세요:\n` : '')
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading]     = useState(false)
 

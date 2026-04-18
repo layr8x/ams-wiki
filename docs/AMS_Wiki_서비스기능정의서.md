@@ -757,6 +757,7 @@ AMS 위키 프로젝트는 매주 금요일 위클리 회의를 진행한다.
 | direct | 2026-04-18 | Editor | **자동 저장 5s 디바운스 + localStorage 복원** (`useAutosave` 훅 신설). 상단바 상태 인디케이터, 임시저장본 복원 배너. **⌘S/Ctrl+S 저장 단축키** 전역 연결. **⌘K 검색 힌트** 병기(`/` + `⌘K`). | 10.2 / 17.1 해소 |
 | direct | 2026-04-18 | Infra | **Vercel Serverless `api/confluence-img/[...path].js`** 신설 — Atlassian 첨부 이미지 prod 프록시. dev/prod 동일 경로 통일(`/api/confluence-img/...`), Basic auth 서버 사이드, 비이미지 응답 방어, CDN 7일 캐시. `vercel.json` rewrites 에 `/api/` 경로 보존 예외 추가. | 17.1 해소 |
 | direct | 2026-04-18 | Search / AI | **Claude Haiku 4.5 기반 검색 AI 요약 카드** 도입 — `api/search-summary.js` 서버리스 엔드포인트(`POST /v1/messages` fetch, SDK 無)에서 system 프롬프트에 `cache_control: ephemeral` 을 달아 **프롬프트 캐싱** 활성화. SearchOverlay가 질의 ≥2자 & 결과 ≥2건일 때 400ms 디바운스로 호출, `AbortController` 로 이전 요청 취소, 결과 상위 6건을 근거로 2~3문장 요약 + 출처 pill(최대 3개)을 결과 리스트 상단에 렌더. `ANTHROPIC_API_KEY` 미설정(503) 시 세션 내내 카드 숨김. vite dev 서버에는 동일 핸들러를 자동 마운트하는 미들웨어(`vercelApiDev` 플러그인) 추가로 dev/prod 경로 일치. | 10.1 / 17.1 해소 |
+| direct | 2026-04-18 | Search / UX | **No-result 폴백** 도입 (`NoResultFallback.jsx`) — 검색 결과 0건일 때 (1) bigram Dice 유사도 기반 **관련 가이드 5건 제안**, (2) **인라인 가이드 추가 요청 폼** 노출. 요청은 `ams-wiki:feedback:queue:v1` localStorage 큐에 `{kind:'missing-guide', query, note, createdAt}` 로 적재(서버 API 와 동일 스키마). "상세 요청 작성" 링크는 `/feedback?topic=...` 로 이동해 FeedbackPage 가 제목/본문을 자동 프리필. | 6.1 / 17.1 해소 |
 
 ### 17.1 사양 대비 미구현 / 차이 항목
 

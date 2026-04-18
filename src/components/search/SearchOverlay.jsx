@@ -18,6 +18,7 @@ import {
 import { useSearchStore } from '@/store/searchStore.jsx'
 import { GUIDES, RECENT_GUIDES, SEARCH_SYNONYMS } from '@/data/mockData'
 import { useSearchSummary } from '@/hooks/useSearchSummary'
+import NoResultFallback from '@/components/search/NoResultFallback'
 import { cn } from '@/lib/utils'
 
 const TYPE_META = {
@@ -85,6 +86,10 @@ export default function SearchOverlay() {
   const summary = useSearchSummary(query, results)
 
   const goTo = useCallback((id) => { navigate('/guides/' + id); close() }, [navigate, close])
+  const openFeedback = useCallback((topic) => {
+    const qs = topic ? `?topic=${encodeURIComponent(topic)}` : ''
+    navigate('/feedback' + qs); close()
+  }, [navigate, close])
 
   useEffect(() => {
     if (!isOpen) return
@@ -129,11 +134,16 @@ export default function SearchOverlay() {
 
           <div className="max-h-[400px] overflow-y-auto">
             {showResults ? (
-              results.length === 0 ? (
+              results.length === 0 && !loading ? (
+                <NoResultFallback
+                  query={query}
+                  onGoTo={goTo}
+                  onNavigateFeedback={openFeedback}
+                />
+              ) : results.length === 0 ? (
                 <div className="flex flex-col items-center gap-2 py-10 text-center">
-                  <Search size={32} className="text-muted-foreground/40" />
-                  <p className="text-sm font-medium">&ldquo;{query}&rdquo; 검색 결과가 없습니다</p>
-                  <p className="text-xs text-muted-foreground">다른 키워드로 검색해보세요</p>
+                  <Loader2 size={20} className="animate-spin text-muted-foreground" />
+                  <p className="text-xs text-muted-foreground">검색 중...</p>
                 </div>
               ) : (
                 <div className="p-1">

@@ -129,7 +129,7 @@ export default function SearchOverlay() {
               autoComplete="off"
               spellCheck={false}
             />
-            <kbd className="pointer-events-none hidden h-5 select-none items-center gap-1 rounded border border-border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground sm:flex">ESC</kbd>
+            <kbd className="pointer-events-none hidden h-5 select-none items-center gap-1 rounded border border-border bg-muted px-1.5 font-mono text-[11px] font-medium text-muted-foreground sm:flex">ESC</kbd>
           </div>
 
           <div className="flex-1 overflow-y-auto">
@@ -162,7 +162,7 @@ export default function SearchOverlay() {
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2">
                             <span className="text-sm font-medium text-foreground truncate">{g.title}</span>
-                            <span className={cn('shrink-0 text-[10px] font-semibold px-1.5 py-0.5 rounded', meta.bg, meta.color)}>{meta.label}</span>
+                            <span className={cn('shrink-0 text-[11px] font-semibold px-1.5 py-0.5 rounded', meta.bg, meta.color)}>{meta.label}</span>
                           </div>
                           <p className="text-xs text-muted-foreground mt-0.5 truncate">{g.module} · {g.tldr?.split('\n')[0]?.slice(0, 60)}</p>
                         </div>
@@ -189,7 +189,7 @@ export default function SearchOverlay() {
                         <Icon size={11} className={meta.color} />
                       </div>
                       <span className="flex-1 text-sm text-foreground truncate">{g.title}</span>
-                      <span className="shrink-0 text-[11px] text-muted-foreground">{g.module?.split('/')[0]}</span>
+                      <span className="shrink-0 text-[12px] text-muted-foreground">{g.module?.split('/')[0]}</span>
                     </button>
                   )
                 })}
@@ -203,7 +203,7 @@ export default function SearchOverlay() {
                     className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-left hover:bg-accent/50 transition-colors"
                   >
                     <span className="flex-1 text-sm text-foreground truncate">{g.title}</span>
-                    {g.views && <span className="shrink-0 text-[11px] text-muted-foreground">{g.views.toLocaleString()} 조회</span>}
+                    {g.views && <span className="shrink-0 text-[12px] text-muted-foreground">{g.views.toLocaleString()} 조회</span>}
                   </button>
                 ))}
               </div>
@@ -211,13 +211,13 @@ export default function SearchOverlay() {
           </div>
 
           <div className="flex items-center justify-between border-t border-border bg-muted/30 px-3 py-2 sm:px-4">
-            <div className="hidden items-center gap-3 text-[11px] text-muted-foreground sm:flex">
+            <div className="hidden items-center gap-3 text-[12px] text-muted-foreground sm:flex">
               <span><kbd className="rounded border border-border bg-background px-1 font-mono">↑↓</kbd> 이동</span>
               <span><kbd className="rounded border border-border bg-background px-1 font-mono">↵</kbd> 열기</span>
               <span><kbd className="rounded border border-border bg-background px-1 font-mono">ESC</kbd> 닫기</span>
             </div>
-            <span className="text-[11px] text-muted-foreground sm:hidden">탭하여 열기</span>
-            <span className="text-[11px] text-muted-foreground">{Object.keys(GUIDES).length}개 가이드</span>
+            <span className="text-[12px] text-muted-foreground sm:hidden">탭하여 열기</span>
+            <span className="text-[12px] text-muted-foreground">{Object.keys(GUIDES).length}개 가이드</span>
           </div>
         </div>
       </div>
@@ -233,7 +233,7 @@ function AiSummaryCard({ summary, onSourceClick }) {
   if (summary.status === 'loading') {
     return (
       <div className={base} aria-live="polite">
-        <div className="flex items-center gap-2 text-[11px] font-medium text-primary">
+        <div className="flex items-center gap-2 text-[12px] font-medium text-primary">
           <Sparkle size={12} weight="fill" />
           <span>AI 요약</span>
           <Loader2 size={11} className="ml-auto animate-spin text-muted-foreground" />
@@ -254,19 +254,19 @@ function AiSummaryCard({ summary, onSourceClick }) {
     const sources = (summary.sources || []).map(id => ({ id, guide: GUIDES[id] })).filter(s => s.guide)
     return (
       <div className={base} aria-live="polite">
-        <div className="flex items-center gap-2 text-[11px] font-medium text-primary">
+        <div className="flex items-center gap-2 text-[12px] font-medium text-primary">
           <Sparkle size={12} weight="fill" />
           <span>AI 요약</span>
-          <span className="ml-auto text-[10px] font-normal text-muted-foreground">Claude Haiku 4.5</span>
+          <span className="ml-auto text-[11px] font-normal text-muted-foreground">Claude Haiku 4.5</span>
         </div>
-        <p className="mt-1.5 text-[13px] leading-relaxed text-foreground">{summary.summary}</p>
+        <p className="mt-1.5 text-[14px] leading-relaxed text-foreground">{summary.summary}</p>
         {sources.length > 0 && (
           <div className="mt-2 flex flex-wrap gap-1.5">
             {sources.map(({ id, guide }) => (
               <button
                 key={id}
                 onClick={() => onSourceClick(id)}
-                className="inline-flex items-center gap-1 rounded-full border border-border bg-background px-2 py-0.5 text-[10.5px] text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
+                className="inline-flex items-center gap-1 rounded-full border border-border bg-background px-2 py-0.5 text-[11.5px] text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
               >
                 <FileText size={9} />
                 <span className="max-w-[160px] truncate">{guide.title}</span>

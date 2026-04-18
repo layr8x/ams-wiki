@@ -69,7 +69,7 @@ export default function UserMenu() {
             {user?.avatar ? (
               <img src={user.avatar} alt={user.name} className="h-6 w-6 rounded-full object-cover" />
             ) : (
-              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
+              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-[11px] font-bold text-primary-foreground">
                 {initials}
               </span>
             )}
@@ -83,7 +83,7 @@ export default function UserMenu() {
               <div className="absolute right-0 top-full z-50 mt-1 w-48 rounded-md border border-border bg-popover p-1 shadow-md">
                 <div className="px-3 py-2 border-b border-border mb-1">
                   <p className="text-xs font-medium text-foreground truncate">{user?.name}</p>
-                  <p className="text-[11px] text-muted-foreground truncate">{user?.email}</p>
+                  <p className="text-[12px] text-muted-foreground truncate">{user?.email}</p>
                 </div>
                 <button className="flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-xs text-foreground hover:bg-accent transition-colors">
                   <Settings size={13} /> 설정
@@ -138,7 +138,7 @@ export default function UserMenu() {
 
             <div className="flex items-center gap-3">
               <div className="flex-1 border-t border-border" />
-              <span className="text-[11px] text-muted-foreground">또는</span>
+              <span className="text-[12px] text-muted-foreground">또는</span>
               <div className="flex-1 border-t border-border" />
             </div>
 

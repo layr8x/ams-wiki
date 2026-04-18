@@ -49,7 +49,7 @@ const badgeVariants = cva(
         danger: "bg-red-500/10     text-red-700     dark:text-red-300     border-red-500/20",
       },
       size: {
-        sm: "h-4 px-1.5 text-[10px] [&>svg]:size-2.5!",
+        sm: "h-[18px] px-1.5 text-[11px] [&>svg]:size-2.5!",
         md: "h-5 px-2 text-xs [&>svg]:size-3!",
         lg: "h-6 px-2.5 text-sm [&>svg]:size-3.5!",
       },

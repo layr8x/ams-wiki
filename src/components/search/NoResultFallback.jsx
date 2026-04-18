@@ -98,7 +98,7 @@ export default function NoResultFallback({ query, onGoTo, onNavigateFeedback }) 
 
       {related.length > 0 && (
         <div>
-          <p className="mb-1.5 px-1 text-[11px] font-medium uppercase tracking-wide text-muted-foreground">이런 가이드는 어떠세요?</p>
+          <p className="mb-1.5 px-1 text-[12px] font-medium uppercase tracking-wide text-muted-foreground">이런 가이드는 어떠세요?</p>
           <ul className="space-y-1">
             {related.map(({ id, guide, score }) => (
               <li key={id}>
@@ -109,9 +109,9 @@ export default function NoResultFallback({ query, onGoTo, onNavigateFeedback }) 
                   <FileText size={13} className="mt-0.5 shrink-0 text-muted-foreground" />
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-medium">{guide.title}</p>
-                    <p className="truncate text-[11px] text-muted-foreground">{guide.module} · {guide.tldr?.split('\n')[0]?.slice(0, 56)}</p>
+                    <p className="truncate text-[12px] text-muted-foreground">{guide.module} · {guide.tldr?.split('\n')[0]?.slice(0, 56)}</p>
                   </div>
-                  <span className="shrink-0 self-center text-[10px] text-muted-foreground/60">{Math.round(score * 100)}%</span>
+                  <span className="shrink-0 self-center text-[11px] text-muted-foreground/60">{Math.round(score * 100)}%</span>
                 </button>
               </li>
             ))}
@@ -121,15 +121,15 @@ export default function NoResultFallback({ query, onGoTo, onNavigateFeedback }) 
 
       <form onSubmit={handleSubmit} className="rounded-lg border border-border bg-muted/30 p-3">
         <div className="flex items-center justify-between">
-          <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">가이드 추가 요청</p>
+          <p className="text-[12px] font-medium uppercase tracking-wide text-muted-foreground">가이드 추가 요청</p>
           {submitted && (
-            <span className="inline-flex items-center gap-1 text-[10.5px] text-emerald-600 dark:text-emerald-400">
+            <span className="inline-flex items-center gap-1 text-[11.5px] text-emerald-600 dark:text-emerald-400">
               <SealCheck size={11} weight="fill" />
               접수 완료
             </span>
           )}
         </div>
-        <p className="mt-1 text-[11.5px] text-muted-foreground">
+        <p className="mt-1 text-[12.5px] text-muted-foreground">
           검색한 키워드 <span className="font-medium text-foreground">&ldquo;{query}&rdquo;</span>{' '}
           관련 가이드가 필요하신가요? 어떤 내용이 필요한지 알려주시면 우선 검토합니다.
         </p>
@@ -140,7 +140,7 @@ export default function NoResultFallback({ query, onGoTo, onNavigateFeedback }) 
           placeholder="예: 신규 강사 첫 출근일 OT 절차가 필요합니다"
           rows={2}
           className={cn(
-            'mt-2 w-full resize-none rounded-md border border-border bg-background px-2.5 py-2 text-[12.5px] placeholder:text-muted-foreground/70 focus:outline-none focus:ring-2 focus:ring-primary/40',
+            'mt-2 w-full resize-none rounded-md border border-border bg-background px-2.5 py-2 text-[13.5px] placeholder:text-muted-foreground/70 focus:outline-none focus:ring-2 focus:ring-primary/40',
             submitted && 'opacity-60',
           )}
           maxLength={500}
@@ -149,7 +149,7 @@ export default function NoResultFallback({ query, onGoTo, onNavigateFeedback }) 
           <button
             type="button"
             onClick={() => onNavigateFeedback(query)}
-            className="text-[11px] text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
+            className="text-[12px] text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
           >
             상세 요청 작성 →
           </button>
@@ -157,7 +157,7 @@ export default function NoResultFallback({ query, onGoTo, onNavigateFeedback }) 
             type="submit"
             disabled={submitting || submitted}
             className={cn(
-              'inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-[12px] font-medium text-primary-foreground transition-colors',
+              'inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1.5 text-[13px] font-medium text-primary-foreground transition-colors',
               'hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed',
             )}
           >

@@ -384,7 +384,7 @@ function GuidePageInner({ id }) {
                 <Badge variant="response" size="sm">시나리오 {i + 1}</Badge>
                 <p className="text-sm font-semibold">{r.scenario}</p>
                 <p className="rounded-md bg-muted px-3 py-2 text-sm italic text-foreground">
-                  "{r.script}"
+                  &ldquo;{r.script}&rdquo;
                 </p>
               </CardContent>
             </Card>

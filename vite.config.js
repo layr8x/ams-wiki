@@ -18,8 +18,41 @@ const getAuthHeaders = () => {
   return { Authorization: `Basic ${auth}` }
 }
 
+// dev 서버에서 Vercel serverless 핸들러를 직접 실행하는 미들웨어.
+// prod는 Vercel이 api/*.js 를 자동 라우팅하므로 별도 설정 불필요.
+const vercelApiDev = () => ({
+  name: 'ams-vercel-api-dev',
+  configureServer(server) {
+    const mount = async (url, importPath) => {
+      server.middlewares.use(url, async (req, res) => {
+        try {
+          const mod = await server.ssrLoadModule(importPath)
+          const handler = mod.default
+          // body 수집 (JSON 전용)
+          const chunks = []
+          for await (const chunk of req) chunks.push(chunk)
+          // eslint-disable-next-line no-undef
+          const raw = Buffer.concat(chunks).toString('utf8')
+          if (raw) {
+            try { req.body = JSON.parse(raw) } catch { req.body = raw }
+          }
+          // Vercel res 호환 shim
+          res.status = (code) => { res.statusCode = code; return res }
+          res.send = (payload) => { res.end(typeof payload === 'string' ? payload : JSON.stringify(payload)) }
+          await handler(req, res)
+        } catch (err) {
+          res.statusCode = 500
+          res.setHeader('content-type', 'application/json')
+          res.end(JSON.stringify({ error: 'dev_handler_error', message: String(err?.message || err) }))
+        }
+      })
+    }
+    mount('/api/search-summary', '/api/search-summary.js')
+  },
+})
+
 export default defineConfig({
-  plugins: [react(), tailwindcss()],
+  plugins: [react(), tailwindcss(), vercelApiDev()],
   resolve: {
     alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
   },

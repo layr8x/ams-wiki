@@ -756,14 +756,15 @@ AMS 위키 프로젝트는 매주 금요일 위클리 회의를 진행한다.
 | direct | 2026-04-18 | Docs | README ↔ 구현 동기화 (shadcn/ui 컴포넌트 9 → **28개** 반영). 스펙 13.1.1 에 실제 설치 컴포넌트 인벤토리 추가. `docs/` NFD 중복 파일 1건 제거. | 13.1.1 / README |
 | direct | 2026-04-18 | Editor | **자동 저장 5s 디바운스 + localStorage 복원** (`useAutosave` 훅 신설). 상단바 상태 인디케이터, 임시저장본 복원 배너. **⌘S/Ctrl+S 저장 단축키** 전역 연결. **⌘K 검색 힌트** 병기(`/` + `⌘K`). | 10.2 / 17.1 해소 |
 | direct | 2026-04-18 | Infra | **Vercel Serverless `api/confluence-img/[...path].js`** 신설 — Atlassian 첨부 이미지 prod 프록시. dev/prod 동일 경로 통일(`/api/confluence-img/...`), Basic auth 서버 사이드, 비이미지 응답 방어, CDN 7일 캐시. `vercel.json` rewrites 에 `/api/` 경로 보존 예외 추가. | 17.1 해소 |
+| direct | 2026-04-18 | Search / AI | **Claude Haiku 4.5 기반 검색 AI 요약 카드** 도입 — `api/search-summary.js` 서버리스 엔드포인트(`POST /v1/messages` fetch, SDK 無)에서 system 프롬프트에 `cache_control: ephemeral` 을 달아 **프롬프트 캐싱** 활성화. SearchOverlay가 질의 ≥2자 & 결과 ≥2건일 때 400ms 디바운스로 호출, `AbortController` 로 이전 요청 취소, 결과 상위 6건을 근거로 2~3문장 요약 + 출처 pill(최대 3개)을 결과 리스트 상단에 렌더. `ANTHROPIC_API_KEY` 미설정(503) 시 세션 내내 카드 숨김. vite dev 서버에는 동일 핸들러를 자동 마운트하는 미들웨어(`vercelApiDev` 플러그인) 추가로 dev/prod 경로 일치. | 10.1 / 17.1 해소 |
 
 ### 17.1 사양 대비 미구현 / 차이 항목
 
 | 정의서 사양 | 현재 구현 | 비고 |
 |---|---|---|
 | Split-view 편집/미리보기 (10.2) | Tab 토글 방식 | 편집 영역의 시각적 복잡도(테이블·반복 카드)로 split-view가 양쪽 모두 좁아지는 문제. Notion/Linear 패턴 채택 |
-| 자동 임시 저장 5초 디바운스 (10.2) | 수동 임시저장 버튼 (mock 700ms delay) | 백엔드 미연동 상태. 향후 API 연결 시 디바운스 추가 예정 |
-| Tab 키 순서 정의 / Ctrl+S 저장 (10.2) | 미구현 | 키보드 핸들러 추가 백로그 |
+| ~~자동 임시 저장 5초 디바운스 (10.2)~~ | **해소 (2026-04-18)** — `useAutosave` 훅으로 5초 디바운스, localStorage(`ams-wiki:editor:draft:v1`) 폴백 저장. 상단바 상태 인디케이터(저장 중/완료/오류), 임시저장본 복원 배너. 백엔드 연결 시 `saveNow` 콜백만 교체하면 됨. | — |
+| ~~Tab 키 순서 정의 / Ctrl+S 저장 (10.2)~~ | **해소 (2026-04-18)** — `⌘S`/`Ctrl+S` 단축키로 `saveNow()` 강제 저장, 브라우저 기본 페이지 저장 다이얼로그 차단. `⌘K` 검색 단축키 힌트 병기(`/` + `⌘K`). | — |
 | 스크롤 동기화 (편집↔미리보기) (10.2) | 해당 없음 | 토글 방식이라 동기화 불필요 |
 | ~~Confluence 첨부 이미지 직접 노출 (8.)~~ | **해소 (2026-04-18)** — Vercel Serverless `api/confluence-img/[...path].js` 로 dev·prod 동일 경로(`/api/confluence-img/...`) 프록시. 서버 env `CONFLUENCE_EMAIL`/`CONFLUENCE_TOKEN` 로 Basic auth, 404/비이미지 응답 방어, CDN 캐시 7일. | — |
 

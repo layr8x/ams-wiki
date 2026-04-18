@@ -12,10 +12,12 @@ import {
   SealCheck as FileCheck,
   Clock,
   TrendUp as TrendingUp,
-  CircleNotch as Loader2
+  CircleNotch as Loader2,
+  Sparkle
 } from '@phosphor-icons/react'
 import { useSearchStore } from '@/store/searchStore.jsx'
 import { GUIDES, RECENT_GUIDES, SEARCH_SYNONYMS } from '@/data/mockData'
+import { useSearchSummary } from '@/hooks/useSearchSummary'
 import { cn } from '@/lib/utils'
 
 const TYPE_META = {
@@ -80,6 +82,8 @@ export default function SearchOverlay() {
     return () => { clearTimeout(loadTimer); clearTimeout(timer) }
   }, [query])
 
+  const summary = useSearchSummary(query, results)
+
   const goTo = useCallback((id) => { navigate('/guides/' + id); close() }, [navigate, close])
 
   useEffect(() => {
@@ -133,6 +137,7 @@ export default function SearchOverlay() {
                 </div>
               ) : (
                 <div className="p-1">
+                  <AiSummaryCard summary={summary} onSourceClick={goTo} />
                   <p className="px-3 py-1.5 text-xs font-medium text-muted-foreground">검색 결과 {results.length}건</p>
                   {results.map((g, i) => {
                     const meta = TYPE_META[g.type] || TYPE_META.SOP
@@ -207,4 +212,59 @@ export default function SearchOverlay() {
       </div>
     </div>
   )
+}
+
+function AiSummaryCard({ summary, onSourceClick }) {
+  if (summary.status === 'idle' || summary.status === 'disabled') return null
+
+  const base = 'mx-2 mb-2 mt-1 rounded-lg border border-primary/20 bg-primary/5 px-3 py-2.5'
+
+  if (summary.status === 'loading') {
+    return (
+      <div className={base} aria-live="polite">
+        <div className="flex items-center gap-2 text-[11px] font-medium text-primary">
+          <Sparkle size={12} weight="fill" />
+          <span>AI 요약</span>
+          <Loader2 size={11} className="ml-auto animate-spin text-muted-foreground" />
+        </div>
+        <div className="mt-2 space-y-1.5">
+          <div className="h-2.5 w-[90%] rounded bg-muted animate-pulse" />
+          <div className="h-2.5 w-[72%] rounded bg-muted animate-pulse" />
+        </div>
+      </div>
+    )
+  }
+
+  if (summary.status === 'error' || summary.status === 'empty') {
+    return null
+  }
+
+  if (summary.status === 'ready') {
+    const sources = (summary.sources || []).map(id => ({ id, guide: GUIDES[id] })).filter(s => s.guide)
+    return (
+      <div className={base} aria-live="polite">
+        <div className="flex items-center gap-2 text-[11px] font-medium text-primary">
+          <Sparkle size={12} weight="fill" />
+          <span>AI 요약</span>
+          <span className="ml-auto text-[10px] font-normal text-muted-foreground">Claude Haiku 4.5</span>
+        </div>
+        <p className="mt-1.5 text-[13px] leading-relaxed text-foreground">{summary.summary}</p>
+        {sources.length > 0 && (
+          <div className="mt-2 flex flex-wrap gap-1.5">
+            {sources.map(({ id, guide }) => (
+              <button
+                key={id}
+                onClick={() => onSourceClick(id)}
+                className="inline-flex items-center gap-1 rounded-full border border-border bg-background px-2 py-0.5 text-[10.5px] text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
+              >
+                <FileText size={9} />
+                <span className="max-w-[160px] truncate">{guide.title}</span>
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+    )
+  }
+  return null
 }

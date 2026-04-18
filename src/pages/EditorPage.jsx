@@ -1,8 +1,9 @@
 // src/pages/EditorPage.jsx
 // 구조: 좌측 사이드바(가이드 리스트) + 우측 편집 영역
 // 발행된 가이드 페이지(GuidePage)의 모든 섹션을 type별로 노출하여 편집할 수 있도록 구성
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useAutosave } from '@/hooks/useAutosave'
 import {
   ArrowLeft,
   FloppyDisk as Save,
@@ -113,28 +114,68 @@ const EMPTY_CONTENT = {
   policyDiff:     { before: '', after: '' },
 }
 
+const DRAFT_KEY = 'ams-wiki:editor:draft:v1'
+const DEFAULT_META = {
+  title:   '',
+  module:  '고객(원생) 관리',
+  type:    'SOP',
+  status:  '작성중',
+  targets: '운영자, 실장',
+  tldr:    '',
+  version: 'v0.1',
+  confluenceId: '',
+}
+
+function formatRelative(ts) {
+  if (!ts) return ''
+  const diff = Math.max(0, Math.floor((Date.now() - ts) / 1000))
+  if (diff < 5)   return '방금'
+  if (diff < 60)  return `${diff}초 전`
+  if (diff < 3600) return `${Math.floor(diff / 60)}분 전`
+  return `${Math.floor(diff / 3600)}시간 전`
+}
+
+// 마운트 이전 1회 동기 복원 — Vite CSR이므로 window 안전.
+// useState lazy-init으로 처리해 이펙트 내 setState 규칙을 준수하고 첫 렌더부터 복원된 값 사용.
+function loadInitialDraft() {
+  if (typeof window === 'undefined') return null
+  try {
+    const raw = window.localStorage.getItem(DRAFT_KEY)
+    if (!raw) return null
+    const parsed = JSON.parse(raw)
+    if (parsed?.data?.meta && parsed?.data?.content) {
+      return {
+        meta: { ...DEFAULT_META, ...parsed.data.meta },
+        content: parsed.data.content,
+        savedAt: parsed.savedAt ?? null,
+      }
+    }
+  } catch { /* ignore */ }
+  return null
+}
+
 export default function EditorPage() {
   const navigate = useNavigate()
 
-  const [selectedType, setSelectedType] = useState('SOP')
-  const [meta, setMeta] = useState({
-    title:   '',
-    module:  '고객(원생) 관리',
-    type:    'SOP',
-    status:  '작성중',
-    targets: '운영자, 실장',
-    tldr:    '',
-    version: 'v0.1',
-    confluenceId: '',
-  })
-  const [content, setContent] = useState(EMPTY_CONTENT)
+  // 초기 상태를 draft 스냅샷 하나로 묶어 관리 → lazy initializer 한 번만 호출.
+  const [draftInit] = useState(loadInitialDraft)
+  const [selectedType, setSelectedType] = useState(() => draftInit?.meta?.type ?? 'SOP')
+  const [meta, setMeta] = useState(() => draftInit?.meta ?? DEFAULT_META)
+  const [content, setContent] = useState(() => draftInit?.content ?? EMPTY_CONTENT)
+  const [restoredAt, setRestoredAt] = useState(() => draftInit?.savedAt ?? null)
   const [preview, setPreview] = useState(false)
-  const [saving, setSaving]   = useState(false)
 
   const sections = useMemo(
     () => SECTIONS_BY_TYPE[meta.type] ?? SECTIONS_BY_TYPE.SOP,
     [meta.type],
   )
+
+  // 자동 저장: 5초 디바운스 + localStorage fallback
+  const autosave = useAutosave({
+    key: DRAFT_KEY,
+    data: { meta, content },
+    delay: 5000,
+  })
 
   // 템플릿 변경 = 본문 sections 구조가 달라지므로 content를 초기화.
   // title/module/tldr/targets 등 메타 입력값은 보존(사용자가 이미 입력했을 수 있음).
@@ -148,11 +189,27 @@ export default function EditorPage() {
     setContent(c => ({ ...c, [key]: value }))
   }
 
-  const handleSave = async () => {
-    setSaving(true)
-    await new Promise(r => setTimeout(r, 700))
-    setSaving(false)
+  const handleSave = () => autosave.saveNow()
+
+  const handleDiscardDraft = () => {
+    autosave.clearDraft()
+    setMeta(DEFAULT_META)
+    setContent(EMPTY_CONTENT)
+    setSelectedType('SOP')
+    setRestoredAt(null)
   }
+
+  // Ctrl/⌘+S — 전역 저장 단축키 (폼 포커스 중에도 동작)
+  useEffect(() => {
+    const h = (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 's') {
+        e.preventDefault()
+        autosave.saveNow()
+      }
+    }
+    window.addEventListener('keydown', h)
+    return () => window.removeEventListener('keydown', h)
+  }, [autosave])
 
   return (
     <div className="flex h-dvh bg-background">
@@ -267,14 +324,50 @@ export default function EditorPage() {
               {preview ? '편집' : '미리보기'}
             </Button>
             <Separator orientation="vertical" className="h-6" />
-            <Button variant="outline" size="sm" onClick={handleSave} disabled={saving}>
-              <Save size={14} /> {saving ? '저장 중' : '임시저장'}
+            <AutosaveIndicator status={autosave.status} savedAt={autosave.savedAt} />
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleSave}
+              disabled={autosave.status === 'saving'}
+              title="임시저장 (Ctrl/⌘+S)"
+            >
+              <Save size={14} />
+              {autosave.status === 'saving' ? '저장 중' : '임시저장'}
+              <kbd className="ml-1 hidden rounded border bg-muted px-1 font-mono text-[10px] text-muted-foreground sm:inline-flex">⌘S</kbd>
             </Button>
             <Button size="sm">
               <Send size={14} /> 발행
             </Button>
           </div>
         </header>
+
+        {restoredAt && (
+          <div className="flex shrink-0 items-center gap-3 border-b bg-amber-500/10 px-4 py-2 text-xs">
+            <Badge variant="outline" size="sm" className="border-amber-500/40 text-amber-700 dark:text-amber-300">
+              임시저장본 복원됨
+            </Badge>
+            <span className="text-muted-foreground">
+              마지막 자동 저장: {new Date(restoredAt).toLocaleString()}
+            </span>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="ml-auto h-7 text-xs"
+              onClick={handleDiscardDraft}
+            >
+              새로 시작 (임시저장본 삭제)
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-7 text-xs"
+              onClick={() => setRestoredAt(null)}
+            >
+              확인
+            </Button>
+          </div>
+        )}
 
         {/* 본문 */}
         <div className="flex min-h-0 flex-1 overflow-hidden">
@@ -405,6 +498,34 @@ export default function EditorPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+// ─── 자동 저장 상태 인디케이터 ──────────────────────────────
+function AutosaveIndicator({ status, savedAt }) {
+  const [, force] = useState(0)
+  // savedAt 기준 '~초 전' 표시를 위해 10초마다 리렌더
+  useEffect(() => {
+    if (!savedAt) return
+    const id = setInterval(() => force(x => x + 1), 10_000)
+    return () => clearInterval(id)
+  }, [savedAt])
+
+  const label = (() => {
+    if (status === 'saving') return '자동 저장 중…'
+    if (status === 'error')  return '자동 저장 실패'
+    if (savedAt)             return `자동 저장 · ${formatRelative(savedAt)}`
+    return '자동 저장 대기'
+  })()
+
+  const tone = status === 'error'
+    ? 'text-destructive'
+    : 'text-muted-foreground'
+
+  return (
+    <span className={cn('hidden px-1.5 text-[11px] tabular-nums md:inline-block', tone)}>
+      {label}
+    </span>
   )
 }
 

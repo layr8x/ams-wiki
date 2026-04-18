@@ -221,13 +221,13 @@ function GuidePageInner({ id }) {
       {guide.mainItemsTable && (
         <section className="mb-10">
           <h2 className="mb-4 text-lg font-semibold tracking-tight">주요 항목</h2>
-          <div className="overflow-hidden rounded-lg border">
-            <Table>
+          <div className="overflow-x-auto rounded-lg border">
+            <Table className="min-w-[520px]">
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-40">항목</TableHead>
+                  <TableHead className="w-32 sm:w-40">항목</TableHead>
                   <TableHead>설명</TableHead>
-                  <TableHead className="w-20 text-center">필수</TableHead>
+                  <TableHead className="w-16 sm:w-20 text-center">필수</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -315,14 +315,14 @@ function GuidePageInner({ id }) {
       {guide.decisionTable && (
         <section className="mb-10">
           <h2 className="mb-4 text-lg font-semibold tracking-tight">판단 기준</h2>
-          <div className="overflow-hidden rounded-lg border">
-            <Table>
+          <div className="overflow-x-auto rounded-lg border">
+            <Table className="min-w-[640px]">
               <TableHeader>
                 <TableRow>
                   <TableHead>조건</TableHead>
                   <TableHead>처리</TableHead>
-                  <TableHead className="w-40">비고</TableHead>
-                  <TableHead className="w-20 text-center">상태</TableHead>
+                  <TableHead className="w-32 sm:w-40">비고</TableHead>
+                  <TableHead className="w-16 sm:w-20 text-center">상태</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -348,14 +348,14 @@ function GuidePageInner({ id }) {
       {guide.troubleTable && (
         <section className="mb-10">
           <h2 className="mb-4 text-lg font-semibold tracking-tight">자주 발생하는 오류</h2>
-          <div className="overflow-hidden rounded-lg border">
-            <Table>
+          <div className="overflow-x-auto rounded-lg border">
+            <Table className="min-w-[720px]">
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-1/4">오류</TableHead>
                   <TableHead className="w-1/4">원인</TableHead>
                   <TableHead>해결</TableHead>
-                  <TableHead className="w-24 text-center">심각도</TableHead>
+                  <TableHead className="w-20 sm:w-24 text-center">심각도</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -401,11 +401,11 @@ function GuidePageInner({ id }) {
       {guide.referenceData && (
         <section className="mb-10">
           <h2 className="mb-4 text-lg font-semibold tracking-tight">참조 데이터</h2>
-          <div className="overflow-hidden rounded-lg border">
-            <Table>
+          <div className="overflow-x-auto rounded-lg border">
+            <Table className="min-w-[480px]">
               <TableHeader>
                 <TableRow>
-                  <TableHead>용어</TableHead>
+                  <TableHead className="w-32 sm:w-40">용어</TableHead>
                   <TableHead>정의</TableHead>
                 </TableRow>
               </TableHeader>

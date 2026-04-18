@@ -112,8 +112,8 @@ export default function SearchOverlay() {
   return (
     <div className="fixed inset-0 z-[999]" role="dialog" aria-modal="true" aria-label="가이드 검색">
       <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={close} />
-      <div className="relative top-[10vh] mx-auto w-full max-w-2xl px-4">
-        <div className="overflow-hidden rounded-xl border border-border bg-background shadow-2xl">
+      <div className="relative top-[6vh] sm:top-[10vh] mx-auto w-full max-w-2xl px-3 sm:px-4">
+        <div className="flex max-h-[88vh] sm:max-h-[80vh] flex-col overflow-hidden rounded-xl border border-border bg-background shadow-2xl">
 
           <div className="flex items-center gap-3 border-b border-border px-4 py-3">
             {loading
@@ -132,7 +132,7 @@ export default function SearchOverlay() {
             <kbd className="pointer-events-none hidden h-5 select-none items-center gap-1 rounded border border-border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground sm:flex">ESC</kbd>
           </div>
 
-          <div className="max-h-[400px] overflow-y-auto">
+          <div className="flex-1 overflow-y-auto">
             {showResults ? (
               results.length === 0 && !loading ? (
                 <NoResultFallback
@@ -210,12 +210,13 @@ export default function SearchOverlay() {
             )}
           </div>
 
-          <div className="flex items-center justify-between border-t border-border bg-muted/30 px-4 py-2">
-            <div className="flex items-center gap-3 text-[11px] text-muted-foreground">
+          <div className="flex items-center justify-between border-t border-border bg-muted/30 px-3 py-2 sm:px-4">
+            <div className="hidden items-center gap-3 text-[11px] text-muted-foreground sm:flex">
               <span><kbd className="rounded border border-border bg-background px-1 font-mono">↑↓</kbd> 이동</span>
               <span><kbd className="rounded border border-border bg-background px-1 font-mono">↵</kbd> 열기</span>
               <span><kbd className="rounded border border-border bg-background px-1 font-mono">ESC</kbd> 닫기</span>
             </div>
+            <span className="text-[11px] text-muted-foreground sm:hidden">탭하여 열기</span>
             <span className="text-[11px] text-muted-foreground">{Object.keys(GUIDES).length}개 가이드</span>
           </div>
         </div>

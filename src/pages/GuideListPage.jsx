@@ -108,13 +108,13 @@ export default function GuideListPage() {
               className="pl-9"
             />
           </div>
-          <div className="flex items-center gap-1 rounded-md border bg-card p-1">
+          <div className="flex flex-wrap items-center gap-1 self-start rounded-md border bg-card p-1 sm:self-auto sm:flex-nowrap">
             {SORT_OPTIONS.map(o => (
               <button
                 key={o.value}
                 onClick={() => setSort(o.value)}
                 className={cn(
-                  'rounded px-3 py-1 text-xs font-medium transition-colors',
+                  'rounded px-2.5 py-1 text-xs font-medium transition-colors sm:px-3',
                   sort === o.value
                     ? 'bg-accent text-accent-foreground'
                     : 'text-muted-foreground hover:text-foreground',

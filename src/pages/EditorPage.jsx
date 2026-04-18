@@ -211,9 +211,54 @@ export default function EditorPage() {
     return () => window.removeEventListener('keydown', h)
   }, [autosave])
 
+  const templateButtons = TEMPLATES.map(t => {
+    const Icon = t.icon
+    const isSelected = selectedType === t.type
+    return (
+      <button
+        key={t.type}
+        onClick={() => handleSelectTemplate(t.type)}
+        className={cn(
+          'mb-1 w-full rounded-md border p-3 text-left transition-colors',
+          isSelected
+            ? 'border-foreground bg-accent text-accent-foreground'
+            : 'border-transparent hover:bg-accent/50',
+        )}
+      >
+        <div className="flex items-center gap-2">
+          <Icon
+            size={16}
+            weight={isSelected ? 'fill' : 'regular'}
+            className={cn(
+              'shrink-0',
+              isSelected ? 'text-accent-foreground' : 'text-muted-foreground',
+            )}
+          />
+          <Badge
+            variant="outline"
+            size="sm"
+            className={cn(
+              'font-mono text-[10px]',
+              isSelected && 'border-accent-foreground/30 bg-accent-foreground/10 text-accent-foreground',
+            )}
+          >
+            {t.type}
+          </Badge>
+          <span className="text-sm font-medium">{t.fullName}</span>
+        </div>
+        <p className={cn(
+          'mt-1.5 text-[11px] leading-relaxed',
+          isSelected ? 'text-accent-foreground/80' : 'text-muted-foreground',
+        )}>
+          {t.desc}
+        </p>
+      </button>
+    )
+  })
+
   return (
     <div className="flex h-dvh bg-background">
-      {/* ─── 좌측 사이드바: 가이드 타입 템플릿 picker ─── */}
+      {/* ─── 좌측 사이드바: 가이드 타입 템플릿 picker (lg+ 전용) ─── */}
       <aside className="hidden w-72 shrink-0 border-r bg-sidebar lg:flex lg:flex-col">
         <header className="flex h-14 shrink-0 items-center gap-2 border-b px-4">
           <Button variant="ghost" size="sm" onClick={() => navigate('/')}>
@@ -227,74 +272,63 @@ export default function EditorPage() {
           </p>
         </div>
         <div className="flex-1 overflow-y-auto p-2">
-          {TEMPLATES.map(t => {
-            const Icon = t.icon
-            const isSelected = selectedType === t.type
-            return (
-              <button
-                key={t.type}
-                onClick={() => handleSelectTemplate(t.type)}
-                className={cn(
-                  'mb-1 w-full rounded-md border p-3 text-left transition-colors',
-                  isSelected
-                    ? 'border-foreground bg-accent text-accent-foreground'
-                    : 'border-transparent hover:bg-accent/50',
-                )}
-              >
-                <div className="flex items-center gap-2">
-                  <Icon
-                    size={16}
-                    weight={isSelected ? 'fill' : 'regular'}
-                    className={cn(
-                      'shrink-0',
-                      isSelected ? 'text-accent-foreground' : 'text-muted-foreground',
-                    )}
-                  />
-                  <Badge
-                    variant="outline"
-                    size="sm"
-                    className={cn(
-                      'font-mono text-[10px]',
-                      isSelected && 'border-accent-foreground/30 bg-accent-foreground/10 text-accent-foreground',
-                    )}
-                  >
-                    {t.type}
-                  </Badge>
-                  <span className="text-sm font-medium">{t.fullName}</span>
-                </div>
-                <p className={cn(
-                  'mt-1.5 text-[11px] leading-relaxed',
-                  isSelected ? 'text-accent-foreground/80' : 'text-muted-foreground',
-                )}>
-                  {t.desc}
-                </p>
-              </button>
-            )
-          })}
+          {templateButtons}
         </div>
       </aside>
 
       {/* ─── 우측 편집 영역 ─── */}
       <div className="flex min-w-0 flex-1 flex-col">
         {/* Top bar */}
-        <header className="flex h-14 shrink-0 items-center justify-between gap-3 border-b bg-background/95 px-4 backdrop-blur">
-          <div className="flex min-w-0 items-center gap-2">
-            <Button variant="ghost" size="sm" className="lg:hidden" onClick={() => navigate('/')}>
+        <header className="flex h-14 shrink-0 items-center justify-between gap-2 border-b bg-background/95 px-3 backdrop-blur sm:gap-3 sm:px-4">
+          <div className="flex min-w-0 items-center gap-1.5 sm:gap-2">
+            {/* 모바일/태블릿: 뒤로가기 + 템플릿 Sheet */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 lg:hidden"
+              onClick={() => navigate('/')}
+              aria-label="나가기"
+            >
               <ArrowLeft size={14} />
             </Button>
-            <Hash size={14} className="text-muted-foreground" />
-            <span className={cn(
-              'truncate text-sm font-medium',
-              !meta.title && 'text-muted-foreground italic',
-            )}>{meta.title || '제목 없음 (새 가이드)'}</span>
-            <Badge variant="outline" size="sm" className="ml-1">{meta.status}</Badge>
-            <Badge variant="outline" size="sm" className="font-mono text-[10px]">{meta.type}</Badge>
-          </div>
-          <div className="flex shrink-0 items-center gap-1.5">
             <Sheet>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="sm">
-                  <History size={14} /> 이력
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 lg:hidden"
+                  aria-label="가이드 타입 선택"
+                  title="가이드 타입 선택"
+                >
+                  <ListChecks size={15} />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-[85vw] max-w-xs p-0">
+                <SheetHeader className="border-b p-4">
+                  <SheetTitle className="text-sm">가이드 타입 선택</SheetTitle>
+                  <p className="text-[11px] leading-relaxed text-muted-foreground">
+                    선택한 타입에 맞는 섹션이 본문에 자동 구성됩니다
+                  </p>
+                </SheetHeader>
+                <div className="overflow-y-auto p-2">
+                  {templateButtons}
+                </div>
+              </SheetContent>
+            </Sheet>
+            <Hash size={14} className="hidden shrink-0 text-muted-foreground sm:inline" />
+            <span className={cn(
+              'min-w-0 truncate text-sm font-medium',
+              !meta.title && 'text-muted-foreground italic',
+            )}>{meta.title || '제목 없음'}</span>
+            <Badge variant="outline" size="sm" className="ml-1 hidden sm:inline-flex">{meta.status}</Badge>
+            <Badge variant="outline" size="sm" className="font-mono text-[10px]">{meta.type}</Badge>
+          </div>
+          <div className="flex shrink-0 items-center gap-1 sm:gap-1.5">
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="sm" className="px-2 sm:px-3" aria-label="버전 이력">
+                  <History size={14} />
+                  <span className="hidden md:inline">이력</span>
                 </Button>
               </SheetTrigger>
               <SheetContent className="w-full sm:max-w-md">
@@ -319,25 +353,30 @@ export default function EditorPage() {
                 </div>
               </SheetContent>
             </Sheet>
-            <Button variant="ghost" size="sm" onClick={() => setPreview(p => !p)}>
+            <Button variant="ghost" size="sm" className="px-2 sm:px-3" onClick={() => setPreview(p => !p)} aria-label={preview ? '편집' : '미리보기'}>
               {preview ? <EyeOff size={14} /> : <Eye size={14} />}
-              {preview ? '편집' : '미리보기'}
+              <span className="hidden md:inline">{preview ? '편집' : '미리보기'}</span>
             </Button>
-            <Separator orientation="vertical" className="h-6" />
+            <Separator orientation="vertical" className="hidden h-6 sm:block" />
             <AutosaveIndicator status={autosave.status} savedAt={autosave.savedAt} />
             <Button
               variant="outline"
               size="sm"
+              className="px-2 sm:px-3"
               onClick={handleSave}
               disabled={autosave.status === 'saving'}
               title="임시저장 (Ctrl/⌘+S)"
+              aria-label="임시저장"
             >
               <Save size={14} />
-              {autosave.status === 'saving' ? '저장 중' : '임시저장'}
-              <kbd className="ml-1 hidden rounded border bg-muted px-1 font-mono text-[10px] text-muted-foreground sm:inline-flex">⌘S</kbd>
+              <span className="hidden sm:inline">
+                {autosave.status === 'saving' ? '저장 중' : '임시저장'}
+              </span>
+              <kbd className="ml-1 hidden rounded border bg-muted px-1 font-mono text-[10px] text-muted-foreground md:inline-flex">⌘S</kbd>
             </Button>
-            <Button size="sm">
-              <Send size={14} /> 발행
+            <Button size="sm" className="px-2 sm:px-3">
+              <Send size={14} />
+              <span className="hidden sm:inline">발행</span>
             </Button>
           </div>
         </header>
@@ -372,7 +411,7 @@ export default function EditorPage() {
         {/* 본문 */}
         <div className="flex min-h-0 flex-1 overflow-hidden">
           <main className="flex-1 overflow-y-auto">
-            <div className="mx-auto w-full max-w-4xl px-6 py-8">
+            <div className="mx-auto w-full max-w-4xl px-4 py-6 sm:px-6 sm:py-8">
               <Tabs defaultValue="content" className="w-full">
                 <TabsList>
                   <TabsTrigger value="content">본문</TabsTrigger>
@@ -523,7 +562,7 @@ function AutosaveIndicator({ status, savedAt }) {
     : 'text-muted-foreground'
 
   return (
-    <span className={cn('hidden px-1.5 text-[11px] tabular-nums md:inline-block', tone)}>
+    <span className={cn('hidden px-1.5 text-[11px] tabular-nums lg:inline-block', tone)}>
       {label}
     </span>
   )

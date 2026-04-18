@@ -4,12 +4,12 @@
 
 const CONFLUENCE = 'https://hiconsy.atlassian.net/wiki/spaces/FVSOL/pages';
 const AMS = 'https://ams.sdij.com';
-// Confluence 첨부 이미지 — 개발: /confluence-img 프록시 경유, 프로덕션: placeholder
-// (Vercel 배포 환경에는 Atlassian 인증을 위한 백엔드 proxy가 없어 placeholder로 fallback)
+// Confluence 첨부 이미지 — dev/prod 공통 프록시 경유.
+// Vercel Serverless Function: api/confluence-img/[...path].js
+// 로컬: vite.config.js 의 /api/confluence-img dev proxy 가 동일 경로로 중개.
+// 요청 시 서버 env(CONFLUENCE_EMAIL/TOKEN)로 Atlassian Basic auth 적용.
 const IMG = (pageId, file) =>
-  import.meta.env.DEV
-    ? `/confluence-img/wiki/download/attachments/${pageId}/${file}?version=1&api=v2`
-    : '/placeholder-screenshot.svg';
+  `/api/confluence-img/wiki/download/attachments/${pageId}/${file}?version=1&api=v2`;
 
 export const GUIDES = {
 

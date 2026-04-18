@@ -29,6 +29,14 @@ export default defineConfig({
   },
   server: {
     proxy: {
+      // Vercel serverless function과 동일 경로 구조로 통일 (prod에서도 동작)
+      '/api/confluence-img': {
+        target: 'https://hiconsy.atlassian.net',
+        changeOrigin: true,
+        rewrite: path => path.replace(/^\/api\/confluence-img/, ''),
+        headers: getAuthHeaders(),
+      },
+      // 구 경로 호환 (2026-04-18 이전 빌드가 혹시 참조하는 경우 대비)
       '/confluence-img': {
         target: 'https://hiconsy.atlassian.net',
         changeOrigin: true,

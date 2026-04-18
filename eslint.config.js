@@ -33,4 +33,11 @@ export default defineConfig([
       'react-refresh/only-export-components': 'off',
     },
   },
+  // Vercel Serverless Functions — Node 런타임 globals (process, Buffer 등)
+  {
+    files: ['api/**/*.{js,mjs}'],
+    languageOptions: {
+      globals: { ...globals.node },
+    },
+  },
 ])

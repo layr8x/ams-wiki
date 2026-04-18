@@ -6,7 +6,7 @@
 
 - **프레임워크**: React 19 + Vite 8
 - **UI/디자인**: Tailwind CSS 4 (CSS-first `@theme`) + shadcn/ui 표준
-- **컴포넌트**: 실사용 9개 (Badge, Button, Card, Input, Separator, Skeleton, Table, Textarea, Toast)
+- **컴포넌트**: 설치 28개 (Accordion, Avatar, Badge, Breadcrumb, Button, Card, Chart, Checkbox, Collapsible, Dialog, Drawer, DropdownMenu, Input, Label, ScrollArea, Select, Separator, Sheet, Sidebar, Skeleton, Sonner, Table, Tabs, Textarea, Toast, Toggle, ToggleGroup, Tooltip)
 - **라우팅**: React Router v7
 - **상태 관리**: React Query (TanStack Query)
 - **데이터베이스**: Supabase (PostgreSQL + Auth + Realtime)
@@ -87,7 +87,7 @@ npm run db:seed
 - 최근 조회 / 인기 가이드
 
 ### 🎨 UI/UX
-- **shadcn/ui 표준** 컴포넌트 9개 (실사용 기반 최소 세트; 확장은 `npx shadcn@latest add <name>`)
+- **shadcn/ui 표준** 컴포넌트 28개 설치 (Sidebar/Dashboard 블록 포함; 확장은 `npx shadcn@latest add <name>`)
 - 다크모드 (CSS 변수 기반, `@theme` + `html.dark`)
 - Pretendard 한글 최적화 폰트
 - 반응형 디자인 (모바일·태블릿·데스크톱)
@@ -112,20 +112,23 @@ npm run db:seed
 
 ## 컴포넌트 라이브러리
 
-현재 9개의 shadcn/ui 컴포넌트를 실사용 중. 필요 시 공식 CLI로 즉시 확장:
+shadcn/ui 컴포넌트 **28개**가 `src/components/ui/` 에 설치되어 있습니다 (sidebar-07 / dashboard-01 블록 적용 포함). 자주 쓰는 9개는 barrel 익스포트(`@/components/ui`)로, 그 외는 개별 파일에서 직접 import합니다.
 
 ```jsx
-import {
-  Badge, Button, Card, CardHeader, CardContent, CardTitle,
-  Input, Separator, Skeleton,
-  Table, TableHeader, TableBody, TableRow, TableCell,
-  Textarea, Toast, Toaster, useToast,
-} from '@/components/ui'
+// 배럴 익스포트 (Badge, Button, Card, Input, Separator, Skeleton, Table, Textarea, Toast)
+import { Badge, Button, Card, CardHeader, CardContent } from '@/components/ui'
+
+// 개별 import (그 외 19개)
+import { Dialog, DialogContent } from '@/components/ui/dialog'
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Sidebar, SidebarContent } from '@/components/ui/sidebar'
 ```
 
+설치된 전체 목록: `accordion`, `avatar`, `badge`, `breadcrumb`, `button`, `card`, `chart`, `checkbox`, `collapsible`, `dialog`, `drawer`, `dropdown-menu`, `input`, `label`, `scroll-area`, `select`, `separator`, `sheet`, `sidebar`, `skeleton`, `sonner`, `table`, `tabs`, `textarea`, `toast`, `toggle`, `toggle-group`, `tooltip`.
+
 ```bash
-# 새 컴포넌트 추가 (예: dialog, dropdown-menu, tabs)
-npx shadcn@latest add dialog dropdown-menu tabs
+# 새 컴포넌트 추가 (예: calendar, popover, form)
+npx shadcn@latest add calendar popover form
 ```
 
 shadcn/ui 전반(철학·CLI·테마·레지스트리·MCP·Tailwind v4)은 [`docs/shadcn-ui/`](./docs/shadcn-ui/README.md) 참조.

@@ -33,9 +33,10 @@ export default async function handler(req, res) {
     return
   }
 
-  const email  = process.env.CONFLUENCE_EMAIL  || process.env.VITE_CONFLUENCE_EMAIL
-  const token  = process.env.CONFLUENCE_TOKEN  || process.env.VITE_CONFLUENCE_TOKEN
-  const domain = process.env.CONFLUENCE_DOMAIN || process.env.VITE_CONFLUENCE_DOMAIN || 'hiconsy.atlassian.net'
+  // 서버 사이드 env 만 허용. VITE_* 접두사는 빌드 시 클라이언트 번들로 인라인되므로 절대 사용 금지.
+  const email  = process.env.CONFLUENCE_EMAIL
+  const token  = process.env.CONFLUENCE_TOKEN
+  const domain = process.env.CONFLUENCE_DOMAIN || 'hiconsy.atlassian.net'
 
   if (!email || !token) {
     res.status(503).json({ error: 'Confluence credentials not configured' })

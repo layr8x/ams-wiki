@@ -32,8 +32,10 @@ export function useGuide(id) {
     queryKey: ['guide', id],
     queryFn: async () => {
       const guide = await fetchGuide(id)
-      // 조회수 증가 (fire-and-forget)
-      incrementViews(id).catch(() => {})
+      // 조회수 증가 (fire-and-forget — 실패해도 사용자 경험에는 영향 없음, 진단용 로깅만 유지)
+      incrementViews(id).catch((err) => {
+        if (import.meta.env.DEV) console.warn('[useGuide] incrementViews 실패:', err)
+      })
       return guide
     },
     enabled: Boolean(id),

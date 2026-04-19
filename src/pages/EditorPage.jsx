@@ -2,8 +2,13 @@
 // 구조: 좌측 사이드바(가이드 리스트) + 우측 편집 영역
 // 발행된 가이드 페이지(GuidePage)의 모든 섹션을 type별로 노출하여 편집할 수 있도록 구성
 import { useState, useMemo, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useAutosave } from '@/hooks/useAutosave'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { fetchGuide, upsertGuide } from '@/lib/db'
+import { useToast } from '@/components/ui/toast'
+import { useAuth } from '@/store/authStore'
+import { Skeleton } from '@/components/ui/skeleton'
 import {
   ArrowLeft,
   FloppyDisk as Save,
@@ -154,16 +159,123 @@ function loadInitialDraft() {
   return null
 }
 
+// DB guide → 에디터 content 매핑 (guide.X 가 null/undefined 여도 빈 템플릿으로 채움)
+function guideToContent(guide) {
+  if (!guide) return EMPTY_CONTENT
+  return {
+    cautions:       guide.cautions       ?? EMPTY_CONTENT.cautions,
+    steps:          guide.steps          ?? EMPTY_CONTENT.steps,
+    mainItemsTable: guide.mainItemsTable ?? EMPTY_CONTENT.mainItemsTable,
+    cases:          guide.cases          ?? EMPTY_CONTENT.cases,
+    decisionTable:  guide.decisionTable  ?? EMPTY_CONTENT.decisionTable,
+    troubleTable:   guide.troubleTable   ?? EMPTY_CONTENT.troubleTable,
+    responses:      guide.responses      ?? EMPTY_CONTENT.responses,
+    referenceData:  guide.referenceData  ?? EMPTY_CONTENT.referenceData,
+    policyDiff:     guide.policyDiff     ?? EMPTY_CONTENT.policyDiff,
+  }
+}
+
+function guideToMeta(guide) {
+  if (!guide) return DEFAULT_META
+  return {
+    title:        guide.title   ?? '',
+    module:       guide.module  ?? DEFAULT_META.module,
+    type:         guide.type    ?? 'SOP',
+    status:       '작성중',
+    targets:      Array.isArray(guide.targets) ? guide.targets.join(', ') : (guide.targets ?? ''),
+    tldr:         guide.tldr    ?? '',
+    version:      guide.version ?? 'v0.1',
+    confluenceId: guide.confluenceId ?? '',
+  }
+}
+
 export default function EditorPage() {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const editingId = searchParams.get('id') || null
+  const qc = useQueryClient()
+  const { toast } = useToast()
+  const { hasPermission } = useAuth()
+
+  // 기존 가이드 로드 (편집 모드)
+  const { data: existingGuide, isLoading: loadingExisting } = useQuery({
+    queryKey: ['guide', editingId],
+    queryFn:  () => fetchGuide(editingId),
+    enabled:  Boolean(editingId),
+    staleTime: 0,
+  })
 
   // 초기 상태를 draft 스냅샷 하나로 묶어 관리 → lazy initializer 한 번만 호출.
-  const [draftInit] = useState(loadInitialDraft)
+  // 편집 모드일 때는 draft 복원을 건너뛴다 (DB 데이터가 우선).
+  const [draftInit] = useState(() => (editingId ? null : loadInitialDraft()))
   const [selectedType, setSelectedType] = useState(() => draftInit?.meta?.type ?? 'SOP')
   const [meta, setMeta] = useState(() => draftInit?.meta ?? DEFAULT_META)
   const [content, setContent] = useState(() => draftInit?.content ?? EMPTY_CONTENT)
   const [restoredAt, setRestoredAt] = useState(() => draftInit?.savedAt ?? null)
   const [preview, setPreview] = useState(false)
+
+  // 기존 가이드 로드 완료 → 에디터 상태 프리필 (1회).
+  // React 권장 패턴: 외부 데이터 변화에 의한 파생 상태 초기화는 렌더 도중 동기 setState 로 처리.
+  // https://react.dev/reference/react/useState#storing-information-from-previous-renders
+  const [hydratedFor, setHydratedFor] = useState(editingId ? null : 'new')
+  const hydrated = hydratedFor === (editingId || 'new')
+  if (editingId && existingGuide && hydratedFor !== existingGuide.id) {
+    setHydratedFor(existingGuide.id)
+    setMeta(guideToMeta(existingGuide))
+    setContent(guideToContent(existingGuide))
+    setSelectedType(existingGuide.type ?? 'SOP')
+  }
+
+  // 발행 / 임시저장 — DB upsert
+  const upsertMutation = useMutation({
+    mutationFn: ({ nextStatus }) => upsertGuide({
+      id:     editingId || `g-${Date.now().toString(36)}`,
+      type:   meta.type,
+      module: meta.module,
+      title:  meta.title,
+      tldr:   meta.tldr,
+      targets: meta.targets ? meta.targets.split(',').map(s => s.trim()).filter(Boolean) : [],
+      version: meta.version,
+      confluenceId: meta.confluenceId,
+      steps:          content.steps,
+      mainItemsTable: content.mainItemsTable,
+      cases:          content.cases,
+      cautions:       content.cautions,
+      troubleTable:   content.troubleTable,
+      responses:      content.responses,
+      decisionTable:  content.decisionTable,
+      referenceData:  content.referenceData,
+      policyDiff:     content.policyDiff,
+      status: nextStatus,
+    }),
+    onSuccess: (saved, { nextStatus }) => {
+      qc.invalidateQueries({ queryKey: ['guides'] })
+      qc.invalidateQueries({ queryKey: ['admin', 'guides'] })
+      qc.invalidateQueries({ queryKey: ['guide', saved.id] })
+      toast({
+        title: nextStatus === 'published' ? '가이드를 발행했습니다.' : '임시저장되었습니다.',
+      })
+      if (nextStatus === 'published') navigate(`/guides/${saved.id}`)
+    },
+    onError: (err) => {
+      toast({ variant: 'destructive', title: '저장 실패', description: String(err?.message || err) })
+    },
+  })
+
+  const canPublish = hasPermission('publish')
+  const validateForPublish = () => {
+    if (!meta.title?.trim()) return '제목을 입력해 주세요.'
+    if (!meta.tldr?.trim())  return '핵심 요약(TL;DR)을 입력해 주세요.'
+    return null
+  }
+  const handlePublish = () => {
+    const err = validateForPublish()
+    if (err) { toast({ variant: 'destructive', title: '발행 불가', description: err }); return }
+    upsertMutation.mutate({ nextStatus: 'published' })
+  }
+  const handleSaveToDb = () => {
+    upsertMutation.mutate({ nextStatus: 'draft' })
+  }
 
   const sections = useMemo(
     () => SECTIONS_BY_TYPE[meta.type] ?? SECTIONS_BY_TYPE.SOP,
@@ -255,6 +367,18 @@ export default function EditorPage() {
       </button>
     )
   })
+
+  // 편집 모드에서 가이드 데이터 로딩 중 → 스켈레톤 화면
+  if (editingId && loadingExisting && !hydrated) {
+    return (
+      <div className="mx-auto flex h-dvh w-full max-w-4xl flex-col gap-4 px-6 py-10">
+        <Skeleton className="h-9 w-60" />
+        <Skeleton className="h-6 w-40" />
+        <Skeleton className="h-32 w-full" />
+        <Skeleton className="h-64 w-full" />
+      </div>
+    )
+  }
 
   return (
     <div className="flex h-dvh bg-background">
@@ -363,21 +487,31 @@ export default function EditorPage() {
               variant="outline"
               size="sm"
               className="px-2 sm:px-3"
-              onClick={handleSave}
-              disabled={autosave.status === 'saving'}
-              title="임시저장 (Ctrl/⌘+S)"
+              onClick={editingId ? handleSaveToDb : handleSave}
+              disabled={autosave.status === 'saving' || upsertMutation.isPending}
+              title={editingId ? '임시저장 (DB)' : '임시저장 (로컬)'}
               aria-label="임시저장"
             >
               <Save size={14} />
               <span className="hidden sm:inline">
-                {autosave.status === 'saving' ? '저장 중' : '임시저장'}
+                {(autosave.status === 'saving' || upsertMutation.isPending) ? '저장 중' : '임시저장'}
               </span>
               <kbd className="ml-1 hidden rounded border bg-muted px-1 font-mono text-xs text-muted-foreground md:inline-flex">⌘S</kbd>
             </Button>
-            <Button size="sm" className="px-2 sm:px-3">
-              <Send size={14} />
-              <span className="hidden sm:inline">발행</span>
-            </Button>
+            {canPublish && (
+              <Button
+                size="sm"
+                className="px-2 sm:px-3"
+                onClick={handlePublish}
+                disabled={upsertMutation.isPending}
+                title="발행"
+              >
+                <Send size={14} />
+                <span className="hidden sm:inline">
+                  {upsertMutation.isPending ? '저장 중…' : '발행'}
+                </span>
+              </Button>
+            )}
           </div>
         </header>
 

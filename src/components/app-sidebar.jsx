@@ -16,6 +16,7 @@ import {
   PencilSimple as PencilLine,
   Gear as Settings,
   Sparkle as Sparkles,
+  Shield,
   Users
 } from '@phosphor-icons/react'
 import { MODULE_TREE, RECENT_GUIDES } from "@/data/mockData"
@@ -95,10 +96,11 @@ const SECONDARY_NAV = [
 export function AppSidebar({ ...props }) {
   const location = useLocation()
   const currentPath = location.pathname
-  const { user, canAccess } = useAuth()
+  const { user, canAccess, hasPermission } = useAuth()
 
   const recents = RECENT_GUIDES.slice(0, 5)
   const visibleModules = MODULE_TREE.filter(mod => canAccess(mod.id))
+  const isAdmin = hasPermission('manage_users')
 
   return (
     <Sidebar collapsible="icon" {...props}>
@@ -205,6 +207,16 @@ export function AppSidebar({ ...props }) {
         <SidebarGroup className="mt-auto">
           <SidebarGroupContent>
             <SidebarMenu>
+              {isAdmin && (
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild size="sm" tooltip="관리자" isActive={currentPath.startsWith('/admin')}>
+                    <NavLink to="/admin">
+                      <Shield />
+                      <span>관리자</span>
+                    </NavLink>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              )}
               {SECONDARY_NAV.map((item) => (
                 <SidebarMenuItem key={item.to}>
                   <SidebarMenuButton asChild size="sm" tooltip={item.title}>

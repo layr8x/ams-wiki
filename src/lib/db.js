@@ -254,3 +254,138 @@ export async function fetchDashboardStats() {
 
 // ─── 모듈 트리 (항상 mockData) ───────────────────────────────────────────────
 export function getModuleTree() { return MODULE_TREE }
+
+// ─── 어드민 전용: 상태 무관 가이드 목록 ─────────────────────────────────────
+/**
+ * 어드민 테이블용 — status 필터를 직접 지정할 수 있다 (기본: 전체).
+ * published/draft/archived 전부 포함.
+ */
+export async function fetchAdminGuides({ status = 'all', module: mod, search } = {}) {
+  if (isSupabaseEnabled) {
+    let q = supabase
+      .from('guides')
+      .select('id,type,module,title,tldr,author,version,views,helpful,status,updated_at')
+      .order('updated_at', { ascending: false })
+    if (status !== 'all') q = q.eq('status', status)
+    if (mod)              q = q.eq('module', mod)
+    if (search)           q = q.or(`title.ilike.%${search}%,tldr.ilike.%${search}%`)
+
+    const { data, error } = await q
+    if (error) throw error
+    return (data || []).map(rowToGuide)
+  }
+
+  // mockData: status 속성이 없으므로 'published' 로 간주
+  let list = Object.entries(GUIDES).map(([id, g]) => ({
+    id,
+    ...g,
+    status: g.status || 'published',
+  }))
+  if (status !== 'all') list = list.filter(g => g.status === status)
+  if (mod)              list = list.filter(g => g.module === mod)
+  if (search) {
+    const q = search.toLowerCase()
+    list = list.filter(g =>
+      g.title?.toLowerCase().includes(q) || g.tldr?.toLowerCase().includes(q)
+    )
+  }
+  return list
+}
+
+/** 가이드 status 변경 (발행/해제/보관) — 어드민 전용 */
+export async function updateGuideStatus(id, status) {
+  if (!['draft', 'published', 'archived'].includes(status)) {
+    throw new Error(`잘못된 status: ${status}`)
+  }
+  if (isSupabaseEnabled) {
+    const { error } = await supabase
+      .from('guides')
+      .update({ status, updated_at: new Date().toISOString() })
+      .eq('id', id)
+    if (error) throw error
+    return true
+  }
+  // mock: 콘솔 경고만. 재로드 시 사라짐을 개발자가 인지해야 함.
+  if (import.meta.env.DEV) {
+    console.warn('[updateGuideStatus] mock 모드에서는 영속되지 않습니다:', id, status)
+  }
+  return true
+}
+
+/** 가이드 upsert — 에디터 저장/발행 */
+export async function upsertGuide(guide) {
+  if (isSupabaseEnabled) {
+    // 앱 내부 camelCase → DB snake_case 매핑
+    const row = {
+      id:              guide.id,
+      type:            guide.type,
+      module:          guide.module,
+      title:           guide.title,
+      tldr:            guide.tldr,
+      path:            guide.path,
+      ams_url:         guide.amsUrl,
+      confluence_id:   guide.confluenceId,
+      confluence_url:  guide.confluenceUrl,
+      targets:         guide.targets || [],
+      tags:            guide.tags    || [],
+      author:          guide.author,
+      version:         guide.version,
+      status:          guide.status || 'draft',
+      steps:           guide.steps,
+      main_items_table:guide.mainItemsTable,
+      cases:           guide.cases,
+      cautions:        guide.cautions,
+      trouble_table:   guide.troubleTable,
+      responses:       guide.responses,
+      decision_table:  guide.decisionTable,
+      reference_data:  guide.referenceData,
+      policy_diff:     guide.policyDiff,
+      updated_at:      new Date().toISOString(),
+    }
+    const { data, error } = await supabase
+      .from('guides')
+      .upsert(row, { onConflict: 'id' })
+      .select()
+      .single()
+    if (error) throw error
+    return rowToGuide(data)
+  }
+  // mock: 개발 모드에서만 경고
+  if (import.meta.env.DEV) {
+    console.warn('[upsertGuide] mock 모드에서는 영속되지 않습니다:', guide.id)
+  }
+  return guide
+}
+
+/** 가이드 삭제 — 기본은 soft delete (archived). hard=true 시 실제 삭제 */
+export async function deleteGuide(id, { hard = false } = {}) {
+  if (!hard) return updateGuideStatus(id, 'archived')
+  if (isSupabaseEnabled) {
+    const { error } = await supabase.from('guides').delete().eq('id', id)
+    if (error) throw error
+  }
+  return true
+}
+
+// ─── 어드민 전용: 피드백 수신함 ──────────────────────────────────────────────
+/** Supabase guide_feedback 최신순 (최대 n건) */
+export async function fetchAdminFeedback({ limit = 100 } = {}) {
+  if (isSupabaseEnabled) {
+    const { data, error } = await supabase
+      .from('guide_feedback')
+      .select('id,guide_id,vote,comment,session_id,created_at')
+      .order('created_at', { ascending: false })
+      .limit(limit)
+    if (error) throw error
+    return (data || []).map(r => ({
+      id:        r.id,
+      source:    'supabase',
+      guideId:   r.guide_id,
+      vote:      r.vote,
+      comment:   r.comment,
+      sessionId: r.session_id,
+      createdAt: r.created_at,
+    }))
+  }
+  return []
+}

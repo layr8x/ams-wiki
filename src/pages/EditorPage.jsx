@@ -63,7 +63,15 @@ const GUIDE_TYPES = [
   { value: 'RESPONSE',  label: 'RESPONSE · 대응매뉴얼' },
   { value: 'POLICY',    label: 'POLICY · 정책공지' },
 ]
-const STATUS_OPTIONS = ['작성중','검수중','배포완료']
+// DB 컬럼값(draft/review/published/archived) 과 UI 한글 라벨 매핑.
+// 과거엔 한글 문자열만 썼고 저장 시 무시됐음(H5) → DB 값으로 일원화.
+const STATUS_OPTIONS = [
+  { value: 'draft',     label: '작성중' },
+  { value: 'review',    label: '검수중' },
+  { value: 'published', label: '배포완료' },
+  { value: 'archived',  label: '보관' },
+]
+const STATUS_LABEL = Object.fromEntries(STATUS_OPTIONS.map(s => [s.value, s.label]))
 
 const STATUS_OPTIONS_FOR_DECISION = [
   { value: 'safe',   label: '허용' },
@@ -152,7 +160,7 @@ const DEFAULT_META = {
   title:   '',
   module:  '고객(원생) 관리',
   type:    'SOP',
-  status:  '작성중',
+  status:  'draft',
   targets: '운영자, 실장',
   tldr:    '',
   version: 'v0.1',
@@ -221,7 +229,7 @@ function guideToMeta(guide) {
     title:        guide.title   ?? '',
     module:       guide.module  ?? DEFAULT_META.module,
     type:         guide.type    ?? 'SOP',
-    status:       '작성중',
+    status:       guide.status  ?? 'draft',
     targets:      Array.isArray(guide.targets) ? guide.targets.join(', ') : (guide.targets ?? ''),
     tldr:         guide.tldr    ?? '',
     version:      guide.version ?? 'v0.1',
@@ -238,12 +246,24 @@ export default function EditorPage() {
   const { hasPermission } = useAuth()
 
   // 기존 가이드 로드 (편집 모드)
-  const { data: existingGuide, isLoading: loadingExisting } = useQuery({
+  const { data: existingGuide, isLoading: loadingExisting, error: loadError } = useQuery({
     queryKey: ['guide', editingId],
     queryFn:  () => fetchGuide(editingId),
     enabled:  Boolean(editingId),
     staleTime: 0,
+    retry: 1,
   })
+
+  // 로드 실패 시 한 번만 토스트 — 같은 err 재호출 방지
+  const [loadErrorShownFor, setLoadErrorShownFor] = useState(null)
+  if (loadError && loadErrorShownFor !== editingId) {
+    setLoadErrorShownFor(editingId)
+    toast({
+      variant: 'destructive',
+      title: '가이드를 불러오지 못했습니다',
+      description: loadError?.message || '네트워크 또는 권한을 확인해 주세요.',
+    })
+  }
 
   // 초기 상태를 draft 스냅샷 하나로 묶어 관리 → lazy initializer 한 번만 호출.
   // 편집 모드일 때는 draft 복원을 건너뛴다 (DB 데이터가 우선).
@@ -314,7 +334,10 @@ export default function EditorPage() {
     upsertMutation.mutate({ nextStatus: 'published' })
   }
   const handleSaveToDb = () => {
-    upsertMutation.mutate({ nextStatus: 'draft' })
+    // 사용자가 고른 meta.status 를 존중 — draft/review 저장 시 조용히 발행 상태로 바뀌거나
+    // 이미 발행된 가이드가 draft 로 돌아가는 현상을 방지.
+    const nextStatus = STATUS_LABEL[meta.status] ? meta.status : 'draft'
+    upsertMutation.mutate({ nextStatus })
   }
 
   const sections = useMemo(
@@ -416,6 +439,24 @@ export default function EditorPage() {
         <Skeleton className="h-6 w-40" />
         <Skeleton className="h-32 w-full" />
         <Skeleton className="h-64 w-full" />
+      </div>
+    )
+  }
+
+  // 편집 모드인데 데이터를 못 가져왔을 때 — 빈 에디터로 묵묵히 진입하는 대신 명시적 에러 UI
+  if (editingId && loadError && !existingGuide) {
+    return (
+      <div className="mx-auto flex h-dvh w-full max-w-lg flex-col items-center justify-center gap-4 px-6 py-10 text-center">
+        <h2 className="text-lg font-semibold">가이드를 불러오지 못했습니다</h2>
+        <p className="text-sm text-muted-foreground">
+          {loadError?.message || '네트워크 오류 또는 권한 문제일 수 있습니다.'}
+        </p>
+        <div className="flex gap-2">
+          <Button variant="outline" size="sm" onClick={() => navigate(-1)}>뒤로</Button>
+          <Button size="sm" onClick={() => qc.invalidateQueries({ queryKey: ['guide', editingId] })}>
+            다시 시도
+          </Button>
+        </div>
       </div>
     )
   }
@@ -672,7 +713,7 @@ export default function EditorPage() {
                       <Select value={meta.status} onValueChange={v => setMeta(m => ({ ...m, status: v }))}>
                         <SelectTrigger><SelectValue /></SelectTrigger>
                         <SelectContent>
-                          {STATUS_OPTIONS.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                          {STATUS_OPTIONS.map(s => <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}
                         </SelectContent>
                       </Select>
                     </div>

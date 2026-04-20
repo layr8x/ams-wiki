@@ -7,7 +7,8 @@ import {
   Clock,
   TrendUp as TrendingUp,
   CircleNotch as Loader2,
-  Sparkle
+  Sparkle,
+  File as FileText,
 } from '@phosphor-icons/react'
 import { useSearchStore } from '@/store/searchStore.jsx'
 import { GUIDES, RECENT_GUIDES, SEARCH_SYNONYMS } from '@/data/mockData'
@@ -232,7 +233,22 @@ function AiSummaryCard({ summary, onSourceClick }) {
     )
   }
 
-  if (summary.status === 'error' || summary.status === 'empty') {
+  // error/empty 상태는 과거 조용히 사라졌음 — 최소한의 피드백 노출
+  if (summary.status === 'error') {
+    return (
+      <div className={base} role="status">
+        <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+          <Sparkle size={12} />
+          <span>AI 요약을 불러오지 못했습니다</span>
+        </div>
+        <p className="mt-1 text-xs text-muted-foreground">
+          {summary.error || '잠시 후 다시 시도해주세요. 검색 결과는 아래에 정상 표시됩니다.'}
+        </p>
+      </div>
+    )
+  }
+  if (summary.status === 'empty') {
+    // 결과가 있지만 요약할 만큼 충분치 않은 경우 — 조용히 생략 (기존 동작 유지)
     return null
   }
 

@@ -1,4 +1,5 @@
 // src/components/common/Pagination.jsx — 페이지네이션 컴포넌트
+import React from 'react'
 import {
   CaretLeft as ChevronLeft,
   CaretRight as ChevronRight
@@ -43,7 +44,8 @@ export default function Pagination({ pagination }) {
   if (totalPages <= 1) return null;
 
   return (
-    <div
+    <nav
+      aria-label="페이지 네비게이션"
       style={{
         display: 'flex',
         flexDirection: 'column',
@@ -52,8 +54,9 @@ export default function Pagination({ pagination }) {
         alignItems: 'center',
       }}
     >
-      {/* 정보 텍스트 */}
+      {/* 정보 텍스트 — 스크린리더가 페이지 변경을 인지하도록 aria-live */}
       <div
+        aria-live="polite"
         style={{
           fontSize: '14px',
           color: 'var(--color-muted-foreground)',
@@ -99,13 +102,15 @@ export default function Pagination({ pagination }) {
         {/* 페이지 번호 */}
         {getPageNumbers().map((page, idx) =>
           page === '...' ? (
-            <span key={`ellipsis-${idx}`} style={{ padding: '0 4px' }}>
+            <span key={`ellipsis-${idx}`} aria-hidden="true" style={{ padding: '0 4px' }}>
               ...
             </span>
           ) : (
             <button
               key={`page-${page}`}
               onClick={() => goToPage(page)}
+              aria-label={`${page}페이지로 이동`}
+              aria-current={page === currentPage ? 'page' : undefined}
               style={{
                 background:
                   page === currentPage
@@ -154,6 +159,6 @@ export default function Pagination({ pagination }) {
           <ChevronRight size={16} />
         </button>
       </div>
-    </div>
+    </nav>
   );
 }

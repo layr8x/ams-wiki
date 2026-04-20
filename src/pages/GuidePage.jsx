@@ -14,16 +14,16 @@ import {
   ShieldCheck,
   CheckCircle as CheckCircle2
 } from '@phosphor-icons/react'
-import { GUIDES } from '@/data/mockData'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import { Button } from '@/components/ui/button'
+import { Skeleton } from '@/components/ui/skeleton'
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from '@/components/ui/table'
 import { PageShell, PageHeader, EmptyState } from '@/components/common/page-primitives'
-import { useSubmitFeedback } from '@/hooks/useGuides'
+import { useGuide, useSubmitFeedback } from '@/hooks/useGuides'
 import { useRecentlyViewed } from '@/hooks/useRecentlyViewed'
 import { getGuideType, SEVERITY, DECISION_STATUS } from '@/lib/guideTypes'
 
@@ -35,8 +35,8 @@ export default function GuidePage() {
 }
 
 function GuidePageInner({ id }) {
-  const guide = GUIDES[id]
-  const { submit, isSubmitting } = useSubmitFeedback()
+  const { data: guide, isLoading, isError } = useGuide(id)
+  const { mutateAsync: submit, isPending: isSubmitting } = useSubmitFeedback(id)
   const [voted, setVoted] = useState(null)
   const { track } = useRecentlyViewed()
 
@@ -44,7 +44,20 @@ function GuidePageInner({ id }) {
     if (guide) track(id)
   }, [id, guide, track])
 
-  if (!guide) {
+  if (isLoading) {
+    return (
+      <PageShell maxWidth="5xl">
+        <div className="space-y-4">
+          <Skeleton className="h-4 w-40" />
+          <Skeleton className="h-10 w-3/4" />
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-40 w-full" />
+        </div>
+      </PageShell>
+    )
+  }
+
+  if (isError || !guide) {
     return (
       <PageShell maxWidth="5xl">
         <EmptyState
@@ -67,7 +80,7 @@ function GuidePageInner({ id }) {
   const handleVote = async (vote) => {
     if (voted) return
     setVoted(vote)
-    try { await submit({ guideId: id, vote }) } catch { /* no-op */ }
+    try { await submit({ vote }) } catch { /* no-op */ }
   }
 
   return (

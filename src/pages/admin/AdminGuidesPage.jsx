@@ -2,8 +2,7 @@
 import { useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { fetchAdminGuides, updateGuideStatus, deleteGuide } from '@/lib/db'
-import { MODULE_TREE } from '@/data/mockData'
+import { fetchAdminGuides, updateGuideStatus, deleteGuide, getModuleTree } from '@/lib/db'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -54,6 +53,11 @@ export default function AdminGuidesPage() {
   const qc = useQueryClient()
   const { toast } = useToast()
   const { hasPermission } = useAuth()
+  const moduleTree = getModuleTree()
+  const moduleLabelById = useMemo(
+    () => new Map(moduleTree.map(m => [m.id, m.label])),
+    [moduleTree]
+  )
 
   const [status, setStatus]   = useState('all')
   const [moduleF, setModuleF] = useState('all')
@@ -132,7 +136,7 @@ export default function AdminGuidesPage() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">전체 모듈</SelectItem>
-                {MODULE_TREE.map((m) => (
+                {moduleTree.map((m) => (
                   <SelectItem key={m.id} value={m.id}>{m.label}</SelectItem>
                 ))}
               </SelectContent>
@@ -181,7 +185,7 @@ export default function AdminGuidesPage() {
                         <p className="mt-0.5 line-clamp-1 text-xs text-muted-foreground">{g.tldr}</p>
                       </TableCell>
                       <TableCell className="text-sm">
-                        {MODULE_TREE.find(m => m.id === g.module)?.label || g.module}
+                        {moduleLabelById.get(g.module) || g.module}
                       </TableCell>
                       <TableCell>
                         <Badge variant="outline" className="text-xs">{g.type}</Badge>

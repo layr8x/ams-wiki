@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Button } from '@/components/ui/button'
-import { MODULE_TREE } from '@/data/mockData'
+import { getModuleTree } from '@/lib/db'
 import {
   FileText,
   Eye,
@@ -87,7 +87,7 @@ export default function AdminOverviewPage() {
                 <Skeleton key={i} className="h-8 w-full" />
               ))
             ) : (
-              MODULE_TREE.map((mod) => {
+              getModuleTree().map((mod) => {
                 const count = moduleStats[mod.id] || 0
                 const max = Math.max(...Object.values(moduleStats), 1)
                 const pct = Math.round((count / max) * 100)

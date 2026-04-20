@@ -1,7 +1,7 @@
 // src/App.jsx — shadcn/ui 표준 + React Query + Toast + 모든 Provider
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { lazy, Suspense } from 'react'
+import { lazy } from 'react'
 import Layout from './components/common/Layout'
 import SearchOverlay from './components/search/SearchOverlay'
 import { SearchProvider } from './store/searchStore'
@@ -9,8 +9,8 @@ import { I18nProvider } from './store/i18nStore'
 import { AuthProvider } from './store/authStore'
 import { ToastProvider } from './components/ui/toast'
 import { TooltipProvider } from './components/ui/tooltip'
-import { Skeleton } from './components/ui/skeleton'
 import { ErrorBoundary } from './components/common/ErrorBoundary'
+import { RouteBoundary } from './components/common/RouteBoundary'
 import { RequireRole } from './components/common/RequireRole'
 
 // 코드 스플리팅 (lazy loading)
@@ -38,26 +38,9 @@ const queryClient = new QueryClient({
   },
 })
 
-// 로딩 폴백
-function PageSkeleton() {
-  return (
-    <div className="mx-auto w-full max-w-5xl px-6 py-10 space-y-4">
-      <Skeleton className="h-4 w-32" />
-      <Skeleton className="h-10 w-2/3" />
-      <Skeleton className="h-4 w-full" />
-      <Skeleton className="h-4 w-5/6" />
-      <div className="mt-8 grid grid-cols-3 gap-4">
-        {Array.from({ length: 6 }).map((_, i) => (
-          <Skeleton key={`sk-${i}`} className="h-32 rounded-lg" />
-        ))}
-      </div>
-    </div>
-  )
-}
-
 export default function App() {
   return (
-    <ErrorBoundary>
+    <ErrorBoundary variant="global">
       <QueryClientProvider client={queryClient}>
         <TooltipProvider delayDuration={200}>
           <I18nProvider>
@@ -69,25 +52,23 @@ export default function App() {
                     {/* 에디터 — 편집 권한 필요, 레이아웃 없이 전체 화면 */}
                     <Route element={<RequireRole permission="edit" />}>
                       <Route path="/editor" element={
-                        <Suspense fallback={<PageSkeleton />}>
-                          <EditorPage />
-                        </Suspense>
+                        <RouteBoundary><EditorPage /></RouteBoundary>
                       } />
                     </Route>
 
                     {/* 어드민 — 관리자 권한 필요 */}
                     <Route element={<RequireRole permission="manage_users" />}>
                       <Route path="/admin" element={
-                        <Suspense fallback={<PageSkeleton />}><AdminLayout /></Suspense>
+                        <RouteBoundary><AdminLayout /></RouteBoundary>
                       }>
                         <Route index element={
-                          <Suspense fallback={<PageSkeleton />}><AdminOverviewPage /></Suspense>
+                          <RouteBoundary><AdminOverviewPage /></RouteBoundary>
                         } />
                         <Route path="guides" element={
-                          <Suspense fallback={<PageSkeleton />}><AdminGuidesPage /></Suspense>
+                          <RouteBoundary><AdminGuidesPage /></RouteBoundary>
                         } />
                         <Route path="feedback" element={
-                          <Suspense fallback={<PageSkeleton />}><AdminFeedbackPage /></Suspense>
+                          <RouteBoundary><AdminFeedbackPage /></RouteBoundary>
                         } />
                       </Route>
                     </Route>
@@ -95,35 +76,35 @@ export default function App() {
                     {/* 기본 레이아웃 */}
                     <Route element={<Layout />}>
                       <Route path="/" element={
-                        <Suspense fallback={<PageSkeleton />}><HomePage /></Suspense>
+                        <RouteBoundary><HomePage /></RouteBoundary>
                       } />
                       <Route path="/guides" element={
-                        <Suspense fallback={<PageSkeleton />}><GuideListPage /></Suspense>
+                        <RouteBoundary><GuideListPage /></RouteBoundary>
                       } />
                       <Route path="/guides/:id" element={
-                        <Suspense fallback={<PageSkeleton />}><GuidePage /></Suspense>
+                        <RouteBoundary><GuidePage /></RouteBoundary>
                       } />
                       <Route path="/modules/:moduleId" element={
-                        <Suspense fallback={<PageSkeleton />}><GuideListPage /></Suspense>
+                        <RouteBoundary><GuideListPage /></RouteBoundary>
                       } />
                       <Route path="/faq" element={
-                        <Suspense fallback={<PageSkeleton />}><FaqPage /></Suspense>
+                        <RouteBoundary><FaqPage /></RouteBoundary>
                       } />
                       <Route path="/updates" element={
-                        <Suspense fallback={<PageSkeleton />}><UpdatesPage /></Suspense>
+                        <RouteBoundary><UpdatesPage /></RouteBoundary>
                       } />
                       <Route path="/feedback" element={
-                        <Suspense fallback={<PageSkeleton />}><FeedbackPage /></Suspense>
+                        <RouteBoundary><FeedbackPage /></RouteBoundary>
                       } />
                       <Route path="/404" element={
-                        <Suspense fallback={<PageSkeleton />}>
+                        <RouteBoundary>
                           <ErrorPage statusCode={404} message="찾을 수 없는 페이지입니다." />
-                        </Suspense>
+                        </RouteBoundary>
                       } />
                       <Route path="*" element={
-                        <Suspense fallback={<PageSkeleton />}>
+                        <RouteBoundary>
                           <ErrorPage statusCode={404} message="찾을 수 없는 페이지입니다." />
-                        </Suspense>
+                        </RouteBoundary>
                       } />
                     </Route>
                   </Routes>

@@ -107,13 +107,9 @@ const SECTION_META = {
   policyDiff:     { label: '정책 비교 (전/후)',  desc: '변경 전후 비교' },
 }
 
-const VERSION_HISTORY = [
-  { version: 'v1.2', date: '2026-04-14', author: '김명준', summary: '환불 기준 문구 보완, 스크린샷 업데이트' },
-  { version: 'v1.1', date: '2026-04-02', author: '이지원', summary: '운영 케이스 2개 추가' },
-  { version: 'v1.0', date: '2026-03-25', author: '김명준', summary: '최초 발행' },
-  { version: 'v0.2', date: '2026-03-18', author: '김명준', summary: '검수 반영 수정' },
-  { version: 'v0.1', date: '2026-03-10', author: '김명준', summary: '초안 작성' },
-]
+// 버전 이력은 아직 백엔드 스키마(guide_versions 테이블)가 없음 → 플레이스홀더.
+// 실제 구현 전까지 가짜 이름·날짜를 보여주지 않는다.
+const VERSION_HISTORY_PLACEHOLDER = true
 
 // 리스트 행 식별자 — React key 안정성을 위한 내부 전용 ID.
 // DB/자동저장으로 나갈 때는 stripIds() 로 제거한다.
@@ -541,20 +537,35 @@ export default function EditorPage() {
                   <SheetTitle>버전 이력</SheetTitle>
                 </SheetHeader>
                 <div className="mt-6 space-y-3 px-4">
-                  {VERSION_HISTORY.map(v => (
-                    <Card key={v.version} className="gap-0 py-0">
+                  {/* 현재 편집 중인 가이드의 메타 — 저장된 version 만 표시 */}
+                  {editingId && existingGuide && (
+                    <Card className="gap-0 py-0">
                       <CardContent className="p-4">
                         <div className="mb-1 flex items-center justify-between">
-                          <Badge variant="outline" size="sm" className="font-mono">{v.version}</Badge>
-                          <span className="text-xs tabular-nums text-muted-foreground">{v.date}</span>
+                          <Badge variant="outline" size="sm" className="font-mono">
+                            {existingGuide.version || meta.version || 'v0.1'}
+                          </Badge>
+                          <span className="text-xs tabular-nums text-muted-foreground">
+                            {existingGuide.updated || existingGuide.updated_at?.slice(0, 10) || '—'}
+                          </span>
                         </div>
-                        <p className="text-sm text-foreground">{v.summary}</p>
-                        <p className="mt-1 text-xs text-muted-foreground">
-                          <User size={10} className="inline" /> {v.author}
+                        <p className="text-sm text-foreground">
+                          현재 저장된 버전
                         </p>
+                        {existingGuide.author && (
+                          <p className="mt-1 text-xs text-muted-foreground">
+                            <User size={10} className="inline" /> {existingGuide.author}
+                          </p>
+                        )}
                       </CardContent>
                     </Card>
-                  ))}
+                  )}
+                  {VERSION_HISTORY_PLACEHOLDER && (
+                    <div className="rounded-md border border-dashed border-border bg-muted/30 px-4 py-6 text-center text-xs text-muted-foreground">
+                      전체 버전 이력은 준비 중입니다.<br />
+                      추후 <code className="text-[11px]">guide_versions</code> 테이블 연동 시 제공됩니다.
+                    </div>
+                  )}
                 </div>
               </SheetContent>
             </Sheet>

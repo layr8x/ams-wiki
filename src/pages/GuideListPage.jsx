@@ -1,6 +1,6 @@
 // src/pages/GuideListPage.jsx
 // 구조: PageHeader → 검색/필터 툴바 → 결과 카운트 → 카드 그리드
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import {
   MagnifyingGlass as Search,
@@ -12,6 +12,8 @@ import {
 } from '@phosphor-icons/react'
 import { getModuleTree } from '@/lib/db'
 import { useGuideList } from '@/hooks/useGuides'
+import { usePagination } from '@/hooks/usePagination'
+import Pagination from '@/components/common/Pagination'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
@@ -64,6 +66,9 @@ export default function GuideListPage() {
     })
     return list
   }, [allGuides, typeFilter, search, sort])
+
+  const pagination = usePagination(filtered, 24) // 3-col × 8행
+  useEffect(() => { pagination.reset() }, [typeFilter, search, sort, moduleId]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <PageShell>
@@ -150,7 +155,7 @@ export default function GuideListPage() {
         />
       ) : (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {filtered.map(g => {
+          {pagination.currentItems.map(g => {
             const typeMeta = getGuideType(g.type)
             return (
               <Link key={g.id} to={`/guides/${g.id}`} className="group">
@@ -194,6 +199,12 @@ export default function GuideListPage() {
               </Link>
             )
           })}
+        </div>
+      )}
+
+      {!isLoading && filtered.length > 0 && pagination.totalPages > 1 && (
+        <div className="mt-8">
+          <Pagination pagination={pagination} />
         </div>
       )}
     </PageShell>

@@ -1,8 +1,10 @@
 // src/pages/admin/AdminGuidesPage.jsx — /admin/guides
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { fetchAdminGuides, updateGuideStatus, deleteGuide, getModuleTree } from '@/lib/db'
+import { usePagination } from '@/hooks/usePagination'
+import Pagination from '@/components/common/Pagination'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -105,6 +107,10 @@ export default function AdminGuidesPage() {
     return by
   }, [guides])
 
+  // 필터 변경 시 1페이지로 리셋 — 결과가 줄었는데 빈 페이지를 보여주는 것 방지
+  const pagination = usePagination(guides, 25)
+  useEffect(() => { pagination.reset() }, [status, moduleF, search]) // eslint-disable-line react-hooks/exhaustive-deps
+
   return (
     <div className="mx-auto w-full max-w-6xl space-y-6 px-6 py-8">
       <header className="flex flex-wrap items-end justify-between gap-4">
@@ -176,7 +182,7 @@ export default function AdminGuidesPage() {
                     </TableCell>
                   </TableRow>
                 ) : (
-                  guides.map((g) => (
+                  pagination.currentItems.map((g) => (
                     <TableRow key={g.id}>
                       <TableCell>
                         <Link to={`/guides/${g.id}`} className="font-medium hover:underline">
@@ -263,6 +269,10 @@ export default function AdminGuidesPage() {
               </TableBody>
             </Table>
           </div>
+
+          {!isLoading && guides.length > 0 && pagination.totalPages > 1 && (
+            <Pagination pagination={pagination} />
+          )}
         </CardContent>
       </Card>
 

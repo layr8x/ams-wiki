@@ -1,5 +1,5 @@
 // src/components/search/SearchOverlay.jsx — shadcn/ui Command 팔레트
-import { useState, useEffect, useRef, useCallback } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   MagnifyingGlass as Search,

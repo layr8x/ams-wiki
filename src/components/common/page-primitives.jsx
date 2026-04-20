@@ -7,6 +7,7 @@
  *   - StatCard:      dashboard-01 스타일 — 헤더/수치/델타/풋터
  *   - EmptyState:    아이콘 + 문구 + 액션
  */
+import React from 'react'
 import { Link } from 'react-router-dom'
 import {
   ArrowRight,

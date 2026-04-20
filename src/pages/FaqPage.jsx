@@ -1,6 +1,6 @@
 // src/pages/FaqPage.jsx
 // 구조: PageHeader → 카테고리 pill → Accordion (shadcn 공식)
-import { useState, useMemo } from 'react'
+import React, { useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import {
   Question as HelpCircle,

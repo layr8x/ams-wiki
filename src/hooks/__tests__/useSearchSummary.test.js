@@ -24,7 +24,7 @@ describe('useSearchSummary', () => {
 
   beforeEach(() => {
     vi.useFakeTimers()
-    fetchSpy = vi.spyOn(global, 'fetch').mockResolvedValue(
+    fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValue(
       new Response(JSON.stringify({ summary: 'AI 요약', sources: ['g1'] }), { status: 200 })
     )
   })

@@ -52,4 +52,21 @@ describe('FaqPage', () => {
     renderPage()
     expect(screen.getByText(/반복 문의/)).toBeTruthy()
   })
+
+  it('카테고리 필터 그룹은 aria-label 과 role="group" 이 있다', () => {
+    renderPage()
+    const group = screen.getByRole('group', { name: '카테고리 필터' })
+    expect(group).toBeTruthy()
+  })
+
+  it('카테고리 pill 은 aria-pressed 로 선택 상태를 알린다', () => {
+    renderPage()
+    const allBtn = screen.getAllByRole('button', { name: /전체/ })[0]
+    expect(allBtn.getAttribute('aria-pressed')).toBe('true')
+    // 다른 카테고리 클릭 시 '전체' 는 aria-pressed=false 로 전환
+    const paymentPill = screen.getAllByRole('button', { name: /결제.환불/ })[0]
+    fireEvent.click(paymentPill)
+    expect(paymentPill.getAttribute('aria-pressed')).toBe('true')
+    expect(allBtn.getAttribute('aria-pressed')).toBe('false')
+  })
 })

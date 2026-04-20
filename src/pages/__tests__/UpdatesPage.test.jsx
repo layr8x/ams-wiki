@@ -52,4 +52,20 @@ describe('UpdatesPage', () => {
     fireEvent.click(screen.getByRole('button', { name: /전체/ }))
     expect(screen.getByText(/AMS 운영 위키 베타 오픈/)).toBeTruthy()
   })
+
+  it('타입 필터 그룹은 aria-label 과 role="group" 이 있다', () => {
+    renderPage()
+    const group = screen.getByRole('group', { name: '업데이트 타입 필터' })
+    expect(group).toBeTruthy()
+  })
+
+  it('필터 pill 은 aria-pressed 로 선택 상태를 알린다', () => {
+    renderPage()
+    const allBtn = screen.getByRole('button', { name: /전체/ })
+    expect(allBtn.getAttribute('aria-pressed')).toBe('true')
+    const featureBtn = screen.getByRole('button', { name: /기능 개선/ })
+    fireEvent.click(featureBtn)
+    expect(featureBtn.getAttribute('aria-pressed')).toBe('true')
+    expect(allBtn.getAttribute('aria-pressed')).toBe('false')
+  })
 })

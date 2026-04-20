@@ -1,51 +1,40 @@
-// src/components/common/LanguageSelector.jsx — 언어 선택 컴포넌트
+// src/components/common/LanguageSelector.jsx — 언어 선택 컴포넌트 (shadcn Select 기반)
+import { Globe } from '@phosphor-icons/react'
+import { useI18n } from '@/hooks/useI18n'
 import {
-  Globe
-} from '@phosphor-icons/react'
-import { useI18n } from '@/hooks/useI18n';
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+} from '@/components/ui/select'
+
+const LANGUAGES = {
+  ko: { label: '한글',    flag: '🇰🇷' },
+  en: { label: 'English', flag: '🇺🇸' },
+}
 
 export default function LanguageSelector() {
-  const { language, setLanguage, getAvailableLanguages } = useI18n();
-
-  const languages = {
-    ko: { label: '한글', flag: '🇰🇷' },
-    en: { label: 'English', flag: '🇺🇸' },
-  };
+  const { language, setLanguage, getAvailableLanguages } = useI18n()
+  const available = getAvailableLanguages()
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: '4px',
-        padding: '6px 8px',
-        background: 'var(--color-secondary)',
-        borderRadius: '4px',
-        border: '1px solid var(--color-border)',
-        minWidth: 'fit-content',
-      }}
-    >
-      <Globe size={14} style={{ color: 'var(--color-muted-foreground)', flexShrink: 0 }} />
-      <select
-        value={language}
-        onChange={(e) => setLanguage(e.target.value)}
-        style={{
-          background: 'transparent',
-          border: 'none',
-          cursor: 'pointer',
-          fontSize: '12px',
-          color: 'var(--color-foreground)',
-          padding: '0 2px',
-          fontFamily: 'inherit',
-          minWidth: 'auto',
-        }}
+    <Select value={language} onValueChange={setLanguage}>
+      <SelectTrigger
+        size="sm"
+        aria-label="언어 선택"
+        className="gap-1.5"
       >
-        {getAvailableLanguages().map((lang) => (
-          <option key={lang} value={lang}>
-            {languages[lang]?.flag} {languages[lang]?.label}
-          </option>
-        ))}
-      </select>
-    </div>
-  );
+        <Globe size={14} className="text-muted-foreground" />
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent align="end">
+        {available.map((lang) => {
+          const meta = LANGUAGES[lang]
+          return (
+            <SelectItem key={lang} value={lang} className="text-xs">
+              <span className="mr-1">{meta?.flag}</span>
+              {meta?.label ?? lang}
+            </SelectItem>
+          )
+        })}
+      </SelectContent>
+    </Select>
+  )
 }

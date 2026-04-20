@@ -2,6 +2,7 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react'
 import { supabase, isSupabaseEnabled } from '@/lib/supabase'
 import { ROLES, ROLE_PERMISSIONS, canAccessModule } from './authConstants'
+import { STORAGE_KEYS } from '@/lib/storageKeys'
 // eslint-disable-next-line react-refresh/only-export-components
 export { ROLES, ROLE_LABELS, PERMISSIONS, MODULE_ACCESS, canAccessModule } from './authConstants'
 
@@ -43,10 +44,10 @@ export function AuthProvider({ children }) {
       // Supabase 미설정 — localStorage 폴백 (queueMicrotask로 래핑)
       queueMicrotask(() => {
         try {
-          const stored = localStorage.getItem('ams_wiki_user')
+          const stored = localStorage.getItem(STORAGE_KEYS.authUser)
           if (stored) setUser(JSON.parse(stored))
         } catch {
-          localStorage.removeItem('ams_wiki_user')
+          localStorage.removeItem(STORAGE_KEYS.authUser)
         }
         setIsLoading(false)
       })
@@ -65,7 +66,7 @@ export function AuthProvider({ children }) {
       loginTime: new Date().toISOString(),
     }
     setUser(mockUser)
-    localStorage.setItem('ams_wiki_user', JSON.stringify(mockUser))
+    localStorage.setItem(STORAGE_KEYS.authUser, JSON.stringify(mockUser))
     return mockUser
   }
 
@@ -95,7 +96,7 @@ export function AuthProvider({ children }) {
       await supabase.auth.signOut()
     }
     setUser(null)
-    localStorage.removeItem('ams_wiki_user')
+    localStorage.removeItem(STORAGE_KEYS.authUser)
   }, [])
 
   // ─── 권한 확인 ───────────────────────────────────────────────────────────

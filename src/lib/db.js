@@ -3,6 +3,7 @@
 // Supabase 미설정 시 로컬 mockData.js에서 자동으로 데이터를 읽습니다.
 
 import { supabase, isSupabaseEnabled } from './supabase'
+import { STORAGE_KEYS } from './storageKeys'
 import { GUIDES, MODULE_TREE, RECENT_GUIDES, POPULAR_GUIDES } from '../data/mockData'
 
 // ─── helpers ────────────────────────────────────────────────────────────────
@@ -175,22 +176,39 @@ export async function searchGuides(query, limit = 20) {
 
 // ─── 피드백 ──────────────────────────────────────────────────────────────────
 
+// 익명 세션 ID — 중복 피드백 방지. SSR-safe 가드.
+function getFeedbackSessionId() {
+  if (typeof window === 'undefined') return null
+  try {
+    let sid = localStorage.getItem(STORAGE_KEYS.feedbackSessionId)
+    if (!sid) {
+      sid = (crypto?.randomUUID?.() ?? `s-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`)
+      localStorage.setItem(STORAGE_KEYS.feedbackSessionId, sid)
+    }
+    return sid
+  } catch {
+    return null
+  }
+}
+
 /** 가이드 피드백 저장 */
 export async function submitFeedback({ guideId, vote, comment }) {
   if (isSupabaseEnabled) {
+    const sessionId = getFeedbackSessionId()
     const { error } = await supabase
       .from('guide_feedback')
-      .insert({ guide_id: guideId, vote, comment: comment || null })
+      .insert({ guide_id: guideId, vote, comment: comment || null, session_id: sessionId })
     if (error) throw error
 
-    // helpful 카운터 업데이트
+    // helpful 카운터 증가 (올바른 RPC — views 가 아니라 helpful)
     if (vote === 'helpful') {
-      await supabase.rpc('increment_guide_views', { guide_id_param: guideId })
+      const { error: rpcErr } = await supabase.rpc('increment_guide_helpful', { guide_id_param: guideId })
+      if (rpcErr) throw rpcErr
     }
     return true
   }
   // mock: 로컬 스토리지에 임시 저장
-  const key = `feedback_${guideId}`
+  const key = `${STORAGE_KEYS.feedbackMockPrefix}${guideId}`
   localStorage.setItem(key, JSON.stringify({ vote, comment, ts: Date.now() }))
   return true
 }

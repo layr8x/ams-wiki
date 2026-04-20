@@ -35,6 +35,7 @@ export default function FeedbackPage() {
   const [body, setBody]     = useState(prefillTopic ? `검색어 "${prefillTopic}" 에 대한 가이드가 필요합니다.\n\n어떤 상황/업무에서 필요한지 적어주세요:\n` : '')
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading]     = useState(false)
+  const [error, setError]         = useState(null)
 
   const canSubmit = selectedType && title.trim().length > 0 && body.trim().length > 0
 
@@ -42,6 +43,7 @@ export default function FeedbackPage() {
     e.preventDefault()
     if (!canSubmit) return
     setLoading(true)
+    setError(null)
     try {
       await submitFeedback({
         guideId: null,
@@ -49,8 +51,10 @@ export default function FeedbackPage() {
         comment: `[${selectedType}] ${title}\n\n${body}`,
       })
       setSubmitted(true)
-    } catch {
-      setSubmitted(true)
+    } catch (err) {
+      // 저장 실패는 반드시 사용자에게 노출 — 과거엔 성공으로 처리해 피드백이 조용히 증발했음
+      if (import.meta.env.DEV) console.error('[FeedbackPage] submitFeedback failed', err)
+      setError(err?.message || '제출 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.')
     } finally {
       setLoading(false)
     }
@@ -164,6 +168,16 @@ export default function FeedbackPage() {
             {body.length} / 1,000
           </div>
         </section>
+
+        {/* 오류 배너 */}
+        {error && (
+          <div
+            role="alert"
+            className="rounded-md border border-destructive/30 bg-destructive/5 px-3 py-2 text-sm text-destructive"
+          >
+            {error}
+          </div>
+        )}
 
         {/* 제출 */}
         <div className="flex items-center justify-between gap-3 border-t pt-6">

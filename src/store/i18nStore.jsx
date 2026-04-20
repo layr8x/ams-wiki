@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { I18nContext } from './i18nContext';
 import koTranslations from '@/locales/ko.json';
 import enTranslations from '@/locales/en.json';
+import { STORAGE_KEYS } from '@/lib/storageKeys';
 
 const translations = {
   ko: koTranslations,
@@ -28,8 +29,7 @@ function getNestedValue(obj, path) {
 
 export function I18nProvider({ children }) {
   const [language, setLanguageState] = useState(() => {
-    // localStorage에서 저장된 언어 확인
-    const saved = localStorage.getItem('language');
+    const saved = localStorage.getItem(STORAGE_KEYS.language);
     if (saved && SUPPORTED_LANGUAGES.includes(saved)) {
       return saved;
     }
@@ -43,8 +43,7 @@ export function I18nProvider({ children }) {
   });
 
   useEffect(() => {
-    // 언어 변경 시 localStorage에 저장
-    localStorage.setItem('language', language);
+    localStorage.setItem(STORAGE_KEYS.language, language);
     // html 태그의 lang 속성 업데이트
     document.documentElement.lang = language;
   }, [language]);

@@ -20,7 +20,7 @@ create table if not exists guides (
   tags          text[],
   author        text,
   version       text default 'v1.0',
-  status        text default 'published' check (status in ('draft','review','published')),
+  status        text default 'published' check (status in ('draft','review','published','archived')),
   views         integer default 0,
   helpful       integer default 0,
   helpful_rate  integer default 0,
@@ -51,9 +51,11 @@ create table if not exists guide_feedback (
   guide_id   text references guides(id) on delete cascade,
   vote       text check (vote in ('helpful','needs_improvement')),
   comment    text,
+  session_id text,
   created_at timestamptz default now()
 );
-create index if not exists feedback_guide_idx on guide_feedback (guide_id);
+create index if not exists feedback_guide_idx   on guide_feedback (guide_id);
+create index if not exists feedback_session_idx on guide_feedback (session_id);
 
 -- ─── 페이지뷰 테이블 ─────────────────────────────────────────────────────────
 create table if not exists guide_views (
@@ -94,6 +96,20 @@ create or replace function increment_guide_views(guide_id_param text)
 returns void language plpgsql as $$
 begin
   update guides set views = views + 1 where id = guide_id_param;
+end;
+$$;
+
+-- ─── helpful 카운터 증가 RPC ─────────────────────────────────────────────────
+create or replace function increment_guide_helpful(guide_id_param text)
+returns void language plpgsql as $$
+begin
+  update guides
+     set helpful = coalesce(helpful, 0) + 1,
+         helpful_rate = case
+           when coalesce(views, 0) = 0 then 100
+           else round(100.0 * (coalesce(helpful, 0) + 1) / greatest(views, 1))
+         end
+   where id = guide_id_param;
 end;
 $$;
 

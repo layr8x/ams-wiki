@@ -1,10 +1,10 @@
 // src/hooks/useDarkMode.js — 다크 모드 훅
 import { useState, useEffect } from 'react';
+import { STORAGE_KEYS } from '@/lib/storageKeys';
 
 export function useDarkMode() {
   const [isDark, setIsDark] = useState(() => {
-    // localStorage에서 저장된 설정 확인
-    const saved = localStorage.getItem('theme-mode');
+    const saved = localStorage.getItem(STORAGE_KEYS.theme);
     if (saved) return saved === 'dark';
 
     // 시스템 설정 확인
@@ -20,8 +20,7 @@ export function useDarkMode() {
       root.classList.remove('dark');
     }
 
-    // localStorage에 저장
-    localStorage.setItem('theme-mode', isDark ? 'dark' : 'light');
+    localStorage.setItem(STORAGE_KEYS.theme, isDark ? 'dark' : 'light');
   }, [isDark]);
 
   const toggle = () => setIsDark(prev => !prev);

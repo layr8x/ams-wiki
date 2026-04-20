@@ -209,7 +209,7 @@ export default function AdminGuidesPage() {
                                 </Link>
                               </DropdownMenuItem>
                             )}
-                            {canPublish && g.status !== 'published' && (
+                            {canPublish && g.status !== 'published' && g.status !== 'archived' && (
                               <DropdownMenuItem
                                 onSelect={() => statusMutation.mutate({ id: g.id, nextStatus: 'published' })}
                               >
@@ -223,7 +223,23 @@ export default function AdminGuidesPage() {
                                 발행 해제
                               </DropdownMenuItem>
                             )}
-                            {canDelete && (
+                            {/* 보관 상태 → 복원 (임시저장으로 되돌림) */}
+                            {canEdit && g.status === 'archived' && (
+                              <DropdownMenuItem
+                                onSelect={() => statusMutation.mutate({ id: g.id, nextStatus: 'draft' })}
+                              >
+                                복원 (임시저장으로)
+                              </DropdownMenuItem>
+                            )}
+                            {/* 보관 상태 → 바로 재발행 */}
+                            {canPublish && g.status === 'archived' && (
+                              <DropdownMenuItem
+                                onSelect={() => statusMutation.mutate({ id: g.id, nextStatus: 'published' })}
+                              >
+                                바로 재발행
+                              </DropdownMenuItem>
+                            )}
+                            {canDelete && g.status !== 'archived' && (
                               <>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem

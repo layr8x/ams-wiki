@@ -5,6 +5,8 @@
 //   - 카테고리 그리드
 //   - 하단 2열: 최근 업데이트 / 자주 찾는 가이드 Top (조회수 기반)
 import { Link } from 'react-router-dom'
+import { useQuery } from '@tanstack/react-query'
+import { fetchDashboardStats } from '@/lib/db'
 import {
   ClipboardText as ClipboardList,
   BookOpen,
@@ -53,6 +55,13 @@ export default function HomePage() {
   const recent5 = RECENT_GUIDES.slice(0, 5)
   const { entries: recentlyViewed } = useRecentlyViewed()
 
+  // 실제 DB 통계 — Supabase 미설정 시 mockData 기반 값이 폴백으로 반환됨 (db.js)
+  const { data: stats } = useQuery({
+    queryKey: ['home', 'dashboard-stats'],
+    queryFn:  fetchDashboardStats,
+    staleTime: 5 * 60 * 1000,
+  })
+
   const recentlyViewedGuides = recentlyViewed
     .map(e => (GUIDES[e.id] ? { id: e.id, ...GUIDES[e.id], viewedAt: e.viewedAt } : null))
     .filter(Boolean)
@@ -89,17 +98,15 @@ export default function HomePage() {
       <section className="mb-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <StatCard
           label="총 가이드"
-          value={`${totalGuides}개`}
-          delta={{ value: '+3', trend: 'up' }}
-          footerTitle="이번 달 3건 신규 추가"
-          footerDesc="지난 30일 기준"
+          value={`${(stats?.totalGuides ?? totalGuides).toLocaleString('ko-KR')}개`}
+          footerTitle="발행된 가이드 수"
+          footerDesc="status=published 기준"
         />
         <StatCard
-          label="월 조회수"
-          value="12,487"
-          delta={{ value: '+12.3%', trend: 'up' }}
-          footerTitle="전월 대비 증가"
-          footerDesc="실장·상담실 합산"
+          label="누적 조회수"
+          value={(stats?.totalViews ?? 0).toLocaleString('ko-KR')}
+          footerTitle={stats?.helpfulRate != null ? `만족도 ${stats.helpfulRate}%` : '만족도 집계 중'}
+          footerDesc="전체 가이드 합산"
         />
         <StatCard
           label="최근 업데이트"

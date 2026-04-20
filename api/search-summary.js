@@ -13,6 +13,63 @@
 const ANTHROPIC_API = 'https://api.anthropic.com/v1/messages'
 const MODEL = 'claude-haiku-4-5'
 
+// 바디 크기 한도 (8KB) — 악성 대용량 payload 로 비용·DoS 방지
+const MAX_BODY_BYTES = 8 * 1024
+
+// 간이 rate-limit — IP 당 분당 20회 (메모리 기반, 단일 인스턴스 한정)
+// Vercel Serverless 는 인스턴스 재사용 시에만 유지되므로 완전한 보호는 아님.
+// 운영 수준 보호는 Vercel Firewall / Upstash Redis 로 별도 도입 권장.
+const RATE_LIMIT_WINDOW_MS = 60 * 1000
+const RATE_LIMIT_MAX = 20
+const rateBuckets = new Map()
+
+function getClientIp(req) {
+  const xf = req.headers['x-forwarded-for']
+  if (typeof xf === 'string' && xf.length > 0) return xf.split(',')[0].trim()
+  return req.socket?.remoteAddress || 'unknown'
+}
+
+function readJsonWithLimit(req, limit) {
+  return new Promise((resolve, reject) => {
+    let received = 0
+    const chunks = []
+    req.on('data', (chunk) => {
+      received += chunk.length
+      if (received > limit) {
+        const err = new Error('payload_too_large')
+        err.code = 'payload_too_large'
+        req.destroy()
+        reject(err)
+        return
+      }
+      chunks.push(chunk)
+    })
+    req.on('end', () => {
+      if (chunks.length === 0) return resolve({})
+      try {
+        resolve(JSON.parse(Buffer.concat(chunks).toString('utf8')))
+      } catch {
+        resolve({})
+      }
+    })
+    req.on('error', reject)
+  })
+}
+
+function checkRateLimit(ip) {
+  const now = Date.now()
+  const bucket = rateBuckets.get(ip)
+  if (!bucket || now - bucket.start > RATE_LIMIT_WINDOW_MS) {
+    rateBuckets.set(ip, { start: now, count: 1 })
+    return { ok: true, remaining: RATE_LIMIT_MAX - 1 }
+  }
+  bucket.count++
+  if (bucket.count > RATE_LIMIT_MAX) {
+    return { ok: false, retryAfter: Math.ceil((bucket.start + RATE_LIMIT_WINDOW_MS - now) / 1000) }
+  }
+  return { ok: true, remaining: RATE_LIMIT_MAX - bucket.count }
+}
+
 // 프롬프트 캐싱이 유의미하려면 최소 ~1024 토큰의 안정된 프리픽스가 필요하다.
 // 아래 지시문은 바이트 단위로 고정이며, 호출 간 절대 변하지 않아야 한다.
 const SYSTEM_PROMPT = `당신은 "AMS Wiki" — 학원 운영 시스템 가이드 통합 위키 — 의 검색 어시스턴트입니다.
@@ -92,13 +149,41 @@ export default async function handler(req, res) {
     return json(res, 405, { error: 'method_not_allowed' })
   }
 
+  // 1) content-length 빠른 거절 (정상 클라이언트는 항상 동반)
+  const declaredLen = Number(req.headers['content-length'] || 0)
+  if (declaredLen > MAX_BODY_BYTES) {
+    return json(res, 413, { error: 'payload_too_large', limit: MAX_BODY_BYTES })
+  }
+
+  // 2) IP 단위 간이 rate-limit
+  const ip = getClientIp(req)
+  const rl = checkRateLimit(ip)
+  if (!rl.ok) {
+    res.setHeader('Retry-After', String(rl.retryAfter))
+    return json(res, 429, { error: 'rate_limited', retryAfter: rl.retryAfter })
+  }
+
   const apiKey = process.env.ANTHROPIC_API_KEY
   if (!apiKey) {
     return json(res, 503, { error: 'api_key_missing', message: 'ANTHROPIC_API_KEY 환경변수가 설정되지 않았습니다.' })
   }
 
+  // 3) Vercel 이 req.body 를 이미 파싱해줬을 수도 있고, 스트림만 줬을 수도 있다.
+  //    어느 쪽이든 실제 바이트 길이를 측정하며 한도를 초과하면 즉시 종료한다.
   let body = req.body
-  if (typeof body === 'string') {
+  if (body == null) {
+    try {
+      body = await readJsonWithLimit(req, MAX_BODY_BYTES)
+    } catch (err) {
+      if (err && err.code === 'payload_too_large') {
+        return json(res, 413, { error: 'payload_too_large', limit: MAX_BODY_BYTES })
+      }
+      return json(res, 400, { error: 'invalid_body' })
+    }
+  } else if (typeof body === 'string') {
+    if (Buffer.byteLength(body, 'utf8') > MAX_BODY_BYTES) {
+      return json(res, 413, { error: 'payload_too_large', limit: MAX_BODY_BYTES })
+    }
     try { body = JSON.parse(body) } catch { body = {} }
   }
   const query = typeof body?.query === 'string' ? body.query.trim().slice(0, 200) : ''

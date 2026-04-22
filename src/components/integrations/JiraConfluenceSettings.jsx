@@ -13,7 +13,6 @@ export function JiraConfluenceSettings() {
   const [loading, setLoading] = useState(true)
   const [connecting, setConnecting] = useState(false)
   const [error, setError] = useState(null)
-  const [user, setUser] = useState(null)
 
   // 현재 사용자 및 통합 로드
   useEffect(() => {
@@ -29,8 +28,6 @@ export function JiraConfluenceSettings() {
         setError('로그인이 필요합니다')
         return
       }
-
-      setUser(sessionData.session.user)
 
       // OAuth 통합 조회
       const { data, error: dbError } = await supabase

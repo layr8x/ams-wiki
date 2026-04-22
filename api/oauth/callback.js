@@ -121,7 +121,7 @@ export default async function handler(req, res) {
     const expiresAt = new Date(Date.now() + expires_in * 1000).toISOString()
 
     for (const resource of resources) {
-      const { cloud_id, url, name } = resource
+      const { cloud_id, url } = resource
 
       // Jira와 Confluence 둘 다 지원 (provider는 나중에 필터링)
       const providers = ['jira', 'confluence']

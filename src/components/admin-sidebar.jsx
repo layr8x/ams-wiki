@@ -10,6 +10,7 @@ import {
   PencilSimple as PencilLine,
   Users,
   ArrowSquareOut as ExternalLink,
+  PlugsConnected,
 } from '@phosphor-icons/react'
 import { useAuth } from "@/store/authStore"
 import {
@@ -32,6 +33,7 @@ const ADMIN_NAV = [
   { title: "가이드 관리", to: "/admin/guides", icon: FileText, perm: 'edit' },
   { title: "새 가이드 작성", to: "/editor", icon: PencilLine, perm: 'edit' },
   { title: "피드백 수신함", to: "/admin/feedback", icon: MessageSquare, perm: 'edit' },
+  { title: "외부 연동", to: "/admin/integration", icon: PlugsConnected, perm: 'manage_users' },
   { title: "사용자 관리", to: "/admin/users", icon: Users, perm: 'manage_users' },
 ]
 

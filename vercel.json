@@ -13,11 +13,7 @@
   "crons": [
     {
       "path": "/api/sync/jira",
-      "schedule": "0 */6 * * *"
-    },
-    {
-      "path": "/api/sync/confluence",
-      "schedule": "0 1,7,13,19 * * *"
+      "schedule": "0 0 * * *"
     }
   ],
   "headers": [

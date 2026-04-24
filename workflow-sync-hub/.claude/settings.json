@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "obsidian": {
+      "command": "npx",
+      "args": ["-y", "obsidian-mcp"],
+      "env": {
+        "OBSIDIAN_API_KEY": "your-api-key-here"
+      }
+    }
+  }
+}

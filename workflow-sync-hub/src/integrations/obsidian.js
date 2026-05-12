@@ -1,5 +1,4 @@
 import axios from 'axios';
-import path from 'path';
 import config from '../config.js';
 
 export class ObsidianClient {
@@ -116,7 +115,7 @@ export class ObsidianClient {
   // 연결 테스트
   async testConnection() {
     try {
-      const response = await this.client.post('/vault/list', {
+      await this.client.post('/vault/list', {
         path: '',
       });
 

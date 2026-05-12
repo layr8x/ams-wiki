@@ -34,7 +34,7 @@ switch (command) {
     scheduler.start();
     break;
 
-  case 'sync':
+  case 'sync': {
     console.log('🔄 Running manual sync');
     const manager = new SyncManager(config);
     manager.syncAll()
@@ -47,6 +47,7 @@ switch (command) {
         process.exit(1);
       });
     break;
+  }
 
   case 'status':
     console.log('Status:', scheduler.getStatus());

@@ -1,0 +1,124 @@
+#!/usr/bin/env node
+// scripts/kakao-partner-backfill.mjs
+// 모든 채팅의 과거 메시지를 /chatlogs REST endpoint 로 가져와 supabase 에 적재.
+//
+// 카카오 응답 구조 (실측):
+//   GET /api/profiles/{pid}/chats/{cid}/chatlogs?since={log_id}&direct={prev|next}
+//   { has_prev: bool, has_next: bool, items: [...] }
+//
+// 페이지네이션:
+//   - direct=next + since=0      → 가장 오래된 메시지부터 시간순
+//   - direct=next + since=lastId → 다음 페이지 (더 최근)
+//   - has_next 가 true 인 동안 반복
+
+import { KakaoPartnerClient } from './lib/kakao-partner-client.mjs';
+import { getAdminClient } from './lib/supabase-admin.mjs';
+
+const PROFILE_ID = process.env.KAKAO_PARTNER_PROFILE_ID;
+const COOKIE = process.env.KAKAO_PARTNER_COOKIE;
+const PAGE_DELAY_MS = Number(process.env.KAKAO_BACKFILL_DELAY_MS || 250);
+const MAX_PAGES_PER_CHAT = Number(process.env.KAKAO_BACKFILL_MAX_PAGES || 200);
+
+const client = new KakaoPartnerClient({ cookie: COOKIE, profileId: PROFILE_ID });
+const supabase = getAdminClient();
+
+function logToRow(item, profileId, chatId) {
+  // sender_type 판정: manager 객체가 있으면 manager, 없고 author.user_type=0 면 user
+  const isManager = !!item.manager;
+  const author = item.author || {};
+  const senderType = isManager ? 'manager' : (author.user_type === 0 ? 'user' : 'system');
+  const senderId = isManager ? String(item.manager?.id ?? '') : String(author.id ?? '');
+
+  // 메시지 본문 후보: message, text, content
+  const message = item.message ?? item.text ?? item.content ?? null;
+  const messageType = item.type ?? null;
+  const sentAt = item.send_at
+    ? new Date(item.send_at).toISOString()
+    : item.created_at
+    ? new Date(item.created_at).toISOString()
+    : null;
+
+  return {
+    log_id: String(item.id),
+    chat_id: String(chatId),
+    profile_id: profileId,
+    sender_type: senderType,
+    sender_id: senderId || null,
+    message,
+    message_type: messageType,
+    attachments: item.attachment && Object.keys(item.attachment).length ? item.attachment : null,
+    sent_at: sentAt,
+    raw: item,
+    source: 'rest_backfill',
+  };
+}
+
+async function backfillChat(chatId) {
+  let totalInserted = 0;
+  let since = 0;
+  let lastInsertedId = null;
+  for (let page = 0; page < MAX_PAGES_PER_CHAT; page++) {
+    const url = `/api/profiles/${PROFILE_ID}/chats/${chatId}/chatlogs?since=${since}&direct=next`;
+    let res;
+    try {
+      res = await client._fetch(url);
+    } catch (e) {
+      console.error(`  [chat ${chatId} page ${page}] fetch fail:`, e.message);
+      return { totalInserted, error: e.message };
+    }
+    const items = res?.items || [];
+    if (!items.length) break;
+
+    const rows = items.map((it) => logToRow(it, PROFILE_ID, chatId));
+    const { error } = await supabase
+      .from('kakao_partner_messages')
+      .upsert(rows, { onConflict: 'log_id' });
+    if (error) {
+      console.error(`  [chat ${chatId} page ${page}] upsert fail:`, error.message);
+      return { totalInserted, error: error.message };
+    }
+    totalInserted += rows.length;
+    lastInsertedId = rows[rows.length - 1].log_id;
+
+    if (!res.has_next) break;
+    // 다음 페이지: 마지막 log_id 부터 next 방향
+    since = lastInsertedId;
+    await new Promise((r) => setTimeout(r, PAGE_DELAY_MS));
+  }
+  return { totalInserted, lastLogId: lastInsertedId };
+}
+
+async function main() {
+  // 인증 검증
+  const me = await client.me();
+  console.log(`[auth] ${me.email || me.id}`);
+
+  // 채팅 ID 목록
+  const { data: chats, error: chatsErr } = await supabase
+    .from('kakao_partner_chats')
+    .select('chat_id, nickname, last_log_id')
+    .eq('profile_id', PROFILE_ID)
+    .order('last_log_send_at', { ascending: false });
+  if (chatsErr) throw chatsErr;
+  console.log(`[plan] ${chats.length} chats to backfill`);
+
+  let grandTotal = 0;
+  let chatIdx = 0;
+  for (const chat of chats) {
+    chatIdx++;
+    const { totalInserted, lastLogId, error } = await backfillChat(chat.chat_id);
+    grandTotal += totalInserted;
+    const tag = error ? `ERR ${error}` : `last=${lastLogId || '-'}`;
+    console.log(
+      `[${chatIdx}/${chats.length}] ${chat.chat_id} ${chat.nickname?.slice(0, 12) || '?'} +${totalInserted} (${tag}) [grand=${grandTotal}]`,
+    );
+    // 채팅 사이 jitter
+    await new Promise((r) => setTimeout(r, 100 + Math.random() * 200));
+  }
+  console.log(`\n[done] inserted ${grandTotal} messages across ${chats.length} chats`);
+}
+
+main().catch((e) => {
+  console.error('[fatal]', e);
+  process.exit(1);
+});

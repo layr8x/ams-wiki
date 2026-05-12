@@ -17,6 +17,7 @@
     "update:cs-insights": "node scripts/update-cs-insights.mjs",
     "cs-pipeline": "npm run sync:kakao-chats && node scripts/run-cs-pipeline.mjs",
     "kakao:bootstrap": "node --env-file=.env.local scripts/kakao-partner-bootstrap.mjs",
+    "kakao:backfill": "node --env-file=.env.local scripts/kakao-partner-backfill.mjs",
     "kakao:stream": "node --env-file=.env.local scripts/kakao-partner-stream.mjs"
   },
   "dependencies": {

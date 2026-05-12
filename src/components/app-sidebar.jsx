@@ -19,7 +19,8 @@ import {
   Shield,
   Users
 } from '@phosphor-icons/react'
-import { MODULE_TREE, RECENT_GUIDES } from "@/data/mockData"
+import { getModuleTree } from "@/lib/db"
+import { useRecentGuides } from "@/hooks/useGuides"
 import { useAuth } from "@/store/authStore"
 import {
   Collapsible,
@@ -98,8 +99,9 @@ export function AppSidebar({ ...props }) {
   const currentPath = location.pathname
   const { user, canAccess, hasPermission } = useAuth()
 
-  const recents = RECENT_GUIDES.slice(0, 5)
-  const visibleModules = MODULE_TREE.filter(mod => canAccess(mod.id))
+  const { data: recentGuidesData } = useRecentGuides(5)
+  const recents = recentGuidesData ?? []
+  const visibleModules = getModuleTree().filter(mod => canAccess(mod.id))
   const isAdmin = hasPermission('manage_users')
 
   return (

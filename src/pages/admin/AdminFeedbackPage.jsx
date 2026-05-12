@@ -1,9 +1,11 @@
 // src/pages/admin/AdminFeedbackPage.jsx — /admin/feedback
 // 로컬 큐(NoResultFallback 등) + Supabase guide_feedback 머지 뷰
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { fetchAdminFeedback } from '@/lib/db'
+import { usePagination } from '@/hooks/usePagination'
+import Pagination from '@/components/common/Pagination'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -14,8 +16,9 @@ import {
 } from '@/components/ui/table'
 import { Trash } from '@phosphor-icons/react'
 import { useToast } from '@/components/ui/toast'
+import { STORAGE_KEYS } from '@/lib/storageKeys'
 
-const FEEDBACK_QUEUE_KEY = 'ams-wiki:feedback:queue:v1'
+const FEEDBACK_QUEUE_KEY = STORAGE_KEYS.feedbackQueue
 
 const KIND_LABEL = {
   'missing-guide': '가이드 요청',
@@ -77,7 +80,7 @@ export default function AdminFeedbackPage() {
   }
 
   // 통합 뷰: 로컬 → 원격 순
-  const merged = [
+  const merged = useMemo(() => [
     ...localItems.map(l => ({ ...l, kind: l.kind || 'missing-guide' })),
     ...remote.map(r => ({
       id:        r.id,
@@ -87,16 +90,21 @@ export default function AdminFeedbackPage() {
       guideId:   r.guideId,
       createdAt: r.createdAt,
     })),
-  ].sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''))
+  ].sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || '')),
+  [localItems, remote])
 
-  const filtered = tab === 'all'
+  const filtered = useMemo(() => tab === 'all'
     ? merged
     : merged.filter(item => {
         if (tab === 'requests') return item.kind === 'missing-guide' || !item.guideId
         if (tab === 'issues')   return item.kind === 'not-helpful' || item.kind === 'bug'
         if (tab === 'praise')   return item.kind === 'helpful' || item.kind === 'praise'
         return true
-      })
+      }),
+  [tab, merged])
+
+  const pagination = usePagination(filtered, 25)
+  useEffect(() => { pagination.reset() }, [tab]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="mx-auto w-full max-w-5xl space-y-6 px-6 py-8">
@@ -151,7 +159,7 @@ export default function AdminFeedbackPage() {
                     </TableCell>
                   </TableRow>
                 ) : (
-                  filtered.map((item) => (
+                  pagination.currentItems.map((item) => (
                     <TableRow key={item.id}>
                       <TableCell>
                         <Badge variant={VOTE_VARIANT[item.kind] || 'outline'} className="text-xs">
@@ -187,6 +195,12 @@ export default function AdminFeedbackPage() {
               </TableBody>
             </Table>
           </div>
+
+          {filtered.length > 0 && pagination.totalPages > 1 && (
+            <div className="p-4">
+              <Pagination pagination={pagination} />
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

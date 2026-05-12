@@ -1,5 +1,6 @@
 // src/pages/ErrorPage.jsx
 // 구조: 큰 상태 코드 + 메시지 + 복구 액션 2개
+import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   House as Home,

@@ -1,6 +1,6 @@
 // src/pages/FaqPage.jsx
 // 구조: PageHeader → 카테고리 pill → Accordion (shadcn 공식)
-import { useState, useMemo } from 'react'
+import React, { useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import {
   Question as HelpCircle,
@@ -56,13 +56,14 @@ export default function FaqPage() {
       />
 
       {/* 카테고리 pill */}
-      <div className="mb-6 flex flex-wrap gap-1.5">
+      <div className="mb-6 flex flex-wrap gap-1.5" role="group" aria-label="카테고리 필터">
         {categories.map(cat => {
           const count = cat === '전체' ? FAQ_DATA.length : FAQ_DATA.filter(f => f.category === cat).length
           return (
             <button
               key={cat}
               onClick={() => setCategory(cat)}
+              aria-pressed={category === cat}
               className={cn(
                 'inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition-colors',
                 category === cat

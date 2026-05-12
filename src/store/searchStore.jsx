@@ -1,5 +1,5 @@
 // src/store/searchStore.jsx - 검색 스토어 관리
-import { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 
 const SearchContext = createContext();
 

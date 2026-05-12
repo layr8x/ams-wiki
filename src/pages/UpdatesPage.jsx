@@ -1,6 +1,6 @@
 // src/pages/UpdatesPage.jsx
 // 구조: PageHeader → 타입 필터 → 월 그룹별 타임라인
-import { useState, useMemo } from 'react'
+import React, { useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import {
   Sparkle as Sparkles,
@@ -69,7 +69,7 @@ export default function UpdatesPage() {
       />
 
       {/* 타입 필터 */}
-      <div className="mb-8 flex flex-wrap gap-1.5">
+      <div className="mb-8 flex flex-wrap gap-1.5" role="group" aria-label="업데이트 타입 필터">
         {TYPE_FILTERS.map(f => {
           const count = f.value === 'all'
             ? UPDATES_DATA.length
@@ -78,6 +78,7 @@ export default function UpdatesPage() {
             <button
               key={f.value}
               onClick={() => setFilter(f.value)}
+              aria-pressed={filter === f.value}
               className={cn(
                 'inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition-colors',
                 filter === f.value

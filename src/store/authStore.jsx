@@ -1,5 +1,5 @@
 // src/store/authStore.jsx — Supabase Auth 실제 연동
-import { createContext, useContext, useState, useEffect, useCallback } from 'react'
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react'
 import { supabase, isSupabaseEnabled } from '@/lib/supabase'
 import { ROLES, ROLE_PERMISSIONS, canAccessModule } from './authConstants'
 import { STORAGE_KEYS } from '@/lib/storageKeys'

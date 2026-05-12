@@ -1,6 +1,6 @@
 // src/pages/GuideListPage.jsx
 // 구조: PageHeader → 검색/필터 툴바 → 결과 카운트 → 카드 그리드
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import {
   MagnifyingGlass as Search,
@@ -10,12 +10,16 @@ import {
   FileX,
   CaretRight as ChevronRight
 } from '@phosphor-icons/react'
-import { GUIDES, MODULE_TREE } from '@/data/mockData'
+import { getModuleTree } from '@/lib/db'
+import { useGuideList } from '@/hooks/useGuides'
+import { usePagination } from '@/hooks/usePagination'
+import Pagination from '@/components/common/Pagination'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Card, CardHeader, CardContent, CardFooter, CardTitle, CardDescription } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
+import { Skeleton } from '@/components/ui/skeleton'
 import {
   PageShell, PageHeader, EmptyState,
 } from '@/components/common/page-primitives'
@@ -33,19 +37,19 @@ export default function GuideListPage() {
   const [typeFilter, setType] = useState('ALL')
   const [sort, setSort]       = useState('updated')
 
+  const moduleTree = getModuleTree()
   const currentModule = useMemo(
-    () => moduleId ? MODULE_TREE.find(m => m.id === moduleId) : null,
-    [moduleId]
+    () => moduleId ? moduleTree.find(m => m.id === moduleId) : null,
+    [moduleId, moduleTree]
   )
 
-  const allGuides = useMemo(
-    () => Object.entries(GUIDES).map(([id, g]) => ({ id, ...g })),
-    []
-  )
+  const { data: fetchedGuides, isLoading } = useGuideList({
+    module: currentModule?.label,
+  })
+  const allGuides = useMemo(() => fetchedGuides ?? [], [fetchedGuides])
 
   const filtered = useMemo(() => {
     let list = allGuides
-    if (currentModule) list = list.filter(g => g.module === currentModule.label)
     if (typeFilter !== 'ALL') list = list.filter(g => g.type === typeFilter)
     if (search.trim()) {
       const q = search.toLowerCase()
@@ -61,7 +65,10 @@ export default function GuideListPage() {
       return (b.updated ?? '').localeCompare(a.updated ?? '')
     })
     return list
-  }, [allGuides, currentModule, typeFilter, search, sort])
+  }, [allGuides, typeFilter, search, sort])
+
+  const pagination = usePagination(filtered, 24) // 3-col × 8행
+  useEffect(() => { pagination.reset() }, [typeFilter, search, sort, moduleId]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <PageShell>
@@ -129,7 +136,13 @@ export default function GuideListPage() {
       <Separator className="mb-6" />
 
       {/* 결과 */}
-      {filtered.length === 0 ? (
+      {isLoading ? (
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <Skeleton key={`g-sk-${i}`} className="h-48 rounded-lg" />
+          ))}
+        </div>
+      ) : filtered.length === 0 ? (
         <EmptyState
           icon={FileX}
           title="검색 결과가 없습니다"
@@ -142,7 +155,7 @@ export default function GuideListPage() {
         />
       ) : (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {filtered.map(g => {
+          {pagination.currentItems.map(g => {
             const typeMeta = getGuideType(g.type)
             return (
               <Link key={g.id} to={`/guides/${g.id}`} className="group">
@@ -186,6 +199,12 @@ export default function GuideListPage() {
               </Link>
             )
           })}
+        </div>
+      )}
+
+      {!isLoading && filtered.length > 0 && pagination.totalPages > 1 && (
+        <div className="mt-8">
+          <Pagination pagination={pagination} />
         </div>
       )}
     </PageShell>

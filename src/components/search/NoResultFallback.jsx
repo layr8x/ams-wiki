@@ -8,7 +8,7 @@
 // 개선 요청: localStorage 큐(`ams-wiki:feedback:queue:v1`)에 적재.
 //  - 백엔드 연결 전 임시 저장소. 제출 형식은 서버 API 와 동일 스키마로 맞춤.
 
-import { useMemo, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import {
   Compass,
   PaperPlaneTilt,
@@ -18,8 +18,9 @@ import {
 import { GUIDES } from '@/data/mockData'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
+import { STORAGE_KEYS } from '@/lib/storageKeys'
 
-const FEEDBACK_QUEUE_KEY = 'ams-wiki:feedback:queue:v1'
+const FEEDBACK_QUEUE_KEY = STORAGE_KEYS.feedbackQueue
 
 function bigrams(str) {
   const s = (str || '').toLowerCase().replace(/\s+/g, '')

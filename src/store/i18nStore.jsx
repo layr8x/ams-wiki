@@ -1,5 +1,5 @@
 // src/store/i18nStore.jsx — 국제화(i18n) 상태 관리
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { I18nContext } from './i18nContext';
 import koTranslations from '@/locales/ko.json';
 import enTranslations from '@/locales/en.json';

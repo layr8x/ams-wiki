@@ -1,5 +1,5 @@
 // src/components/search/SearchOverlay.jsx — shadcn/ui Command 팔레트
-import { useState, useEffect, useRef, useCallback } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   MagnifyingGlass as Search,
@@ -115,6 +115,13 @@ export default function SearchOverlay() {
               className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
               autoComplete="off"
               spellCheck={false}
+              role="combobox"
+              aria-expanded={showResults && results.length > 0}
+              aria-controls="search-results-listbox"
+              aria-autocomplete="list"
+              aria-activedescendant={
+                showResults && results.length > 0 ? `search-result-${selected}` : undefined
+              }
             />
             <kbd className="pointer-events-none hidden h-5 select-none items-center gap-1 rounded border border-border bg-muted px-1.5 font-mono text-xs font-medium text-muted-foreground sm:flex">ESC</kbd>
           </div>
@@ -135,13 +142,22 @@ export default function SearchOverlay() {
               ) : (
                 <div className="p-1">
                   <AiSummaryCard summary={summary} onSourceClick={goTo} />
-                  <p className="px-3 py-1.5 text-xs font-medium text-muted-foreground">검색 결과 {results.length}건</p>
+                  <p className="px-3 py-1.5 text-xs font-medium text-muted-foreground" id="search-results-count">검색 결과 {results.length}건</p>
+                  <ul
+                    id="search-results-listbox"
+                    role="listbox"
+                    aria-labelledby="search-results-count"
+                    className="list-none p-0 m-0"
+                  >
                   {results.map((g, i) => {
                     const meta = getGuideType(g.type)
                     const Icon = meta.icon
+                    const isSelected = selected === i
                     return (
-                      <button key={g.id} onClick={() => goTo(g.id)} onMouseEnter={() => setSelected(i)}
-                        className={cn('flex w-full items-start gap-3 rounded-md px-3 py-2.5 text-left transition-colors', selected === i ? 'bg-accent' : 'hover:bg-accent/50')}
+                      <li key={g.id} role="option" id={`search-result-${i}`} aria-selected={isSelected}>
+                      <button onClick={() => goTo(g.id)} onMouseEnter={() => setSelected(i)}
+                        tabIndex={-1}
+                        className={cn('flex w-full items-start gap-3 rounded-md px-3 py-2.5 text-left transition-colors', isSelected ? 'bg-accent' : 'hover:bg-accent/50')}
                       >
                         <div className={cn('mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-md', meta.tone.bg)}>
                           <Icon size={13} className={meta.tone.text} />
@@ -155,8 +171,10 @@ export default function SearchOverlay() {
                         </div>
                         <ArrowRight size={13} className="mt-1 shrink-0 text-muted-foreground/50" />
                       </button>
+                      </li>
                     )
                   })}
+                  </ul>
                 </div>
               )
             ) : (

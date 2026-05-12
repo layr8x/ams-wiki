@@ -5,8 +5,10 @@
 //   - 카테고리 그리드
 //   - 하단 2열: 최근 업데이트 / 자주 찾는 가이드 Top (조회수 기반)
 import { Link } from 'react-router-dom'
+import { useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { fetchDashboardStats } from '@/lib/db'
+import { fetchDashboardStats, getModuleTree } from '@/lib/db'
+import { useRecentGuides, usePopularGuides, useGuideList } from '@/hooks/useGuides'
 import {
   ClipboardText as ClipboardList,
   BookOpen,
@@ -24,7 +26,6 @@ import {
   PencilSimple as PencilLine,
   Eye,
 } from '@phosphor-icons/react'
-import { MODULE_TREE, RECENT_GUIDES, GUIDES } from '@/data/mockData'
 import {
   Card, CardContent, CardHeader, CardTitle, CardDescription, CardAction,
 } from '@/components/ui/card'
@@ -51,9 +52,8 @@ const MODULE_TINT = {
 }
 
 export default function HomePage() {
-  const totalGuides = Object.keys(GUIDES).length
-  const recent5 = RECENT_GUIDES.slice(0, 5)
   const { entries: recentlyViewed } = useRecentlyViewed()
+  const moduleTree = getModuleTree()
 
   // 실제 DB 통계 — Supabase 미설정 시 mockData 기반 값이 폴백으로 반환됨 (db.js)
   const { data: stats } = useQuery({
@@ -62,15 +62,23 @@ export default function HomePage() {
     staleTime: 5 * 60 * 1000,
   })
 
-  const recentlyViewedGuides = recentlyViewed
-    .map(e => (GUIDES[e.id] ? { id: e.id, ...GUIDES[e.id], viewedAt: e.viewedAt } : null))
-    .filter(Boolean)
-    .slice(0, 4)
+  const { data: recentGuidesData } = useRecentGuides(5)
+  const { data: popularGuidesData } = usePopularGuides(5)
+  // 최근 열람 가이드 복원용 — 전체 목록을 한 번만 받아와 ID로 매칭
+  const { data: allGuides } = useGuideList()
 
-  const popularGuides = Object.entries(GUIDES)
-    .map(([id, g]) => ({ id, ...g }))
-    .sort((a, b) => (b.views ?? 0) - (a.views ?? 0))
-    .slice(0, 5)
+  const recent5 = recentGuidesData ?? []
+  const popularGuides = popularGuidesData ?? []
+  const totalGuides = stats?.totalGuides ?? (allGuides?.length ?? 0)
+
+  const recentlyViewedGuides = useMemo(() => {
+    if (!allGuides) return []
+    const byId = new Map(allGuides.map(g => [g.id, g]))
+    return recentlyViewed
+      .map(e => (byId.has(e.id) ? { ...byId.get(e.id), viewedAt: e.viewedAt } : null))
+      .filter(Boolean)
+      .slice(0, 4)
+  }, [allGuides, recentlyViewed])
 
   return (
     <PageShell>
@@ -167,7 +175,7 @@ export default function HomePage() {
           link="/guides"
         />
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {MODULE_TREE.map(mod => {
+          {moduleTree.map(mod => {
             const Icon = ICON_MAP[mod.icon] ?? FileText
             const tint = MODULE_TINT[mod.id] ?? 'bg-muted text-muted-foreground'
             return (

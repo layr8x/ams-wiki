@@ -6,6 +6,7 @@
 -- =============================================================================
 
 create extension if not exists "uuid-ossp";
+create extension if not exists pg_trgm;
 
 -- ─── 채팅방 (대화 단위) ─────────────────────────────────────────────────────
 create table if not exists kakao_partner_chats (

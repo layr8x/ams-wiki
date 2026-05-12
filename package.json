@@ -11,7 +11,8 @@
     "test": "vitest",
     "test:e2e": "playwright test",
     "db:seed": "node supabase/generate-seed.mjs",
-    "sync:confluence": "node scripts/sync-confluence.mjs"
+    "sync:confluence": "node scripts/sync-confluence.mjs",
+    "sync:kakao-chats": "node scripts/sync-kakao-chats.mjs"
   },
   "dependencies": {
     "@phosphor-icons/react": "^2.1.10",

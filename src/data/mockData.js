@@ -2,10 +2,13 @@
 // AMS 실제 운영 가이드 데이터 — Confluence 원본 기반
 // Source: https://hiconsy.atlassian.net/wiki/spaces/FVSOL/pages/1378910256
 //
-// 2026-05-12: 실장 카톡 단톡방 6개월(2025.11~2026.05, 14,897라인) 분석 기반 신규 가이드 7개 통합.
-//             상세 분석은 docs/manager-inquiries-analysis.md 참고.
+// 2026-05-12 (1차): 실장 카톡 단톡방 6개월(14,897라인) 분석 → 신규 가이드 7개 통합
+//                   상세: docs/manager-inquiries-analysis.md
+// 2026-05-12 (2차): 마이클래스 CS 상담(1,119건) + GA4 교차분석 → 신규 가이드 4개 + CS 인사이트 통합
+//                   상세: docs/ams-wiki-roadmap.md
 
 import { INQUIRY_GUIDES, INQUIRY_RECENT } from './inquiryGuides.js';
+import { CS_GUIDES, CS_RECENT } from './csGuides.js';
 
 const CONFLUENCE = 'https://hiconsy.atlassian.net/wiki/spaces/FVSOL/pages';
 const AMS = 'https://ams.sdij.com';
@@ -785,8 +788,11 @@ export const GUIDES = {
     responses: null, decisionTable: null, referenceData: null, policyDiff: null,
   },
 
-  // ── 실장 카톡 분석 기반 신규 가이드 (2026-05-12 통합) ────────────────────
+  // ── 실장 카톡 분석 기반 신규 가이드 (2026-05-12 1차) ───────────────────────
   ...INQUIRY_GUIDES,
+
+  // ── 마이클래스 CS 상담 분석 기반 신규 가이드 (2026-05-12 2차) ──────────────
+  ...CS_GUIDES,
 };
 
 // AMS 실제 메뉴 구조 (https://ams.sdij.com 기준)
@@ -812,12 +818,13 @@ export const MODULE_TREE = [
     id: 'operation', label: '수업운영관리', icon: 'Calendar',
     amsPath: '/operation/class/manage',
     guides: [
-      { id: 'enrollment-process', label: '입반 처리 가이드' },
-      { id: 'attendance-process', label: '출결 처리 가이드' },
-      { id: 'class-manage',       label: '수업관리 화면 가이드' },
-      { id: 'class-transfer',     label: '전반 처리 가이드' },
-      { id: 'unpaid-withdraw',    label: '미납자 퇴반처리' },
-      { id: 'qr-trouble',         label: 'QR 출석 인식 실패 트러블슈팅' },
+      { id: 'enrollment-process',     label: '입반 처리 가이드' },
+      { id: 'attendance-process',     label: '출결 처리 가이드' },
+      { id: 'class-manage',           label: '수업관리 화면 가이드' },
+      { id: 'class-transfer',         label: '전반 처리 가이드' },
+      { id: 'unpaid-withdraw',        label: '미납자 퇴반처리' },
+      { id: 'qr-trouble',             label: 'QR 출석 인식 실패 트러블슈팅' },
+      { id: 'attendance-print-export',label: '출석부 인쇄·엑셀 다운로드 가이드' },
     ],
   },
   {
@@ -837,10 +844,11 @@ export const MODULE_TREE = [
     id: 'customer', label: '고객(원생) 관리', icon: 'Users',
     amsPath: '/customer/member/detail',
     guides: [
-      { id: 'member-merge',        label: 'AMS 회원 병합 가이드' },
-      { id: 'duplicate-account',   label: '중복 계정 통합 프로세스' },
-      { id: 'parent-phone-change', label: '학부모 대표번호 변경 (부↔모)' },
-      { id: 'student-suspension',  label: '휴강 처리 절차' },
+      { id: 'member-merge',             label: 'AMS 회원 병합 가이드' },
+      { id: 'duplicate-account',        label: '중복 계정 통합 프로세스' },
+      { id: 'parent-phone-change',      label: '학부모 대표번호 변경 (부↔모)' },
+      { id: 'school-registration-link', label: '학원 등록정보 연동 (학부모 셀프)' },
+      { id: 'student-suspension',       label: '휴강 처리 절차' },
     ],
   },
   {
@@ -851,6 +859,15 @@ export const MODULE_TREE = [
       { id: 'virtual-account-guide', label: '가상계좌 안내 문자 발송 가이드' },
       { id: 'payment-request-sms',   label: '결제 요청 문자 발송 가이드' },
       { id: 'payment-url-expired',   label: '결제 URL 만료·미수신 트러블슈팅' },
+      { id: 'privacy-consent-flow',  label: '개인정보 동의 처리 (이탈 방지)' },
+    ],
+  },
+  // ── 영상/VOD (신규 모듈, CS 1위 카테고리) ────────────────────────────────
+  {
+    id: 'video', label: '영상/VOD 관리', icon: 'PlayCircle',
+    amsPath: '/video',
+    guides: [
+      { id: 'video-playback-trouble', label: '복습영상·VOD 재생 오류 트러블슈팅' },
     ],
   },
   {
@@ -867,7 +884,10 @@ export const MODULE_TREE = [
 ];
 
 export const RECENT_GUIDES = [
-  // 카톡 분석 기반 신규 가이드 (가장 최근)
+  // 마이클래스 CS 상담 분석 기반 신규 가이드 (2026-05-12 2차, 최신)
+  ...CS_RECENT,
+
+  // 실장 카톡 분석 기반 신규 가이드 (2026-05-12 1차)
   ...INQUIRY_RECENT,
 
   { id:'attendance-process',    module:'수업운영관리',         title:'출결 처리 가이드',                     updated_at:'2026-04-13', views: 512, helpful: 42, version: 'v2.3', author: '이준호', tags: ['출결', '필수'] },
@@ -909,4 +929,9 @@ export const SEARCH_SYNONYMS = {
   '중복결제': ['카드 2회 결제', '승인번호 누락', 'CTI 콜', '키오스크 오류'],
   '전반': ['반 이동', '강좌 변경', '티켓 이관'],
   '라이브 데이터': ['sdijon', '라이브 수강', '이메일 변경'],
+  // CS 분석(마이클래스 상담 1,119건) 기반 자연어 패턴
+  '영상 재생 오류': ['VOD 안 나옴', '복습영상', '동영상 안 나옴', '버퍼링', '재생 안됨', '스트리밍 끊김'],
+  '학원 등록 연동': ['연동 안됨', '학원 등록 정보 연동', '연동 코드', '본인인증 안됨'],
+  '개인정보 동의': ['동의 문자', '개인정보 동의 안됨', '동의 안 옴', '동의 링크'],
+  '출석부 다운로드': ['출석부 엑셀', '출석부 인쇄', '신규생 명단', '결석생 명단'],
 };

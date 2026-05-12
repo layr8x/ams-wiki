@@ -28,10 +28,12 @@ Claude Haiku 4.5 (검색 결과 요약)
 ```
 
 ### 주요 페이지/컴포넌트
-- **HomePage**: 최근 가이드 + 인기 가이드 + 모듈 네비게이션
-- **GuideListPage**: 모듈별 가이드 목록 (필터링)
-- **GuidePage**: 개별 가이드 상세 보기 + 편집 + 피드백
-- **AdminPage**: 관리자 대시보드 (RBAC 기반)
+- **HomePage** (`/`): 최근 가이드 + 인기 가이드 + 모듈 네비게이션
+- **GuideListPage** (`/guides`): 모듈별 가이드 목록 (필터링)
+- **GuidePage** (`/guides/:id`): 개별 가이드 상세 보기 + 편집 + 피드백
+- **CreateGuidePage** (`/create`): 새 가이드 작성 시작 (템플릿 선택 → 기본정보 입력)
+- **EditorPage** (`/editor?id=...`): 가이드 편집 (구조 정의 + 콘텐츠 작성)
+- **AdminPage** (`/admin/*`): 관리자 대시보드 (RBAC 기반)
 - **SearchOverlay**: ⌘K 명령 팔레트 (shadcn Command)
 - **SyncMonitor**: Jira/Confluence 동기화 상태 (Pro 플랜용)
 
@@ -160,6 +162,8 @@ npm run sync:confluence       # Confluence 동기화
 ## 📊 배포
 
 ### Vercel 자동 배포
+- **프로덕션**: https://ams-wiki.vercel.app
+- **프리뷰**: https://ams-wiki-h6th.vercel.app
 - main 브랜치 푸시 → GitHub Actions → Vercel 자동 배포
 - 환경변수는 Vercel 프로젝트 설정에서 관리
 - Cron Jobs는 vercel.json에서 정의

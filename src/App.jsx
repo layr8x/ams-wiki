@@ -19,6 +19,7 @@ const GuideListPage        = lazy(() => import('./pages/GuideListPage'))
 const GuidePage            = lazy(() => import('./pages/GuidePage'))
 const FaqPage              = lazy(() => import('./pages/FaqPage'))
 const UpdatesPage          = lazy(() => import('./pages/UpdatesPage'))
+const CreateGuidePage      = lazy(() => import('./pages/CreateGuidePage'))
 const EditorPage           = lazy(() => import('./pages/EditorPage'))
 const FeedbackPage         = lazy(() => import('./pages/FeedbackPage'))
 const ErrorPage            = lazy(() => import('./pages/ErrorPage'))
@@ -66,6 +67,15 @@ export default function App() {
                 <SearchProvider>
                   <BrowserRouter>
                   <Routes>
+                    {/* 새 가이드 작성 — 편집 권한 필요, 레이아웃 없이 전체 화면 */}
+                    <Route element={<RequireRole permission="edit" />}>
+                      <Route path="/create" element={
+                        <Suspense fallback={<PageSkeleton />}>
+                          <CreateGuidePage />
+                        </Suspense>
+                      } />
+                    </Route>
+
                     {/* 에디터 — 편집 권한 필요, 레이아웃 없이 전체 화면 */}
                     <Route element={<RequireRole permission="edit" />}>
                       <Route path="/editor" element={

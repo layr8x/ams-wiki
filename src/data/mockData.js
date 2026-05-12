@@ -1,6 +1,11 @@
 // src/data/mockData.js
 // AMS 실제 운영 가이드 데이터 — Confluence 원본 기반
 // Source: https://hiconsy.atlassian.net/wiki/spaces/FVSOL/pages/1378910256
+//
+// 2026-05-12: 실장 카톡 단톡방 6개월(2025.11~2026.05, 14,897라인) 분석 기반 신규 가이드 7개 통합.
+//             상세 분석은 docs/manager-inquiries-analysis.md 참고.
+
+import { INQUIRY_GUIDES, INQUIRY_RECENT } from './inquiryGuides.js';
 
 const CONFLUENCE = 'https://hiconsy.atlassian.net/wiki/spaces/FVSOL/pages';
 const AMS = 'https://ams.sdij.com';
@@ -779,6 +784,9 @@ export const GUIDES = {
     ],
     responses: null, decisionTable: null, referenceData: null, policyDiff: null,
   },
+
+  // ── 실장 카톡 분석 기반 신규 가이드 (2026-05-12 통합) ────────────────────
+  ...INQUIRY_GUIDES,
 };
 
 // AMS 실제 메뉴 구조 (https://ams.sdij.com 기준)
@@ -816,10 +824,13 @@ export const MODULE_TREE = [
     id: 'billing', label: '청구/수납/결제/환불', icon: 'CreditCard',
     amsPath: '/billing',
     guides: [
-      { id: 'billing-guide',   label: '청구 생성 가이드' },
-      { id: 'payment-switch',  label: '전환결제 처리 가이드' },
-      { id: 'refund-policy',   label: '환불 승인 기준 판단 가이드' },
-      { id: 'payment-method',  label: '결제 수단 등록 가이드' },
+      { id: 'billing-guide',           label: '청구 생성 가이드' },
+      { id: 'payment-switch',          label: '전환결제 처리 가이드' },
+      { id: 'refund-policy',           label: '환불 승인 기준 판단 가이드' },
+      { id: 'refund-pending-cancel',   label: '환불대기 취소 처리 (수작업 요청)' },
+      { id: 'shinhan-campus-payment',  label: '신한캠퍼스 결제·환불 처리' },
+      { id: 'cti-duplicate-payment',   label: 'CTI 콜 인입 중복결제 처리' },
+      { id: 'payment-method',          label: '결제 수단 등록 가이드' },
     ],
   },
   {
@@ -828,6 +839,7 @@ export const MODULE_TREE = [
     guides: [
       { id: 'member-merge',        label: 'AMS 회원 병합 가이드' },
       { id: 'duplicate-account',   label: '중복 계정 통합 프로세스' },
+      { id: 'parent-phone-change', label: '학부모 대표번호 변경 (부↔모)' },
       { id: 'student-suspension',  label: '휴강 처리 절차' },
     ],
   },
@@ -838,20 +850,26 @@ export const MODULE_TREE = [
       { id: 'sms-send',              label: '문자 발송 가이드' },
       { id: 'virtual-account-guide', label: '가상계좌 안내 문자 발송 가이드' },
       { id: 'payment-request-sms',   label: '결제 요청 문자 발송 가이드' },
+      { id: 'payment-url-expired',   label: '결제 URL 만료·미수신 트러블슈팅' },
     ],
   },
   {
     id: 'system', label: '공통/시스템', icon: 'Settings',
     amsPath: AMS,
     guides: [
-      { id: 'ams-glossary',    label: 'AMS 주요 용어 사전' },
-      { id: 'response-manual', label: '상황별 CS 대응 매뉴얼' },
-      { id: 'policy-2026',     label: '2026 수강료 정책 변경 공지' },
+      { id: 'ams-glossary',         label: 'AMS 주요 용어 사전' },
+      { id: 'response-manual',      label: '상황별 CS 대응 매뉴얼' },
+      { id: 'policy-2026',          label: '2026 수강료 정책 변경 공지' },
+      { id: 'okta-device-reset',    label: 'OKTA 인증 기기변경 / 재설정' },
+      { id: 'live-data-isolation',  label: '라이브(sdijon) 데이터 이관 불가 안내' },
     ],
   },
 ];
 
 export const RECENT_GUIDES = [
+  // 카톡 분석 기반 신규 가이드 (가장 최근)
+  ...INQUIRY_RECENT,
+
   { id:'attendance-process',    module:'수업운영관리',         title:'출결 처리 가이드',                     updated_at:'2026-04-13', views: 512, helpful: 42, version: 'v2.3', author: '이준호', tags: ['출결', '필수'] },
   { id:'enrollment-process',    module:'수업운영관리',         title:'입반 처리 가이드',                     updated_at:'2026-04-14', views: 389, helpful: 31, version: 'v1.6', author: '박소연', tags: ['입반', '필수'] },
   { id:'course-create',         module:'강좌/교재 관리',       title:'강좌 생성 가이드',                     updated_at:'2026-04-12', views: 267, helpful: 22, version: 'v2.0', author: '박소연', tags: ['강좌', '필수'] },
@@ -875,11 +893,20 @@ export const POPULAR_GUIDES = RECENT_GUIDES
   .slice(0, 5);
 
 // 검색 동의어 사전 — 사용자 자연어 검색을 AMS 용어로 매핑
+// 카톡 단톡방에서 실제로 사용되는 자연어 표현을 가이드 검색에 매핑.
 export const SEARCH_SYNONYMS = {
   '환불': ['돈 돌려받기', '수강료 반환', '환불 신청', '환불 거절'],
-  '회원 병합': ['계정 통합', '중복 계정', '계정 합치기', '회원 통합'],
+  '환불대기': ['환불 취소', '환불 풀어주세요', '환불 원복', '환불코드', '환불 잘못 눌렀어요'],
+  '회원 병합': ['계정 통합', '중복 계정', '계정 합치기', '회원 통합', '통합 부탁드립니다', '로컬과 통합', '이관 부탁드립니다'],
   '청구': ['수강료 청구', '결제', '청구서', '결제 생성'],
   '출석': ['출석 처리', 'QR', '출결', '출석 인식'],
   '수업 관리': ['수업 운영', '강좌 관리', '수강', '수업'],
   '결제': ['카드 결제', '결제 수단', '결제 변경', '전환 결제'],
+  'OKTA': ['옥타', '기기변경', '앱 삭제', '인증 재설정', '로그인 안됨'],
+  '신한캠퍼스': ['신캠', '강제취소', '신한 결제', '부분환불 불가'],
+  '학부모 번호 변경': ['부 → 모', '대표번호 변경', 'R40004', '학부모 정보 수정'],
+  '결제 URL 만료': ['결제링크 안 열림', 'URL 만료', '결제 점검중', '결제 문자 미수신'],
+  '중복결제': ['카드 2회 결제', '승인번호 누락', 'CTI 콜', '키오스크 오류'],
+  '전반': ['반 이동', '강좌 변경', '티켓 이관'],
+  '라이브 데이터': ['sdijon', '라이브 수강', '이메일 변경'],
 };

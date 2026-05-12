@@ -40,4 +40,15 @@ export default defineConfig([
       globals: { ...globals.node },
     },
   },
+  // Node.js 스크립트 (Workflow Sync Hub, 시드 생성기 등) — Node 런타임 globals
+  {
+    files: [
+      'workflow-sync-hub/**/*.{js,mjs}',
+      'supabase/**/*.{js,mjs}',
+      'scripts/**/*.{js,mjs}',
+    ],
+    languageOptions: {
+      globals: { ...globals.node },
+    },
+  },
 ])

@@ -16,7 +16,7 @@ async function main() {
 
   try {
     const analyzer = new WorkflowAnalyzer(config);
-    const generator = new PortfolioGenerator(config);
+    // NOTE: PortfolioGenerator는 향후 sampleData 기반 포트폴리오 생성에 사용 예정 (현재 예제는 분석 단계만 시연)
 
     const sampleData = {
       confluence_pages: [

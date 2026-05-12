@@ -40,3 +40,7 @@ test-results
 dist
 .next
 out
+
+# Supabase (Edge Functions + migrations — deployed separately via supabase CLI)
+# Vercel must NOT see these .ts files; they target Deno runtime, not Node.
+supabase

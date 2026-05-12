@@ -53,10 +53,12 @@ export class KakaoPartnerClient {
   }
 
   // ─── 채팅 목록 (페이징) ──────────────────────────────────────────────────
-  // size: 1~100. before / after 토큰으로 페이징 (응답에서 확인 후 보강 예정)
-  searchChats({ size = 100, body = {} } = {}) {
+  // 실측: size cap=100, since 는 query string + last 채팅의 last_log_id 값.
+  // body 는 query 필터 ({status, keyword, labels, isBlocked, isStarred}). 비우면 전체.
+  searchChats({ size = 100, since = null, body = {} } = {}) {
+    const qs = since ? `size=${size}&since=${since}` : `size=${size}`;
     return this._fetch(
-      `/api/profiles/${this.profileId}/chats/search?size=${size}`,
+      `/api/profiles/${this.profileId}/chats/search?${qs}`,
       {
         method: 'POST',
         headers: { 'content-type': 'application/json' },

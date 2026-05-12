@@ -99,29 +99,41 @@ async function main() {
   const me = await client.me();
   console.log(`[auth] ${me.email || me.id}`);
 
-  // 채팅 ID 목록
+  // 채팅 ID 목록 — Supabase 기본 1000 limit 회피
   const { data: chats, error: chatsErr } = await supabase
     .from('kakao_partner_chats')
     .select('chat_id, nickname, last_log_id')
     .eq('profile_id', PROFILE_ID)
-    .order('last_log_send_at', { ascending: false });
+    .order('last_log_send_at', { ascending: false })
+    .range(0, 9999);
   if (chatsErr) throw chatsErr;
   console.log(`[plan] ${chats.length} chats to backfill`);
 
+  const CONCURRENCY = Number(process.env.KAKAO_BACKFILL_CONCURRENCY || 8);
   let grandTotal = 0;
-  let chatIdx = 0;
-  for (const chat of chats) {
-    chatIdx++;
-    const { totalInserted, lastLogId, error } = await backfillChat(chat.chat_id);
-    grandTotal += totalInserted;
-    const tag = error ? `ERR ${error}` : `last=${lastLogId || '-'}`;
-    console.log(
-      `[${chatIdx}/${chats.length}] ${chat.chat_id} ${chat.nickname?.slice(0, 12) || '?'} +${totalInserted} (${tag}) [grand=${grandTotal}]`,
-    );
-    // 채팅 사이 jitter
-    await new Promise((r) => setTimeout(r, 100 + Math.random() * 200));
+  let done = 0;
+  const startedAt = Date.now();
+
+  // 워커 N개로 큐 소비
+  const queue = chats.slice();
+  async function worker(wid) {
+    while (queue.length > 0) {
+      const chat = queue.shift();
+      if (!chat) break;
+      const { totalInserted, lastLogId, error } = await backfillChat(chat.chat_id);
+      grandTotal += totalInserted;
+      done++;
+      const tag = error ? `ERR ${error}` : `last=${lastLogId || '-'}`;
+      if (done % 25 === 0 || done === chats.length) {
+        const eta = ((Date.now() - startedAt) / done * (chats.length - done) / 1000).toFixed(0);
+        console.log(`[${done}/${chats.length}] grand=${grandTotal} eta=${eta}s`);
+      }
+      if (error) console.error(`  [chat ${chat.chat_id}] ${tag}`);
+      await new Promise((r) => setTimeout(r, 50 + Math.random() * 100));
+    }
   }
-  console.log(`\n[done] inserted ${grandTotal} messages across ${chats.length} chats`);
+  await Promise.all(Array.from({ length: CONCURRENCY }, (_, i) => worker(i)));
+  console.log(`\n[done] inserted ${grandTotal} messages across ${chats.length} chats in ${(Date.now()-startedAt)/1000}s`);
 }
 
 main().catch((e) => {

@@ -30,15 +30,13 @@ async function main() {
   let totalSeen = 0;
   const seenIds = new Set();
 
-  // 카카오 search API의 페이징 토큰 구조가 명확하지 않아 일단 size=100 단발 조회.
-  // 실제로 100건 이상이면 토큰 추가 후 루프 확장.
+  // 카카오 search 페이지네이션: ?size=100&since={마지막 채팅의 last_log_id}
+  let since = null;
   for (let page = 0; page < MAX_PAGES; page++) {
-    const body = {}; // before/after 토큰 발견 시 여기 채움
-    const res = await client.searchChats({ size: PAGE_SIZE, body });
+    const res = await client.searchChats({ size: PAGE_SIZE, since, body: {} });
     const items = Array.isArray(res?.items) ? res.items : [];
     if (items.length === 0) break;
 
-    // 중복 감지 (페이징 미구현 상황 안전장치)
     let newOnes = 0;
     for (const it of items) {
       if (seenIds.has(it.id)) continue;
@@ -47,21 +45,23 @@ async function main() {
     }
     totalSeen += newOnes;
 
-    // upsert
-    const rows = items
-      .filter((it) => seenIds.has(it.id))
-      .map((it) => chatToRow(it, PROFILE_ID));
-
+    const rows = items.map((it) => chatToRow(it, PROFILE_ID));
     const { error } = await supabase
       .from('kakao_partner_chats')
       .upsert(rows, { onConflict: 'chat_id' });
     if (error) throw error;
     totalInserted += rows.length;
 
-    console.log(`[page ${page}] received=${items.length} new=${newOnes} upserted=${rows.length}`);
+    console.log(`[page ${page}] received=${items.length} new=${newOnes} has_next=${res.has_next} grand=${totalSeen}`);
 
-    // 더 이상 새 항목 없으면 종료
-    if (newOnes === 0) break;
+    if (!res.has_next) break;
+    // 다음 페이지: 마지막 채팅의 last_log_id
+    const lastItem = items[items.length - 1];
+    since = lastItem?.last_log_id;
+    if (!since) {
+      console.warn('[abort] last_log_id missing on last item — cannot paginate further');
+      break;
+    }
   }
 
   // stream_state 초기화

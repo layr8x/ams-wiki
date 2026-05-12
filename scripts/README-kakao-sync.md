@@ -88,16 +88,50 @@ node scripts/sync-kakao-chats.mjs
 
 ---
 
-## 6. 분석 파이프라인 연동
+## 6. 분석 파이프라인 연동 (end-to-end 자동화)
 
-추출된 CSV는 기존 `analyze.py`(분류 룰셋 보유)에 그대로 입력 가능합니다:
+본 저장소는 **Python 의존성 없이 Node.js 만으로 동작하는 end-to-end 파이프라인**을 제공합니다:
 
+### 한 번에 실행 (권장)
 ```bash
-python analyze.py data/kakao-chats-2026-05-12.csv \
-  --output data/classified-2026-05-12.csv
+npm run cs-pipeline       # 수집 → 분류 → 위키 갱신 → seed 재생성 자동 수행
+```
 
-# 분류 결과를 csInsights.js 에 반영하는 헬퍼 (별도 작업)
-# node scripts/update-cs-insights.mjs data/classified-2026-05-12.csv
+### 단계별 수동 실행
+```bash
+# (1) 수집: 카카오 비즈니스 → CSV
+npm run sync:kakao-chats
+
+# (2) 분류: CSV → 12 카테고리 + 감정 + 통계 (analyze.py JS 포팅)
+npm run classify:kakao -- data/kakao-chats-2026-05-12.csv
+
+# (3) 위키 갱신: classify 요약 → src/data/csInsights.js 자동 패치
+npm run update:cs-insights -- data/kakao-chats-2026-05-12-summary.json
+
+# (4) DB 시드 재생성 (선택)
+npm run db:seed
+```
+
+### 옵션
+```bash
+# 특정 CSV 지정
+node scripts/run-cs-pipeline.mjs --csv data/kakao-chats-2026-05-10.csv
+
+# 변경 미리보기 (파일 수정 안 함)
+node scripts/run-cs-pipeline.mjs --dry-run
+
+# Supabase seed 재생성 생략
+node scripts/run-cs-pipeline.mjs --skip-seed
+```
+
+### 출력 파일
+```
+data/
+  kakao-chats-2026-05-12.csv             ← (1) 수집 원본
+  kakao-chats-2026-05-12-classified.csv  ← (2) 카테고리/감정 추가
+  kakao-chats-2026-05-12-summary.json    ← (2) 통계 요약
+src/data/csInsights.js                    ← (3) CUSTOMER_CATEGORIES 자동 갱신
+supabase/seed.sql                         ← (4) DB 시드 재생성
 ```
 
 ---

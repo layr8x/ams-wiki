@@ -27,6 +27,7 @@ const AdminLayout          = lazy(() => import('./layouts/AdminLayout'))
 const AdminOverviewPage    = lazy(() => import('./pages/admin/AdminOverviewPage'))
 const AdminGuidesPage      = lazy(() => import('./pages/admin/AdminGuidesPage'))
 const AdminFeedbackPage    = lazy(() => import('./pages/admin/AdminFeedbackPage'))
+const AdminIntegrationPage = lazy(() => import('./pages/admin/AdminIntegrationPage'))
 
 // React Query 클라이언트
 const queryClient = new QueryClient({
@@ -98,6 +99,9 @@ export default function App() {
                         } />
                         <Route path="feedback" element={
                           <Suspense fallback={<PageSkeleton />}><AdminFeedbackPage /></Suspense>
+                        } />
+                        <Route path="integration" element={
+                          <Suspense fallback={<PageSkeleton />}><AdminIntegrationPage /></Suspense>
                         } />
                       </Route>
                     </Route>

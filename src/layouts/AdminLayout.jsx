@@ -20,6 +20,7 @@ const BREADCRUMB_LABEL = {
   admin: '관리자',
   guides: '가이드 관리',
   feedback: '피드백 수신함',
+  integration: '외부 연동',
   users: '사용자 관리',
   sync: 'Confluence 동기화',
   audit: '감사 로그',

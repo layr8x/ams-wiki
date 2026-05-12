@@ -11,7 +11,11 @@
     "test": "vitest",
     "test:e2e": "playwright test",
     "db:seed": "node supabase/generate-seed.mjs",
-    "sync:confluence": "node scripts/sync-confluence.mjs"
+    "sync:confluence": "node scripts/sync-confluence.mjs",
+    "sync:kakao-chats": "node scripts/sync-kakao-chats.mjs",
+    "classify:kakao": "node scripts/classify-kakao-csv.mjs",
+    "update:cs-insights": "node scripts/update-cs-insights.mjs",
+    "cs-pipeline": "npm run sync:kakao-chats && node scripts/run-cs-pipeline.mjs"
   },
   "dependencies": {
     "@phosphor-icons/react": "^2.1.10",

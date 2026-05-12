@@ -1,0 +1,35 @@
+{
+  "description": "AMS Wiki — shadcn/ui + Supabase + Confluence API 엔터프라이즈 가이드 위키",
+  "rules": [
+    "React Query 훅으로 데이터 조회 (mockData 직접 참조 금지)",
+    "모든 API 호출은 try-catch 또는 에러 바운더리로 처리",
+    "환경변수는 .env.local 사용 (git 무시)",
+    "Supabase RLS 정책 항상 활성화",
+    "프롬프트 캐싱 설정 변경 금지 (api/search-summary.js)",
+    "PageSize 변경 금지 (기본 20, 최대 100)",
+    "민감한 정보는 서버에서만 처리"
+  ],
+  "codePatterns": {
+    "routing": "React Router v7 (App.jsx에 정의)",
+    "dataFetching": "React Query (TanStack) + Supabase RLS",
+    "stateManagement": "React Query + 로컬 상태",
+    "styling": "Tailwind CSS 4 + CSS variables (@theme)",
+    "components": "shadcn/ui (28개 설치됨)",
+    "errorHandling": "ErrorBoundary (페이지 단위) + Suspense",
+    "testing": "Vitest + Playwright"
+  },
+  "architecture": {
+    "frontend": "React 19 + Vite 8",
+    "ui": "shadcn/ui + Tailwind CSS 4",
+    "routing": "React Router v7",
+    "database": "Supabase (PostgreSQL)",
+    "api": "Confluence REST API v2 + Jira REST API v3",
+    "ai": "Claude Haiku 4.5 (프롬프트 캐싱)",
+    "deployment": "Vercel + GitHub Actions CI/CD",
+    "cron": "Vercel Cron Jobs (Hobby/Pro 플랜별)"
+  },
+  "memoryFiles": {
+    "MEMORY.md": ".claude/MEMORY.md (프로젝트 메모리)",
+    "CLAUDE.md": "규칙, 패턴, 컨벤션 가이드"
+  }
+}

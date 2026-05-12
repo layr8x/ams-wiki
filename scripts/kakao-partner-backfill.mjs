@@ -55,10 +55,16 @@ function logToRow(item, profileId, chatId) {
 
 async function backfillChat(chatId) {
   let totalInserted = 0;
-  let since = 0;
+  let oldestLogId = null;
   let lastInsertedId = null;
+  // 카카오 chatlogs 페이지네이션 실측:
+  //   ?size=500          → 가장 최근 N건 (has_prev: true 면 더 과거 있음)
+  //   ?since=<id>&direct=prev → 그 id 이전(더 과거) N건
   for (let page = 0; page < MAX_PAGES_PER_CHAT; page++) {
-    const url = `/api/profiles/${PROFILE_ID}/chats/${chatId}/chatlogs?since=${since}&direct=next`;
+    const qs = page === 0
+      ? `size=500`
+      : `since=${oldestLogId}&direct=prev&size=500`;
+    const url = `/api/profiles/${PROFILE_ID}/chats/${chatId}/chatlogs?${qs}`;
     let res;
     try {
       res = await client._fetch(url);
@@ -78,11 +84,11 @@ async function backfillChat(chatId) {
       return { totalInserted, error: error.message };
     }
     totalInserted += rows.length;
+    // items 는 시간순(과거→최근) 정렬, oldest 가 첫 element
+    oldestLogId = rows[0].log_id;
     lastInsertedId = rows[rows.length - 1].log_id;
 
-    if (!res.has_next) break;
-    // 다음 페이지: 마지막 log_id 부터 next 방향
-    since = lastInsertedId;
+    if (!res.has_prev) break; // 더 과거 메시지 없음
     await new Promise((r) => setTimeout(r, PAGE_DELAY_MS));
   }
   return { totalInserted, lastLogId: lastInsertedId };
